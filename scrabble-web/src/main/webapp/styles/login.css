@@ -1,0 +1,28 @@
+body {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #eee;
+}
+
+
+#login form {
+	width: 300px;
+	margin:auto;
+}
+#login form #branding {
+	width:300px;
+	margin-left:100px;
+}
+#login form fieldset {
+	border: none;
+	margin-top:10px;
+}
+#login form section {
+	margin: 2em 1em;
+	text-align: center;
+}
+#login form #recover_password a, span {
+	display: block;
+	text-align: center;
+}
+#login footer { text-align: right; }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="${locale.language}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Login to
+        <th:block th:text="#{site.metadata.title}">Web Scrabble</th:block>
+    </title>
+    <link rel="icon" href="images/favicon.ico" th:href="@{/images/favicon.png}"/>
+    <link rel="stylesheet" href="styles/normalize.css" th:href="@{/styles/normalize.css}"/>
+    <link rel="stylesheet" href="styles/login.css" th:href="@{/styles/pages/error.css}"/>
+</head>
+<body>
+<legend>You don`t have permissions to view this page!</legend>
+<div class="actions">
+    <input type="submit" value="Logout"/>
+</div>
+</body>
+</html>

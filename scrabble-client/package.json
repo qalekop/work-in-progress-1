@@ -1,0 +1,20 @@
+{
+  "name": "Cells",
+  "version": "0.0.0",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "build": "browserify -t [ reactify --es6 ] main.js > ./public/javascripts/compiled.js"
+  },
+  "dependencies": {
+    "react": "^0.13.2"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "reactify": "^1.1.0",
+    "vinyl-source-stream": "*",
+    "gulp-load-plugins": "0.10.0",
+    "gulp-react": "^3.0.1",
+    "gulp-sass": "^2.0.4"
+  }
+}

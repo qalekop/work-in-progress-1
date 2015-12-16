@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>	
+      <version>0.1</version>
+      <groupId>ak.scrabble</groupId>
+      <artifactId>ak.scrabble</artifactId>
+    </parent>
+    <packaging>war</packaging>
+    <name>${project.artifactId}</name>
+    <artifactId>scrabble.web</artifactId>
+    <!--<version>0.1</version>-->
+
+	<build>
+       <finalName>${project.artifactId}</finalName>
+       <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>utf-8</encoding>
+                    <fork>true</fork>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>2024m</maxmem>
+                </configuration>
+            </plugin>
+		</plugins>
+ 	</build>
+
+     <profiles>
+         <profile>
+             <!-- Active by default: can be turned off by setting tools.nodebug environment property -->
+             <id>debug</id>
+             <activation>
+                 <property>
+                     <name>!tools.nodebug</name>
+                 </property>
+             </activation>
+             <build>
+                 <plugins>
+                     <plugin>
+                         <groupId>org.zeroturnaround</groupId>
+                         <artifactId>jrebel-maven-plugin</artifactId>
+                         <version>1.1.5</version>
+                         <executions>
+                             <execution>
+                                 <id>generate-rebel-xml</id>
+                                 <phase>process-resources</phase>
+                                 <goals>
+                                     <goal>generate</goal>
+                                 </goals>
+                             </execution>
+                         </executions>
+                     </plugin>
+                 </plugins>
+             </build>
+         </profile>
+     </profiles>
+
+     <dependencies>
+         <dependency>
+             <groupId>ak.scrabble</groupId>
+             <artifactId>scrabble.engine</artifactId>
+             <version>${project.version}</version>
+         </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springsecurity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${org.springsecurity.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring3</artifactId>
+            <version>${org.thymeleaf.version}</version>
+        </dependency>
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-databind</artifactId>
+             <version>2.5.0</version>
+         </dependency>
+     </dependencies>
+
+</project>

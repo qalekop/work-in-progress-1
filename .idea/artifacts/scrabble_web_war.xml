@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="scrabble.web:war">
+    <output-path>$PROJECT_DIR$/scrabble-web/target</output-path>
+    <root id="archive" name="scrabble.web.war">
+      <element id="artifact" artifact-name="scrabble.web:war exploded" />
+    </root>
+  </artifact>
+</component>

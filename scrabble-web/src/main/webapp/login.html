@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Login to
+        <th:block th:text="#{site.metadata.title}">Web Scrabble</th:block>
+    </title>
+    <!-- link rel="icon" href="images/favicon.ico" th:href="@{/images/favicon.png}"/ -->
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/webjars/bootstrap/3.2.0/css/bootstrap.min.css"
+          th:href="@{/static/bootstrap/3.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="styles/login.css" th:href="@{/styles/login.css}"/>
+</head>
+<body id="login">
+
+<div class="container">
+
+    <form class="form-signin" th:action="@{/j_spring_security_check}" method="POST">
+        <h2 class="form-signin-heading">Please login</h2>
+
+        <div class="alert alert-danger" role="alert" th:if="${param.error != null}">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Invalid user name or password. Please correct.
+        </div>
+        <fieldset>
+            <label for="username" class="sr-only">User name</label>
+            <input type="text" id="username" class="form-control" placeholder="User name" name="username"
+                   required="true" autofocus="true"/>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password"
+                   required="true"/>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me">Remember me</input>
+                </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" th:value="#{pages.login.action_login}">
+                Login
+            </button>
+        </fieldset>
+    </form>
+
+</div>
+</body>
+</html>

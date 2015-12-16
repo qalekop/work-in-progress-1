@@ -1,0 +1,67 @@
+$count: 3;
+$size: 50px;
+$other-color: #ffdead;
+$tile-color: #deadff;
+$margin: 50px;
+
+@mixin h-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin tile($color : black) {
+  width: $size;
+  height: $size;
+  border: 1px solid $color;
+  text-align: center;
+  font-size: $size;
+  line-height: 90%;
+  margin: -1px;
+}
+
+body {
+  background-image: url("../images/3.jpg");
+}
+
+.content {
+  @include h-align-center;
+  border: 2px double white;
+  height: (($count + 1) * $size) + (3 * $margin);
+  width: ($count * $size) + (2 * $margin);
+  margin-top: $margin;
+}
+
+.gamefield {
+  @include h-align-center;
+  position: relative;
+  margin-top: $margin;
+  width: $count * $size;
+  height: $count * $size;
+  border: 1px solid red;
+}
+
+.rack {
+  @include h-align-center;
+  margin-top: $margin;
+  width: $count * $size;
+}
+
+.cell {
+  @include tile;
+  position: absolute;
+}
+
+.tile {
+  @include tile(blue);
+  display: inline-block;
+  background-color: $tile-color;
+}
+
+.odd {
+  background-color: $other-color;
+}
+
+@for $i from 0 through ($count - 1) {
+  .col_#{$i} {left: $size * $i}
+  .row_#{$i} {top: $size * $i}
+}

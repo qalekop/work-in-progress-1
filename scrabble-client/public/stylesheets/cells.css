@@ -1,0 +1,67 @@
+body {
+  background-image: url("../images/3.jpg"); }
+
+.content {
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px double white;
+  height: 350px;
+  width: 250px;
+  margin-top: 50px; }
+
+.gamefield {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  margin-top: 50px;
+  width: 150px;
+  height: 150px;
+  border: 1px solid red; }
+
+.rack {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  width: 150px; }
+
+.cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  text-align: center;
+  font-size: 50px;
+  line-height: 90%;
+  margin: -1px;
+  position: absolute; }
+
+.tile {
+  width: 50px;
+  height: 50px;
+  border: 1px solid blue;
+  text-align: center;
+  font-size: 50px;
+  line-height: 90%;
+  margin: -1px;
+  display: inline-block;
+  background-color: #deadff; }
+
+.odd {
+  background-color: #ffdead; }
+
+.col_0 {
+  left: 0px; }
+
+.row_0 {
+  top: 0px; }
+
+.col_1 {
+  left: 50px; }
+
+.row_1 {
+  top: 50px; }
+
+.col_2 {
+  left: 100px; }
+
+.row_2 {
+  top: 100px; }
