@@ -2,8 +2,9 @@
  * Created by akopylov on 23.09.2015.
  */
 var React = require('react');
+var Actions = require('../flux/actions/Actions');
 
-var SIZE = 3;
+var SIZE = 7;
 var Cell = React.createClass({
 
     getInitialState() {
@@ -12,11 +13,19 @@ var Cell = React.createClass({
 
     , drop(event) {
         event.preventDefault();
-        this.setState({letter: event.dataTransfer.getData('text'), occupied: true});
+        var letter = event.dataTransfer.getData('text');
+        this.setState({letter: letter, occupied: true});
+        Actions.tileDropped(letter);
     }
 
     , dragOver(event) {
         if (!this.state.occupied) event.preventDefault();
+    }
+
+    , clicked(event) {
+        event.preventDefault();
+        this.setState({letter: '', occupied: false});
+        Actions.tileReverted(this.state.letter);
     }
 
     , render() {
@@ -25,6 +34,7 @@ var Cell = React.createClass({
             className = "cell " + ((row + col) % 2 ? "odd" : "even") + (" col_" + col) + (" row_" + row);
         return (
             <div className={className}
+                 onContextMenu={this.clicked}
                  onDragOver={this.dragOver}
                  onDrop={this.drop}>{this.state.letter}</div>
         );

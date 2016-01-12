@@ -1,16 +1,22 @@
 package ak.scrabble.web.controller;
 
-import ak.scrabble.engine.Configuration;
+import ak.scrabble.conf.Configuration;
+import ak.scrabble.engine.model.Player;
 import ak.scrabble.engine.model.Rack;
+import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.security.SecurityModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 import org.apache.commons.lang3.StringUtils;
+
+import java.security.Principal;
 
 /**
  * Created by akopylov on 09.10.2015.
@@ -18,26 +24,28 @@ import org.apache.commons.lang3.StringUtils;
 @Controller
 public class GameController {
     public static final String GAME_URL = "/game";
+    private static final String LETTERS_FIELD = "letters";
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL,
-            method = RequestMethod.GET)
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    RackService rackService;
+
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL, method = RequestMethod.GET)
     public String scrabble(Model model, SecurityContextHolderAwareRequestWrapper request) {
         model.addAttribute("name", request.getRemoteUser());
         return SecurityModel.SECURE_URI + GAME_URL;
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack",
-            method = RequestMethod.GET)
-    public String getRack(SecurityContextHolderAwareRequestWrapper request) throws JsonProcessingException {
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
         // get list of letters and convert 'em to a JSON object
 
-//        Rack rack;
-        final int size = Configuration.RACK_SIZE;
-        final String name = request.getRemoteUser();
-        final StringBuilder sb = new StringBuilder(StringUtils.repeat("Z", size)).replace(0, size, name);
+        final String name = user.getName();
+        final String existingLetters = letters.getFirst(LETTERS_FIELD);
+        Rack rack = rackService.getRack(name, StringUtils.isEmpty(existingLetters) ? "" : existingLetters);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        return mapper.writeValueAsString(sb.toString());
+        return mapper.writer().writeValueAsString(rack.getLetters());
     }
 }

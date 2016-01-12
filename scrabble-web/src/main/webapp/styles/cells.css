@@ -5,8 +5,8 @@ body {
   margin-left: auto;
   margin-right: auto;
   border: 2px double white;
-  height: 350px;
-  width: 250px;
+  height: 550px;
+  width: 450px;
   margin-top: 50px; }
 
 .gamefield {
@@ -14,15 +14,15 @@ body {
   margin-right: auto;
   position: relative;
   margin-top: 50px;
-  width: 150px;
-  height: 150px;
+  width: 350px;
+  height: 350px;
   border: 1px solid red; }
 
 .rack {
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
-  width: 150px; }
+  width: 350px; }
 
 .cell {
   width: 50px;
@@ -65,3 +65,27 @@ body {
 
 .row_2 {
   top: 100px; }
+
+.col_3 {
+  left: 150px; }
+
+.row_3 {
+  top: 150px; }
+
+.col_4 {
+  left: 200px; }
+
+.row_4 {
+  top: 200px; }
+
+.col_5 {
+  left: 250px; }
+
+.row_5 {
+  top: 250px; }
+
+.col_6 {
+  left: 300px; }
+
+.row_6 {
+  top: 300px; }

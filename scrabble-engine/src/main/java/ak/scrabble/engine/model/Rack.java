@@ -1,5 +1,8 @@
 package ak.scrabble.engine.model;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +11,7 @@ import java.util.List;
  */
 public class Rack {
     private final int length;
-    private List<String> letters;
+    private List<Pair> letters;
 
 
     public Rack(int length) {
@@ -17,13 +20,40 @@ public class Rack {
     }
 
     //<editor-fold desc="Getters-'n'-Setters">
-
-    public List<String> getLetters() {
+    public List<Pair> getLetters() {
         return letters;
     }
 
-    public void setLetters(List<String> letters) {
+    public void setLetters(List<Pair> letters) {
         this.letters = letters;
+    }
+
+    public boolean addPair(String letter, byte score) {
+        return letters.size() < length && letters.add(new Pair(letter, score));
+    }
+
+    public boolean addPair(Pair letter) {
+        return letters.size() < length && letters.add(letter);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Internal class(es)">
+    private class Pair {
+        private String letter;
+        private byte score;
+
+        public Pair(String letter, byte score) {
+            this.letter = letter;
+            this.score = score;
+        }
+
+        public String getLetter() {
+            return letter;
+        }
+
+        public byte getScore() {
+            return score;
+        }
     }
     //</editor-fold>
 }

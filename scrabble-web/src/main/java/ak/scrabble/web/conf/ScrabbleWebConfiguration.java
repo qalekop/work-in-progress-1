@@ -19,7 +19,7 @@ import org.thymeleaf.spring3.view.ThymeleafViewResolver;
  * Created by akopylov on 15.09.2015.
  */
 @Configuration
-@ComponentScan(basePackages = "ak.scrabble.web")
+@ComponentScan(basePackages = "ak.scrabble")
 @EnableWebMvc
 @EnableMBeanExport(
         registration = RegistrationPolicy.IGNORE_EXISTING,

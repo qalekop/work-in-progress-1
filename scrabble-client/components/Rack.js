@@ -2,7 +2,7 @@
  * Created by akopylov on 29.09.2015.
  */
 var React = require('react');
-var SIZE = 3;
+var RackStore = require('../flux/stores/RackStore');
 
 var Tile = React.createClass({
     drag(event) {
@@ -12,26 +12,23 @@ var Tile = React.createClass({
     }
 
     , render() {
-        return <div className="tile" draggable="true" onDragStart={this.drag}>{this.props.letter}</div>
+        return <div className="tile" draggable="true" onDragStart={this.drag}>
+            {this.props.letter}
+        </div>
     }
 });
 
 var Rack = React.createClass({
-    getInitialState() {
-        return {'letters': ['X', 'Y', 'Z']};
-    }
+    componentDidMount() {
+        RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
+    },
 
-    , componentDidMount() {
-        console.log('*** component did mount');
-        $.get('/game/rack/', function(result) {
-            console.log(result);
-        });
-    }
-
-    , render() {
+    render() {
         return (
             <div className="rack">
-                {this.state.letters.map((letter, i) => { return <Tile letter={letter} key={letter}/> })}
+                {this.props.letters
+                    .filter(tile => !tile.hidden)
+                    .map((tile, i) => { return <Tile letter={tile.letter} score={tile.score} key={i}/> })}
             </div>
         )
     }
