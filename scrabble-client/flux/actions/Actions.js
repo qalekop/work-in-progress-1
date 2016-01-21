@@ -16,5 +16,9 @@ class Actions {
     tileReverted(letter) {
         this.dispatch(letter);
     }
+
+    makeMove() {
+        this.dispatch();
+    }
 }
 module.exports = alt.createActions(Actions);

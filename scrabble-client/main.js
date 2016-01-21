@@ -3,9 +3,10 @@
  */
 
 var React = require('react');
-var Scrabble = require('./components/Scrabble');
+var ReactDOM = require('react-dom');
 
-React.render(
+var Scrabble = require('./components/Scrabble');
+ReactDOM.render(
 <Scrabble />,
     document.getElementById('main')
 );

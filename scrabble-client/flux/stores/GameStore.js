@@ -6,13 +6,14 @@ var alt = require('../../alt');
 
 var Actions = require('../actions/Actions');
 
+var SIZE = 7;
 class GameStore {
     constructor() {
-        this.items = [];
+        this.cells = [];
         // init field with empty cells
         for (var row=0; row<SIZE; row++) {
             for (var column=0; column<SIZE; column++) {
-                this.items.push({'row': row, 'column': column});
+                this.cells.push({'row': row, 'column': column});
             }
         }
         this.bindListeners({
@@ -25,16 +26,19 @@ class GameStore {
     handleMakeMove() {
         // todo implement me
         console.log('*** GameStore.makeMove');
+        this.cells
+            .filter(function(cell) { return !!cell.letter;})
+            .forEach(function(cell) {console.log('* ' + cell.letter)});
     }
 
     handleTileDropped(tile) {
-        var index = this.items.findIndex(item => item.row == tile.row && item.column == tile.col);
-        if (index >= 0) this.items[index].letter = tile.letter;
+        var index = this.cells.findIndex(item => item.row == tile.row && item.column == tile.col);
+        if (index >= 0) this.cells[index].letter = tile.letter;
     }
 
     handleTileReverted(tile) {
-        var index = this.items.findIndex(item => item.row == tile.row && item.column == tile.col);
-        if (index >= 0) this.items[index].letter = null;
+        var index = this.cells.findIndex(item => item.row == tile.row && item.column == tile.col);
+        if (index >= 0) this.cells[index].letter = null;
     }
 }
 module.exports = alt.createStore(GameStore, 'GameStore');

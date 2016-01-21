@@ -3,9 +3,11 @@
  */
 var React = require('react');
 
+var Actions = require('../flux/actions/Actions');
+
 var ButtonGo = React.createClass({
     clicked(event) {
-        console.log('*** ButtonGo clicked');
+        Actions.makeMove();
     }
 
     , render() {

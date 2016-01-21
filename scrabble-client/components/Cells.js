@@ -2,9 +2,10 @@
  * Created by akopylov on 23.09.2015.
  */
 var React = require('react');
-var Actions = require('../flux/actions/Actions');
 
-var SIZE = 7;
+var Actions = require('../flux/actions/Actions');
+var GameStore = require('../flux/stores/GameStore');
+
 var Cell = React.createClass({
 
     getInitialState() {
@@ -49,19 +50,13 @@ var Cell = React.createClass({
 var Cells = React.createClass({
 
     getInitialState() {
-        var items = [];
-        for (var row=0; row<SIZE; row++) {
-            for (var column=0; column<SIZE; column++) {
-                items.push({'row': row, 'column': column});
-            }
-        }
-        return {'items': items};
+        return GameStore.getState();
     }
 
     , render() {
         return (
           <div className="gamefield">
-              {this.state.items.map(cell => {
+              {this.state.cells.map(cell => {
                   return <Cell row={cell.row} col={cell.column} key={cell.row + '-' + cell.column}/>
               })}
           </div>

@@ -7,7 +7,6 @@ var RackStore = require('../flux/stores/RackStore');
 var Tile = React.createClass({
     drag(event) {
         event.dataTransfer.setData('text', this.props.letter);
-        console.log("onDragStart: " + this.props.letter);
         //event.stopPropagation();
     }
 
