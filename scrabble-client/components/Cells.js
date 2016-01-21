@@ -14,8 +14,11 @@ var Cell = React.createClass({
     , drop(event) {
         event.preventDefault();
         var letter = event.dataTransfer.getData('text');
+        // todo switch to Store.listen
         this.setState({letter: letter, occupied: true});
-        Actions.tileDropped(letter);
+        Actions.tileDropped({'row': this.props.row,
+            'col': this.props.col,
+            'letter': letter});
     }
 
     , dragOver(event) {
@@ -25,7 +28,9 @@ var Cell = React.createClass({
     , clicked(event) {
         event.preventDefault();
         this.setState({letter: '', occupied: false});
-        Actions.tileReverted(this.state.letter);
+        Actions.tileReverted({'row': this.props.row,
+            'col': this.props.col,
+            'letter': this.state.letter});
     }
 
     , render() {

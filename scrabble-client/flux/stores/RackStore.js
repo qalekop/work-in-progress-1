@@ -30,13 +30,13 @@ class RackStore {
     }
 
     handleTileDropped(letter) {
-        var index = this.letters.findIndex(tile => tile.letter == letter);
+        var index = this.letters.findIndex(tile => tile.letter == letter.letter);
         //console.log('*** RackStore.tileDropped ' + letter + ' ' + index);
         this.letters[index].hidden = true;
     }
 
     handleTileReverted(letter) {
-        var index = this.letters.findIndex(tile => tile.hidden && tile.letter == letter);
+        var index = this.letters.findIndex(tile => tile.hidden && tile.letter == letter.letter);
         if (index >= 0) this.letters[index].hidden = false;
     }
 

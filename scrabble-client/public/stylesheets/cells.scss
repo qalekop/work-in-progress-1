@@ -1,7 +1,10 @@
 $count: 7;
 $size: 50px;
-$other-color: #ffdead;
-$tile-color: #deadff;
+$color-other: #ffdead;
+$color-tile: #deadff;
+$color-tile-hover: #deaddd;
+$color-button: #deadaa;
+$color-button-hover: #aadead;
 $margin: 50px;
 
 @mixin h-align-center {
@@ -26,7 +29,7 @@ body {
 .content {
   @include h-align-center;
   border: 2px double white;
-  height: (($count + 1) * $size) + (3 * $margin);
+  height: (($count + 3) * $size) + (3 * $margin);
   width: ($count * $size) + (2 * $margin);
   margin-top: $margin;
 }
@@ -44,6 +47,11 @@ body {
   @include h-align-center;
   margin-top: $margin;
   width: $count * $size;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .cell {
@@ -54,11 +62,27 @@ body {
 .tile {
   @include tile(blue);
   display: inline-block;
-  background-color: $tile-color;
+  background-color: $color-tile;
+  border-radius: $size / 10;
+  flex-grow: 0;
+  flex-basis: auto;
+}
+.tile:hover {
+  background-color: $color-tile-hover;
+}
+
+.button {
+  width: $size * 3;
+  height: $size;
+  background-color: $color-button;
+  border-radius: $size / 10;
+}
+.button:hover {
+  background-color: $color-button-hover;
 }
 
 .odd {
-  background-color: $other-color;
+  background-color: $color-other;
 }
 
 @for $i from 0 through ($count - 1) {
