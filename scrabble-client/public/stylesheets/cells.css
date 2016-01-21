@@ -5,7 +5,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   border: 2px double white;
-  height: 550px;
+  height: 650px;
   width: 450px;
   margin-top: 50px; }
 
@@ -22,7 +22,12 @@ body {
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
-  width: 350px; }
+  width: 350px;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between; }
 
 .cell {
   width: 50px;
@@ -43,7 +48,22 @@ body {
   line-height: 90%;
   margin: -1px;
   display: inline-block;
-  background-color: #deadff; }
+  background-color: #deadff;
+  border-radius: 5px;
+  flex-grow: 0;
+  flex-basis: auto; }
+
+.tile:hover {
+  background-color: #deaddd; }
+
+.button {
+  width: 150px;
+  height: 50px;
+  background-color: #deadaa;
+  border-radius: 5px; }
+
+.button:hover {
+  background-color: #aadead; }
 
 .odd {
   background-color: #ffdead; }
