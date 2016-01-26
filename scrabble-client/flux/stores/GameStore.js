@@ -5,7 +5,7 @@
 var alt = require('../../alt');
 
 var Actions = require('../actions/Actions');
-
+var Source = require('../sources/RackSource');
 var SIZE = 7;
 class GameStore {
     constructor() {
@@ -21,14 +21,15 @@ class GameStore {
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED
         });
+        this.exportAsync(Source);
     }
 
     handleMakeMove() {
         // todo implement me
-        console.log('*** GameStore.makeMove');
-        this.cells
-            .filter(function(cell) { return !!cell.letter;})
-            .forEach(function(cell) {console.log('* ' + cell.letter)});
+        var field = this.cells
+            .filter(function(cell) { return !!cell.letter;});
+            //.forEach(function(cell) {console.log('* ' + cell.letter)});
+        this.getInstance().makeMove(field);
     }
 
     handleTileDropped(tile) {

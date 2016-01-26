@@ -4,6 +4,7 @@
 
 var Actions = require('../actions/Actions');
 var RACK_URL = '/scrabble/game/rack/';
+var MOVE_URL = '/scrabble/game/move/';
 
 var RackSource = {
     getRack() {
@@ -20,8 +21,27 @@ var RackSource = {
                     });
                 })
             }
-            , local(state) { return null; }
+            , local() { return null; }
             , success: Actions.getRack
+        }
+    }
+
+    , makeMove() {
+        return {
+            remote(state, field) {
+                console.log('*** Source.makeMove ' + field);
+                return new Promise(function(resolve) {
+                    $.ajax({
+                        method: 'POST',
+                        url: MOVE_URL,
+                        data: field,
+                        dataType: 'json',
+                        success: function(data) {resolve(data);}
+                    })
+                })
+            }
+            , local() { return null; }
+            , success: Actions.success
         }
     }
 };
