@@ -54,7 +54,9 @@ public class GameController {
         return mapper.writer().writeValueAsString(rack.getLetters());
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move", method = RequestMethod.POST)
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
+            , method = RequestMethod.POST
+            , headers = {"Content-type=application/json"})
     @ResponseBody // ??
     public void makeMove(@RequestBody List<Cell> cells) {
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));

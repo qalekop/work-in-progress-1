@@ -29,19 +29,23 @@ var RackSource = {
     , makeMove() {
         return {
             remote(state, field) {
-                console.log('*** Source.makeMove ' + field);
+                console.log('*** Source.makeMove ' + JSON.stringify(field));
+                //field.forEach(cell => console.log(JSON.stringify(cell)));
                 return new Promise(function(resolve) {
                     $.ajax({
                         method: 'POST',
                         url: MOVE_URL,
-                        data: field,
+                        data: JSON.stringify(field),
                         dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
                         success: function(data) {resolve(data);}
                     })
                 })
             }
             , local() { return null; }
-            , success: Actions.success
         }
     }
 };
