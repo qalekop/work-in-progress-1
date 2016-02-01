@@ -10,6 +10,7 @@ import java.util.Set;
 public class Configuration {
 
     public static final int RACK_SIZE = 7;
+    public static final int FIELD_SIZE = 7;
 
     /** letter's score */
     private static final Map<String, Byte> letterScores = new HashMap<>();

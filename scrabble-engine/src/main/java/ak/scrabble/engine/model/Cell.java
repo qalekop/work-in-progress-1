@@ -7,6 +7,9 @@ public class Cell {
     private int row;
     private int col;
     private char letter;
+    /** false for the newly added letter (possible to be reverted), true after move is accepted */
+    private boolean accepted;
+    private CellStateEnum state;
 
     //<editor-fold desc="Getters-'n'-Setters">
     public int getRow() {
@@ -27,6 +30,22 @@ public class Cell {
 
     public char getLetter() {
         return letter;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public CellStateEnum getState() {
+        return state;
+    }
+
+    public void setState(CellStateEnum state) {
+        this.state = state;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     public void setLetter(char letter) {

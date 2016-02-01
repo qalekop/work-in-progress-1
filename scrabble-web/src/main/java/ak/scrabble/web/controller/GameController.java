@@ -61,6 +61,6 @@ public class GameController {
     public void makeMove(@RequestBody List<Cell> cells) {
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
         int  x = 0;
-        // get json [{row: ..., col: ..., letter: ...}, ...] and do the job
+        // get json [{row: ..., col: ..., letter: ..., accepted: false}, ...] and do the job
     }
 }
