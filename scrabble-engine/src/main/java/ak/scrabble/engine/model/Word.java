@@ -7,6 +7,13 @@ public class Word {
     //todo enhance later with other properties
     private String word;
 
+    @Override
+    public String toString() {
+        return "Word{" +
+                "word='" + word + '\'' +
+                '}';
+    }
+
     //<editor-fold desc="Getters-'n'-Setters>
     public String getWord() {
         return word;

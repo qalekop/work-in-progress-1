@@ -23,9 +23,7 @@ public class WordUtils {
         Word word;
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
-            int pos = dimension == DimensionEnum.COLUMN
-                    ? translateIndex(i, index, DimensionEnum.COLUMN)
-                    : translateIndex(index, i, DimensionEnum.ROW);
+            int pos = translateIndex(i, index, dimension);
             cell = field.get(pos);
             state = cell.getState();
             if (state != prevState) {

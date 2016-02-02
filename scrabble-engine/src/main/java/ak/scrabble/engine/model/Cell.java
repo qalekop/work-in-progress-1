@@ -9,7 +9,7 @@ public class Cell {
     private char letter;
     /** false for the newly added letter (possible to be reverted), true after move is accepted */
     private boolean accepted;
-    private CellStateEnum state;
+    private CellStateEnum state = CellStateEnum.AVAILABLE;
 
     //<editor-fold desc="Getters-'n'-Setters">
     public int getRow() {
