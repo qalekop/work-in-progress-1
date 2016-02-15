@@ -2,6 +2,7 @@ package ak.scrabble.web.controller;
 
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.Rack;
+import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.security.SecurityModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +36,8 @@ public class GameController {
 
     @Autowired
     RackService rackService;
+    @Autowired
+    GameService gameService;
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL, method = RequestMethod.GET)
     public String scrabble(Model model, SecurityContextHolderAwareRequestWrapper request) {
@@ -44,6 +47,9 @@ public class GameController {
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack", method = RequestMethod.POST)
     @ResponseBody
+    /**
+     * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
+     */
     public String getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
         // get list of letters and convert 'em to a JSON object
 
@@ -54,11 +60,32 @@ public class GameController {
         return mapper.writer().writeValueAsString(rack.getLetters());
     }
 
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/field", method = RequestMethod.POST)
+    @ResponseBody
+    /**
+     * Returns JSON object describing game state (i.e., field cells).
+     */
+    public String getField(Principal user) throws JsonProcessingException {
+        // todo implement me
+        // 1. retrieve game state for this particular gamer from the db.
+        LOG.info("geting game for " + user.getName());
+        List<Cell> field = gameService.getGame(user.getName());
+        ///
+        String _s = mapper.writer().writeValueAsString(field);
+        return _s;
+        ///
+//        return mapper.writer().writeValueAsString(field);
+    }
+
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
             , method = RequestMethod.POST
             , headers = {"Content-type=application/json"})
-    @ResponseBody // ??
-    public void makeMove(@RequestBody List<Cell> cells) {
+    @ResponseBody // todo response with 'success' to wait for the next PUSH or 'error' with a proper message
+    /**
+     * Accepts human's move, verifies it and, if OK, starts MachineMove process.
+     */
+    public void makeMove(@RequestBody List<Cell> cells, Principal user) {
+        // todo implement me
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
         int  x = 0;
         // get json [{row: ..., col: ..., letter: ..., accepted: false}, ...] and do the job

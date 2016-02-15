@@ -2,7 +2,7 @@ package ak.scrabble.engine;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellStateEnum;
+import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.Word;
 import ak.scrabble.engine.utils.WordUtils;
@@ -12,7 +12,6 @@ import org.junit.runners.JUnit4;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,11 +34,11 @@ public class WordsTest {
         int size = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
         List<Cell> result = new ArrayList<>(size);
         for (int i=0; i<size; i++) result.add(new Cell());
-        result.get(2).setLetter('Р'); result.get(2).setState(CellStateEnum.OCCUPIED);
-        result.get(8).setLetter('С'); result.get(8).setState(CellStateEnum.OCCUPIED);
-        result.get(9).setLetter('О'); result.get(9).setState(CellStateEnum.OCCUPIED);
-        result.get(10).setLetter('К'); result.get(10).setState(CellStateEnum.OCCUPIED);
-        result.get(16).setLetter('Г'); result.get(16).setState(CellStateEnum.OCCUPIED);
+        result.get(2).setLetter('Р'); result.get(2).setState(CellState.OCCUPIED);
+        result.get(8).setLetter('С'); result.get(8).setState(CellState.OCCUPIED);
+        result.get(9).setLetter('О'); result.get(9).setState(CellState.OCCUPIED);
+        result.get(10).setLetter('К'); result.get(10).setState(CellState.OCCUPIED);
+        result.get(16).setLetter('Г'); result.get(16).setState(CellState.OCCUPIED);
 
         return result;
     }

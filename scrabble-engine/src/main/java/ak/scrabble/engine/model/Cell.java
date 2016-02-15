@@ -1,5 +1,7 @@
 package ak.scrabble.engine.model;
 
+import java.util.Optional;
+
 /**
  * Created by akopylov on 22/01/16.
  */
@@ -7,9 +9,12 @@ public class Cell {
     private int row;
     private int col;
     private char letter;
-    /** false for the newly added letter (possible to be reverted), true after move is accepted */
+    /** <code>false</code> for the newly added letter (possible to be reverted), <code>true</code> after move is accepted. */
     private boolean accepted;
-    private CellStateEnum state = CellStateEnum.AVAILABLE;
+    /** to distinguish between Human and Machine players. Reasonable only for state == Occupied. */
+    private Player player;
+    private Bonus bonus = Bonus.NONE;
+    private CellState state = CellState.AVAILABLE;
 
     //<editor-fold desc="Getters-'n'-Setters">
     public int getRow() {
@@ -36,11 +41,11 @@ public class Cell {
         return accepted;
     }
 
-    public CellStateEnum getState() {
+    public CellState getState() {
         return state;
     }
 
-    public void setState(CellStateEnum state) {
+    public void setState(CellState state) {
         this.state = state;
     }
 
@@ -51,5 +56,21 @@ public class Cell {
     public void setLetter(char letter) {
         this.letter = letter;
     }
-    //</editor-fold>
+
+    public Optional<Player> getPlayer() {
+        return state == CellState.OCCUPIED ? Optional.ofNullable(player) : Optional.empty();
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public Bonus getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Bonus bonus) {
+        this.bonus = bonus;
+    }
+//</editor-fold>
 }

@@ -7,7 +7,6 @@ var RackStore = require('../flux/stores/RackStore');
 var Tile = React.createClass({
     drag(event) {
         event.dataTransfer.setData('text', this.props.letter);
-        //event.stopPropagation();
     }
 
     , render() {
@@ -19,6 +18,7 @@ var Tile = React.createClass({
 
 var Rack = React.createClass({
     componentDidMount() {
+        // todo implement me!
         RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
     },
 
