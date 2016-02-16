@@ -21,8 +21,8 @@ class Actions {
         this.dispatch();
     }
 
-    getField() {
-        this.dispatch();
+    getField(cells) {
+        this.dispatch(cells);
     }
 }
 module.exports = alt.createActions(Actions);

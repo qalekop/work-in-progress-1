@@ -81,11 +81,18 @@ body {
   background-color: $color-button-hover;
 }
 
-.odd {
-  background-color: $color-other;
+.WORD_3X {
+  background-color: red;
 }
 
-@for $i from 0 through ($count - 1) {
-  .col_#{$i} {left: $size * $i}
-  .row_#{$i} {top: $size * $i}
+.WORD-2X {
+  background-color: green;
+}
+
+.LETTER_3X {
+  background-color: yellow;
+}
+
+.LETTER_2X {
+  background-color: darkblue;
 }

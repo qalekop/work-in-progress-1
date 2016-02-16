@@ -6,6 +6,8 @@ var React = require('react');
 var Actions = require('../flux/actions/Actions');
 var GameStore = require('../flux/stores/GameStore');
 
+const SIZE = 50;
+
 var Cell = React.createClass({
 
     getInitialState() {
@@ -37,11 +39,14 @@ var Cell = React.createClass({
     , render() {
         var row = this.props.row,
             col = this.props.col,
-            className = "cell " + ((row + col) % 2 ? "odd" : "even") + (" col_" + col) + (" row_" + row);
+            className = 'cell '
+                + this.props.state + ' '
+                + (this.props.bonus == 'NONE' ? '' : this.props.bonus);
         return (
             <div className={className}
                  onContextMenu={this.clicked}
                  onDragOver={this.dragOver}
+                 style={{left: col * SIZE +'px', top: row * SIZE + 'px'}}
                  onDrop={this.drop}>{this.state.letter}</div>
         );
     }
@@ -49,19 +54,21 @@ var Cell = React.createClass({
 
 var Cells = React.createClass({
 
-    getInitialState() {
-        return GameStore.getState();
-    }
-
-    , componentDidMount() {
+    componentDidMount() {
+        console.log('*** Cells.didMount');
         GameStore.getField();
     }
 
     , render() {
+        if (!this.props.cells) return null;
         return (
           <div className="gamefield">
-              {this.state.cells.map(cell => {
-                  return <Cell row={cell.row} col={cell.column} key={cell.row + '-' + cell.column}/>
+              {this.props.cells.map(cell => {
+                  return <Cell row={cell.row}
+                               col={cell.col}
+                               bonus={cell.bonus}
+                               state={cell.state}
+                               key={cell.row + '-' + cell.col}/>
               })}
           </div>
         );

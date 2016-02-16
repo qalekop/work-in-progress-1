@@ -6,17 +6,12 @@ var alt = require('../../alt');
 
 var Actions = require('../actions/Actions');
 var GameSource = require('../sources/GameSource');
-var SIZE = 7;
+
 class GameStore {
     constructor() {
         this.cells = [];
-        // init field with empty cells
-        for (var row=0; row<SIZE; row++) {
-            for (var column=0; column<SIZE; column++) {
-                this.cells.push({'row': row, 'col': column});
-            }
-        }
-        this.bindListeners({
+
+         this.bindListeners({
             handleMakeMove: Actions.MAKE_MOVE,
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED,
@@ -44,8 +39,8 @@ class GameStore {
     }
 
     handleGetField(cells) {
-        console.log('*** GameStore.getField');
-        //this.cells = cells;
+        console.log('*** GameStore.getField ' + cells.length);
+        this.cells = cells;
     }
 }
 module.exports = alt.createStore(GameStore, 'GameStore');

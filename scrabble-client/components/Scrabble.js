@@ -9,12 +9,15 @@ var ControlPanel = require('./ControlPanel');
 
 var AltContainer = require('alt/AltContainer');
 var RackStore = require('../flux/stores/RackStore');
+var GameStore = require('../flux/stores/GameStore');
 
 var Scrabble = React.createClass({
     render() {
         return(
             <div>
-                <Cells/>
+                <AltContainer store={GameStore}>
+                    <Cells/>
+                </AltContainer>
                 <AltContainer store={RackStore}>
                     <Rack/>
                     <ControlPanel/>
