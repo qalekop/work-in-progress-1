@@ -15,12 +15,13 @@ import java.util.List;
 public class GameService {
     public List<Cell> getGame(final String user) {
         // todo implement me
-        final int length = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
-        List<Cell> result = new ArrayList<>(length);
-        for (int i=0; i<length; i++) {
-            Cell cell = new Cell();
-            cell.setBonus(ScrabbleUtils.bonusForCell(i));
-            result.add(cell);
+        List<Cell> result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
+        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
+            for (int row=0; row<Configuration.FIELD_SIZE; row++) {
+                Cell cell = new Cell(row, col);
+                cell.setBonus(ScrabbleUtils.bonusForCell(row, col));
+                result.add(cell);
+            }
         }
         return result;
     }

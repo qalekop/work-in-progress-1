@@ -20,5 +20,9 @@ class Actions {
     makeMove() {
         this.dispatch();
     }
+
+    getField() {
+        this.dispatch();
+    }
 }
 module.exports = alt.createActions(Actions);

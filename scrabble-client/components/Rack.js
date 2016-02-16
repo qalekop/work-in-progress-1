@@ -20,9 +20,9 @@ var Rack = React.createClass({
     componentDidMount() {
         // todo implement me!
         RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
-    },
+    }
 
-    render() {
+    , render() {
         return (
             <div className="rack">
                 {this.props.letters

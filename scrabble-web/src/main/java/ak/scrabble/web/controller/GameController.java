@@ -60,7 +60,7 @@ public class GameController {
         return mapper.writer().writeValueAsString(rack.getLetters());
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/field", method = RequestMethod.POST)
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game", method = RequestMethod.GET)
     @ResponseBody
     /**
      * Returns JSON object describing game state (i.e., field cells).

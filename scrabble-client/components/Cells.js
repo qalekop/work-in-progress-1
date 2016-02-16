@@ -53,6 +53,10 @@ var Cells = React.createClass({
         return GameStore.getState();
     }
 
+    , componentDidMount() {
+        GameStore.getField();
+    }
+
     , render() {
         return (
           <div className="gamefield">
