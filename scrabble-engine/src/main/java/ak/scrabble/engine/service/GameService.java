@@ -47,7 +47,7 @@ public class GameService {
             final int dim = col;
             s = cells.stream()
                     .filter(cell -> cell.getCol() == dim)
-                    .sorted((cell1, cell2) -> Integer.valueOf(cell1.getCol()).compareTo(cell2.getCol()))
+                    .sorted((cell1, cell2) -> Integer.valueOf(cell1.getRow()).compareTo(cell2.getRow()))
                     .map(cell -> cell.getLetter() == (char) 0 ? " " : String.valueOf(cell.getLetter()))
                     .reduce("", String::concat);
             if (StringUtils.isNotBlank(s)) newWords.add(s.trim());
