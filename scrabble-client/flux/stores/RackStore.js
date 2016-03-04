@@ -17,12 +17,12 @@ class RackStore {
         });
         this.exportAsync(Source);
 
-        ////
+        /*
         this.on('bootstrap', () => { console.log('--- bootstrap')});
         this.on('snapshot', () => { console.log('--- snapshot')});
         this.on('init', () => { console.log('--- init')});
         this.on('error', () => { console.log('--- error')});
-
+        */
     }
 
     handleGetRack(letters) {
@@ -31,7 +31,6 @@ class RackStore {
 
     handleTileDropped(letter) {
         var index = this.letters.findIndex(tile => tile.letter == letter.letter);
-        //console.log('*** RackStore.tileDropped ' + letter + ' ' + index);
         this.letters[index].hidden = true;
     }
 

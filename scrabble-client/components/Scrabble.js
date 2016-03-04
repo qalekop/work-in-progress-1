@@ -7,7 +7,7 @@ var Cells = require('./Cells');
 var Rack = require('./Rack');
 var ControlPanel = require('./ControlPanel');
 
-var AltContainer = require('alt/AltContainer');
+var AltContainer = require('alt-container');
 var RackStore = require('../flux/stores/RackStore');
 var GameStore = require('../flux/stores/GameStore');
 

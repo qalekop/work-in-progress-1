@@ -21,25 +21,23 @@ class GameStore {
     }
 
     handleMakeMove() {
-        // todo implement me
         var field = this.cells
             .filter(function(cell) { return !!cell.letter;});
-            //.forEach(function(cell) {console.log('* ' + cell.letter)});
+            //.forEach(function(cell) {console.log('cell[' + cell.row + '][' + cell.col + ']=' + cell.letter)});
         this.getInstance().makeMove(field);
     }
 
     handleTileDropped(tile) {
-        var index = this.cells.findIndex(item => item.row == tile.row && item.column == tile.col);
+        var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
         if (index >= 0) this.cells[index].letter = tile.letter;
     }
 
     handleTileReverted(tile) {
-        var index = this.cells.findIndex(item => item.row == tile.row && item.column == tile.col);
+        var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
         if (index >= 0) this.cells[index].letter = null;
     }
 
     handleGetField(cells) {
-        console.log('*** GameStore.getField ' + cells.length);
         this.cells = cells;
     }
 }

@@ -28,7 +28,7 @@ var GameSource = {
     , makeMove() {
         return {
             remote(state, field) {
-                console.log('*** Source.makeMove ' + JSON.stringify(field));
+                console.log('*** Source.makeMove');
                 //field.forEach(cell => console.log(JSON.stringify(cell)));
                 return new Promise(function(resolve) {
                     $.ajax({

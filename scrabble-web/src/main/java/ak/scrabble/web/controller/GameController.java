@@ -45,7 +45,8 @@ public class GameController {
         return SecurityModel.SECURE_URI + GAME_URL;
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack", method = RequestMethod.POST)
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
+            , method = RequestMethod.POST)
     @ResponseBody
     /**
      * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
@@ -60,7 +61,8 @@ public class GameController {
         return mapper.writer().writeValueAsString(rack.getLetters());
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game", method = RequestMethod.GET)
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
+            , method = RequestMethod.GET)
     @ResponseBody
     /**
      * Returns JSON object describing game state (i.e., field cells).
@@ -70,11 +72,7 @@ public class GameController {
         // 1. retrieve game state for this particular gamer from the db.
         LOG.info("geting game for " + user.getName());
         List<Cell> field = gameService.getGame(user.getName());
-        ///
-        String _s = mapper.writer().writeValueAsString(field);
-        return _s;
-        ///
-//        return mapper.writer().writeValueAsString(field);
+        return mapper.writer().writeValueAsString(field);
     }
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
@@ -87,7 +85,6 @@ public class GameController {
     public void makeMove(@RequestBody List<Cell> cells, Principal user) {
         // todo implement me
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
-        int  x = 0;
-        // get json [{row: ..., col: ..., letter: ..., accepted: false}, ...] and do the job
+        gameService.processHumanMove(user.getName(), cells);
     }
 }

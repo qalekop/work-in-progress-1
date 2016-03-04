@@ -17,7 +17,6 @@ var Cell = React.createClass({
     , drop(event) {
         event.preventDefault();
         var letter = event.dataTransfer.getData('text');
-        // todo switch to Store.listen
         this.setState({letter: letter, occupied: true});
         Actions.tileDropped({'row': this.props.row,
             'col': this.props.col,
@@ -28,7 +27,7 @@ var Cell = React.createClass({
         if (!this.state.occupied) event.preventDefault();
     }
 
-    , clicked(event) {
+    , rightClicked(event) {
         event.preventDefault();
         this.setState({letter: '', occupied: false});
         Actions.tileReverted({'row': this.props.row,
@@ -44,7 +43,7 @@ var Cell = React.createClass({
                 + (this.props.bonus == 'NONE' ? '' : this.props.bonus);
         return (
             <div className={className}
-                 onContextMenu={this.clicked}
+                 onContextMenu={this.rightClicked}
                  onDragOver={this.dragOver}
                  style={{left: col * SIZE +'px', top: row * SIZE + 'px'}}
                  onDrop={this.drop}>{this.state.letter}</div>
