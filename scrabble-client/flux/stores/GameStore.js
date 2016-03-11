@@ -22,19 +22,26 @@ class GameStore {
 
     handleMakeMove() {
         var field = this.cells
-            .filter(function(cell) { return !!cell.letter;});
-            //.forEach(function(cell) {console.log('cell[' + cell.row + '][' + cell.col + ']=' + cell.letter)});
+            .filter(function(cell) { return cell.occupied;})
+            //.forEach(function(cell) {console.log('cell[' + cell.row + '][' + cell.col + ']=' + cell.letter)})
+            ;
         this.getInstance().makeMove(field);
     }
 
     handleTileDropped(tile) {
         var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
-        if (index >= 0) this.cells[index].letter = tile.letter;
+        if (index >= 0) {
+            this.cells[index].letter = tile.letter;
+            this.cells[index].occupied = true;
+        }
     }
 
     handleTileReverted(tile) {
         var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
-        if (index >= 0) this.cells[index].letter = null;
+        if (index >= 0) {
+            this.cells[index].letter = null; // excessive
+            this.cells[index].occupied = false;
+        }
     }
 
     handleGetField(cells) {
