@@ -12,7 +12,7 @@ public class Cell {
     /** to distinguish between Human and Machine players. Only for state == Occupied. */
     private Player player;
     private Bonus bonus = Bonus.NONE;
-    private CellState state = CellState.AVAILABLE;
+    private CellAvailability availability = CellAvailability.AVAILABLE;
 
     public Cell(int row, int col) {
         this.row = row;
@@ -47,14 +47,6 @@ public class Cell {
         return accepted;
     }
 
-    public CellState getState() {
-        return state;
-    }
-
-    public void setState(CellState state) {
-        this.state = state;
-    }
-
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
     }
@@ -78,5 +70,14 @@ public class Cell {
     public void setBonus(Bonus bonus) {
         this.bonus = bonus;
     }
-//</editor-fold>
+
+    public CellAvailability getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(CellAvailability availability) {
+        this.availability = availability;
+    }
+
+    //</editor-fold>
 }

@@ -39,7 +39,7 @@ var Cell = React.createClass({
         var row = this.props.row,
             col = this.props.col,
             className = 'cell '
-                + this.props.state + ' '
+                + (this.props.state == 'UNALLOWED' ? 'UNALLOWED' : '') + ' '
                 + (this.props.bonus == 'NONE' ? '' : this.props.bonus);
         return (
             <div className={className}
@@ -54,7 +54,6 @@ var Cell = React.createClass({
 var Cells = React.createClass({
 
     componentDidMount() {
-        console.log('*** Cells.didMount');
         GameStore.getField();
     }
 
@@ -66,7 +65,7 @@ var Cells = React.createClass({
                   return <Cell row={cell.row}
                                col={cell.col}
                                bonus={cell.bonus}
-                               state={cell.state}
+                               state={cell.availability}
                                key={cell.row + '-' + cell.col}/>
               })}
           </div>

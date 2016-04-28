@@ -30,6 +30,7 @@ class GameStore {
 
     handleTileDropped(tile) {
         var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
+        // todo check if 'ALLOWED' cells are hit
         if (index >= 0) {
             this.cells[index].letter = tile.letter;
             this.cells[index].occupied = true;
@@ -39,7 +40,7 @@ class GameStore {
     handleTileReverted(tile) {
         var index = this.cells.findIndex(item => item.row == tile.row && item.col == tile.col);
         if (index >= 0) {
-            this.cells[index].letter = null; // excessive
+            // this.cells[index].letter = null; // excessive?
             this.cells[index].occupied = false;
         }
     }
@@ -48,4 +49,5 @@ class GameStore {
         this.cells = cells;
     }
 }
+
 module.exports = alt.createStore(GameStore, 'GameStore');

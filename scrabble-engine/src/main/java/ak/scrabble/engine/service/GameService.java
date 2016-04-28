@@ -2,6 +2,7 @@ package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.CellAvailability;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService {
     public List<Cell> getGame(final String user) {
-        // todo implement me - retrieve user state
+        // todo implement me - retrieve user state from a db
         List<Cell> result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
             for (int row=0; row<Configuration.FIELD_SIZE; row++) {
@@ -26,6 +27,9 @@ public class GameService {
                 result.add(cell);
             }
         }
+        // for the first move - make central cell obligatory
+        result.get((Configuration.FIELD_SIZE / 2) * Configuration.FIELD_SIZE + (Configuration.FIELD_SIZE / 2))
+                .setAvailability(CellAvailability.ALLOWED);
         return result;
     }
 

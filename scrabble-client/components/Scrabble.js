@@ -1,17 +1,18 @@
 /**
  * Created by akopylov on 29.09.2015.
  */
-var React = require('react');
+const React = require('react');
 
-var Cells = require('./Cells');
-var Rack = require('./Rack');
-var ControlPanel = require('./ControlPanel');
+const Cells = require('./Cells');
+const Rack = require('./Rack');
+const ControlPanel = require('./ControlPanel');
 
-var AltContainer = require('alt-container');
-var RackStore = require('../flux/stores/RackStore');
-var GameStore = require('../flux/stores/GameStore');
+const AltContainer = require('alt-container');
+const RackStore = require('../flux/stores/RackStore');
+const GameStore = require('../flux/stores/GameStore');
+const ControlStore = require('../flux/stores/ControlStore');
 
-var Scrabble = React.createClass({
+const Scrabble = React.createClass({
     render() {
         return(
             <div>
@@ -20,6 +21,8 @@ var Scrabble = React.createClass({
                 </AltContainer>
                 <AltContainer store={RackStore}>
                     <Rack/>
+                </AltContainer>
+                <AltContainer store={ControlStore}>
                     <ControlPanel/>
                 </AltContainer>
             </div>

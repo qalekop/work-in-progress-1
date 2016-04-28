@@ -5,6 +5,7 @@ $color-tile: #deadff;
 $color-tile-hover: #deaddd;
 $color-button: #deadaa;
 $color-button-hover: #aadead;
+$color-disabled: lightgray;
 $margin: 50px;
 
 @mixin h-align-center {
@@ -76,16 +77,22 @@ body {
   height: $size;
   background-color: $color-button;
   border-radius: $size / 10;
+  text-align: center;
+  vertical-align: middle;
 }
 .button:hover {
   background-color: $color-button-hover;
+}
+
+.disabled {
+  background-color: $color-disabled;
 }
 
 .WORD_3X {
   background-color: red;
 }
 
-.WORD-2X {
+.WORD_2X {
   background-color: green;
 }
 
@@ -95,4 +102,8 @@ body {
 
 .LETTER_2X {
   background-color: darkblue;
+}
+
+.UNALLOWED {
+  background-color: black;
 }

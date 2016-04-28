@@ -2,7 +2,7 @@ package ak.scrabble.engine.utils;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellState;
+import ak.scrabble.engine.model.CellAvailability;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.Word;
 
@@ -17,17 +17,17 @@ public class WordUtils {
         if (index < 0 || index > Configuration.FIELD_SIZE) throw new IllegalArgumentException("invalid index: " + index);
 
         List<Word> result = new ArrayList<>(Configuration.FIELD_SIZE);
-        CellState prevState = CellState.AVAILABLE;
-        CellState state;
+        CellAvailability prevState = CellAvailability.AVAILABLE;
+        CellAvailability state;
         Cell cell;
         Word word;
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
             int pos = translateIndex(i, index, dimension);
             cell = field.get(pos);
-            state = cell.getState();
+            state = cell.getAvailability();
             if (state != prevState) {
-                if (state == CellState.OCCUPIED) {
+                if (state == CellAvailability.OCCUPIED) {
                     // start of a new word
                     sb.append(cell.getLetter());
                 } else {
@@ -38,7 +38,7 @@ public class WordUtils {
                     result.add(word);
                 }
                 prevState = state;
-            } else if (state == CellState.OCCUPIED) {
+            } else if (state == CellAvailability.OCCUPIED) {
                 sb.append(cell.getLetter());
             }
         }

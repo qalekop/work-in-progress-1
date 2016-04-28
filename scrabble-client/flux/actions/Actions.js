@@ -9,8 +9,8 @@ class Actions {
         this.dispatch(rack);
     }
 
-    tileDropped(letter) {
-        this.dispatch(letter);
+    tileDropped(tile) {
+        this.dispatch(tile);
     }
 
     tileReverted(letter) {

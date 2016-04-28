@@ -7,12 +7,13 @@ var Actions = require('../flux/actions/Actions');
 
 var ButtonGo = React.createClass({
     clicked(event) {
-        Actions.makeMove();
+        if (this.props.enabled) Actions.makeMove();
     }
 
     , render() {
+        let className = 'button' + (this.props.enabled ? '' : ' disabled');
         return(
-            <div className="button"
+            <div className={className}
                  onClick={this.clicked}>GO!
             </div>
         )
@@ -20,10 +21,26 @@ var ButtonGo = React.createClass({
 });
 
 var ControlPanel = React.createClass({
-    render() {
+    getInitialState() {
+        return {'enabled': false};
+    }
+
+    , componentDidMount(){
+        ControlStore.listen(this.onChange);
+    }
+
+    , componentWillUnmount() {
+        ControlStore.unlisten(this.onChange);
+    }
+
+    , onChange() {
+        this.forceUpdate();
+    }
+
+    , render() {
         return (
             <div className="rack">
-                <ButtonGo/>
+                <ButtonGo enabled={this.props.enabled}/>
             </div>
         )
     }
