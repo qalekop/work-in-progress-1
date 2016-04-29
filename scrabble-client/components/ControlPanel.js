@@ -4,16 +4,27 @@
 var React = require('react');
 
 var Actions = require('../flux/actions/Actions');
+var ControlStore = require('../flux/stores/ControlStore');
 
 var ButtonGo = React.createClass({
-    clicked(event) {
+    getInitialState() {
+        return {'hover': false};
+    }
+
+    , clicked(event) {
         if (this.props.enabled) Actions.makeMove();
+    }
+    
+    , hover() {
+        this.setState({'hover': !this.state.hover});
     }
 
     , render() {
-        let className = 'button' + (this.props.enabled ? '' : ' disabled');
+        let className = 'button' + (this.props.enabled ? (this.state.hover ? ' hilighted' : '') : ' disabled');
         return(
             <div className={className}
+                 onMouseEnter={this.hover}
+                 onMouseLeave={this.hover}
                  onClick={this.clicked}>GO!
             </div>
         )

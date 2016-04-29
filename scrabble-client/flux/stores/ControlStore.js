@@ -5,6 +5,7 @@
 const alt = require('../../alt');
 
 const Actions = require('../actions/Actions');
+const GameStore = require('./GameStore');
 
 class ControlStore {
     constructor() {
@@ -18,12 +19,19 @@ class ControlStore {
 
     handleTileDropped(tile) {
         console.log(`*** ControlStore.tileDropped: ${tile.col}/${tile.row}`);
-        this.enabled = true;
+        this.enabled = zzz();
     }
 
     handleTileReverted(tile) {
         console.log(`*** ControlStore.tileReverted: ${tile.col}/${tile.row}`);
-        this.enabled = false;
+        this.enabled = zzz();
+    }
+
+    static zzz() {
+        return GameStore.getState().cells
+            .some(function(cell) { return cell.occupied && cell.availability == 'ALLOWED';})
+            // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability})`)})
+        ;
     }
 }
 

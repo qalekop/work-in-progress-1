@@ -78,9 +78,13 @@ body {
   background-color: $color-button;
   border-radius: $size / 10;
   text-align: center;
-  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  /*align-content: center;*/
+  flex-direction: column;
 }
-.button:hover {
+
+.hilighted {
   background-color: $color-button-hover;
 }
 
