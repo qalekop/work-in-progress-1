@@ -18,20 +18,30 @@ class ControlStore {
     }
 
     handleTileDropped(tile) {
-        console.log(`*** ControlStore.tileDropped: ${tile.col}/${tile.row}`);
-        this.enabled = zzz();
+        console.log(`** ControlStore.tileDropped: ${tile.row}/${tile.col}`);
+        var cell = ControlStore.findCell(tile.row, tile.col);
+        if (!!cell) cell.availability = 'OCCUPIED';
+        this.enabled = ControlStore.checkField();
     }
 
     handleTileReverted(tile) {
-        console.log(`*** ControlStore.tileReverted: ${tile.col}/${tile.row}`);
-        this.enabled = zzz();
+        console.log(`** ControlStore.tileReverted: ${tile.row}/${tile.col}`);
+        var cell = ControlStore.findCell(tile.row, tile.col);
+        if (!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
+        this.enabled = ControlStore.checkField();
     }
 
-    static zzz() {
+    static checkField() {
         return GameStore.getState().cells
-            .some(function(cell) { return cell.occupied && cell.availability == 'ALLOWED';})
+            .some(function(cell) { return cell.occupied && cell.availability == 'OCCUPIED';})
             // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability})`)})
         ;
+    }
+
+    static findCell(row, col) {
+        return GameStore.getState().cells.find(function(cell) {
+            return cell.row == row && cell.col == col;
+        })
     }
 }
 

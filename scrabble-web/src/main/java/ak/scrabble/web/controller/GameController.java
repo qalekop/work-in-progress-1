@@ -1,7 +1,11 @@
 package ak.scrabble.web.controller;
 
 import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.ImmutableResponseError;
+import ak.scrabble.engine.model.ImmutableResponseSuccess;
 import ak.scrabble.engine.model.Rack;
+import ak.scrabble.engine.model.ResponseError;
+import ak.scrabble.engine.model.ResponseSuccess;
 import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.security.SecurityModel;
@@ -72,7 +76,11 @@ public class GameController {
         // 1. retrieve game state for this particular gamer from the db.
         LOG.info("geting game for " + user.getName());
         List<Cell> field = gameService.getGame(user.getName());
-        return mapper.writer().writeValueAsString(field);
+        ResponseSuccess response = ImmutableResponseSuccess.builder()
+                .cells(field)
+                .build();
+
+        return mapper.writer().writeValueAsString(response);
     }
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
@@ -82,9 +90,16 @@ public class GameController {
     /**
      * Accepts human's move, verifies it and, if OK, starts MachineMove process.
      */
-    public void makeMove(@RequestBody List<Cell> cells, Principal user) {
+    public String makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         // todo implement me
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
         gameService.processHumanMove(user.getName(), cells);
+
+        // response with a FAKE error
+        // 1. set payload with verbose description
+        ResponseError response = ImmutableResponseError.builder()
+                .message("Oops!").cell(cells.get(0))
+                .build();
+        return mapper.writer().writeValueAsString(response);
     }
 }

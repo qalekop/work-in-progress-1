@@ -20,9 +20,9 @@ class Actions {
     makeMove() {
         this.dispatch();
     }
-
-    getField(cells) {
-        this.dispatch(cells);
+    
+    getField(response) {
+        this.dispatch(response);
     }
 }
 module.exports = alt.createActions(Actions);
