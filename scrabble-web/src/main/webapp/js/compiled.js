@@ -106,18 +106,26 @@ module.exports = Cells;
 var React = require('react');
 
 var Actions = require('../flux/actions/Actions');
+var ControlStore = require('../flux/stores/ControlStore');
 
 var ButtonGo = React.createClass({
     displayName: 'ButtonGo',
+    getInitialState: function getInitialState() {
+        return { 'hover': false };
+    },
     clicked: function clicked(event) {
         if (this.props.enabled) Actions.makeMove();
     },
+    hover: function hover() {
+        this.setState({ 'hover': !this.state.hover });
+    },
     render: function render() {
-        var className = 'button' + (this.props.enabled ? '' : ' disabled');
-        console.log('*** ButtonGo ' + className);
+        var className = 'button' + (this.props.enabled ? this.state.hover ? ' hilighted' : '' : ' disabled');
         return React.createElement(
             'div',
             { className: className,
+                onMouseEnter: this.hover,
+                onMouseLeave: this.hover,
                 onClick: this.clicked },
             'GO!'
         );
@@ -126,6 +134,18 @@ var ButtonGo = React.createClass({
 
 var ControlPanel = React.createClass({
     displayName: 'ControlPanel',
+    getInitialState: function getInitialState() {
+        return { 'enabled': false };
+    },
+    componentDidMount: function componentDidMount() {
+        ControlStore.listen(this.onChange);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+        ControlStore.unlisten(this.onChange);
+    },
+    onChange: function onChange() {
+        this.forceUpdate();
+    },
     render: function render() {
         return React.createElement(
             'div',
@@ -136,7 +156,7 @@ var ControlPanel = React.createClass({
 });
 module.exports = ControlPanel;
 
-},{"../flux/actions/Actions":7,"react":197}],5:[function(require,module,exports){
+},{"../flux/actions/Actions":7,"../flux/stores/ControlStore":10,"react":197}],5:[function(require,module,exports){
 'use strict';
 
 /**
@@ -264,8 +284,8 @@ var Actions = function () {
         }
     }, {
         key: 'getField',
-        value: function getField(cells) {
-            this.dispatch(cells);
+        value: function getField(response) {
+            this.dispatch(response);
         }
     }]);
 
@@ -330,7 +350,8 @@ var GameSource = {
             },
             local: function local() {
                 return null;
-            }
+            },
+            success: Actions.getField
         };
     }
 };
@@ -386,13 +407,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var alt = require('../../alt');
 
 var Actions = require('../actions/Actions');
+var GameStore = require('./GameStore');
 
 var ControlStore = function () {
     function ControlStore() {
         _classCallCheck(this, ControlStore);
 
         this.enabled = false;
-        console.log('*** ControlStore');
+
         this.bindListeners({
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED
@@ -402,12 +424,34 @@ var ControlStore = function () {
     _createClass(ControlStore, [{
         key: 'handleTileDropped',
         value: function handleTileDropped(tile) {
-            console.log('*** ControlStore.tileDropped: ' + tile.col + '/' + tile.row);
+            console.log('** ControlStore.tileDropped: ' + tile.row + '/' + tile.col);
+            var cell = ControlStore.findCell(tile.row, tile.col);
+            if (!!cell) cell.availability = 'OCCUPIED';
+            this.enabled = ControlStore.checkField();
         }
     }, {
         key: 'handleTileReverted',
         value: function handleTileReverted(tile) {
-            console.log('*** ControlStore.tileReverted: ' + tile.col + '/' + tile.row);
+            console.log('** ControlStore.tileReverted: ' + tile.row + '/' + tile.col);
+            var cell = ControlStore.findCell(tile.row, tile.col);
+            if (!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
+            this.enabled = ControlStore.checkField();
+        }
+    }], [{
+        key: 'checkField',
+        value: function checkField() {
+            return GameStore.getState().cells.some(function (cell) {
+                return cell.occupied && cell.availability == 'OCCUPIED';
+            })
+            // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability})`)})
+            ;
+        }
+    }, {
+        key: 'findCell',
+        value: function findCell(row, col) {
+            return GameStore.getState().cells.find(function (cell) {
+                return cell.row == row && cell.col == col;
+            });
         }
     }]);
 
@@ -416,7 +460,7 @@ var ControlStore = function () {
 
 module.exports = alt.createStore(ControlStore, 'ControlStore');
 
-},{"../../alt":2,"../actions/Actions":7}],11:[function(require,module,exports){
+},{"../../alt":2,"../actions/Actions":7,"./GameStore":11}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -452,9 +496,7 @@ var GameStore = function () {
         value: function handleMakeMove() {
             var field = this.cells.filter(function (cell) {
                 return cell.occupied;
-            })
-            //.forEach(function(cell) {console.log('cell[' + cell.row + '][' + cell.col + ']=' + cell.letter)})
-            ;
+            });
             this.getInstance().makeMove(field);
         }
     }, {
@@ -463,7 +505,6 @@ var GameStore = function () {
             var index = this.cells.findIndex(function (item) {
                 return item.row == tile.row && item.col == tile.col;
             });
-            // todo check if 'ALLOWED' cells are hit
             if (index >= 0) {
                 this.cells[index].letter = tile.letter;
                 this.cells[index].occupied = true;
@@ -476,14 +517,19 @@ var GameStore = function () {
                 return item.row == tile.row && item.col == tile.col;
             });
             if (index >= 0) {
-                // this.cells[index].letter = null; // excessive?
                 this.cells[index].occupied = false;
             }
         }
     }, {
         key: 'handleGetField',
-        value: function handleGetField(cells) {
-            this.cells = cells;
+        value: function handleGetField(response) {
+            console.log('*** get field: ' + response.isSuccess);
+            if (response.isSuccess) {
+                this.cells = response.cells;
+            } else {
+                console.log('*** Error:' + response.message + '; ' + response.cell.letter);
+                // implement me
+            }
         }
     }]);
 

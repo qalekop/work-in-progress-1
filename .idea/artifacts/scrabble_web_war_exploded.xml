@@ -31,6 +31,8 @@
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.5.0" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.5.0" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.5.0" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" />
           <element id="library" level="project" name="Maven: com.github.resource4j:resource4j-spring:2.0.1" />
           <element id="library" level="project" name="Maven: com.github.resource4j:resource4j-core:2.0.1" />
           <element id="library" level="project" name="Maven: org.webjars:bootstrap:3.2.0" />

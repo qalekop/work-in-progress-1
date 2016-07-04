@@ -60,52 +60,30 @@ body {
   width: 150px;
   height: 50px;
   background-color: #deadaa;
-  border-radius: 5px; }
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  /*align-content: center;*/
+  flex-direction: column; }
 
-.button:hover {
+.hilighted {
   background-color: #aadead; }
 
-.odd {
-  background-color: #ffdead; }
+.disabled {
+  background-color: lightgray; }
 
-.col_0 {
-  left: 0px; }
+.WORD_3X {
+  background-color: red; }
 
-.row_0 {
-  top: 0px; }
+.WORD_2X {
+  background-color: green; }
 
-.col_1 {
-  left: 50px; }
+.LETTER_3X {
+  background-color: yellow; }
 
-.row_1 {
-  top: 50px; }
+.LETTER_2X {
+  background-color: darkblue; }
 
-.col_2 {
-  left: 100px; }
-
-.row_2 {
-  top: 100px; }
-
-.col_3 {
-  left: 150px; }
-
-.row_3 {
-  top: 150px; }
-
-.col_4 {
-  left: 200px; }
-
-.row_4 {
-  top: 200px; }
-
-.col_5 {
-  left: 250px; }
-
-.row_5 {
-  top: 250px; }
-
-.col_6 {
-  left: 300px; }
-
-.row_6 {
-  top: 300px; }
+.UNALLOWED {
+  background-color: black; }
