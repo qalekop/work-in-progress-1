@@ -8,7 +8,7 @@ import ak.scrabble.engine.model.Bonus;
  */
 public class ScrabbleUtils {
 
-    public static Bonus bonusForCell(int cellNumber) {
+    private static Bonus bonusForCell(int cellNumber) {
         assert(7 == Configuration.FIELD_SIZE);
 
         switch (cellNumber) {

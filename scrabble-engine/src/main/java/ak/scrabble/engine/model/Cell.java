@@ -12,7 +12,7 @@ public class Cell {
     /** to distinguish between Human and Machine players. Only for state == Occupied. */
     private Player player;
     private Bonus bonus = Bonus.NONE;
-    private CellAvailability availability = CellAvailability.AVAILABLE;
+    private CellState state = CellState.AVAILABLE;
 
     public Cell(int row, int col) {
         this.row = row;
@@ -71,12 +71,12 @@ public class Cell {
         this.bonus = bonus;
     }
 
-    public CellAvailability getAvailability() {
-        return availability;
+    public CellState getState() {
+        return state;
     }
 
-    public void setAvailability(CellAvailability availability) {
-        this.availability = availability;
+    public void setState(CellState state) {
+        this.state = state;
     }
 
     //</editor-fold>

@@ -2,15 +2,13 @@ package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellAvailability;
+import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by akopylov on 15/02/16.
@@ -27,9 +25,6 @@ public class GameService {
                 result.add(cell);
             }
         }
-        // for the first move - make central cell obligatory
-        result.get((Configuration.FIELD_SIZE / 2) * Configuration.FIELD_SIZE + (Configuration.FIELD_SIZE / 2))
-                .setAvailability(CellAvailability.ALLOWED);
         return result;
     }
 
