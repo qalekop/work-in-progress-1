@@ -56,7 +56,6 @@ public class GameController {
      * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
      */
     public String getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
-        // get list of letters and convert 'em to a JSON object
 
         final String name = user.getName();
         final String existingLetters = letters.getFirst(LETTERS_FIELD);

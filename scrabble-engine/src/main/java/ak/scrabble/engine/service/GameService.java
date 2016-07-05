@@ -1,10 +1,11 @@
 package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
+import ak.scrabble.engine.da.GameDAO;
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,8 +16,15 @@ import java.util.List;
  */
 @Service
 public class GameService {
+
+    @Autowired
+    private GameDAO gameDAO;
+
     public List<Cell> getGame(final String user) {
         // todo implement me - retrieve user state from a db
+        // 1. try to retrieve the saved state, if any, from the db
+        boolean prevGameExists = gameDAO.savedStateExists(user);
+        // 2. if no records found for that particular user, or if 'field' is empty, then create new game, persist it and return it.
         List<Cell> result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
             for (int row=0; row<Configuration.FIELD_SIZE; row++) {
