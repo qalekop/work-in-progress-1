@@ -61,7 +61,7 @@
           <dependency>
              <groupId>org.springframework</groupId>
              <artifactId>spring-context</artifactId>
-             <version>4.1.7.RELEASE</version>
+             <version>${org.springframework.version}</version>
          </dependency>
          <dependency>
              <groupId>org.apache.tomcat</groupId>
@@ -72,7 +72,7 @@
          <dependency>
              <groupId>org.springframework</groupId>
              <artifactId>spring-test</artifactId>
-             <version>4.0.0.BUILD-SNAPSHOT</version>
+             <version>${org.springframework.spring.test}</version>
              <scope>test</scope>
          </dependency>
          <dependency>
@@ -83,8 +83,12 @@
          <dependency>
              <groupId>org.springframework</groupId>
              <artifactId>spring-jdbc</artifactId>
-             <version>4.0.0.BUILD-SNAPSHOT</version>
-             <scope>test</scope>
+             <version>${org.springframework.spring.jdbc}</version>
+         </dependency>
+         <dependency>
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-lang3</artifactId>
+             <version>${org.apache.commons.lang3.version}</version>
          </dependency>
          <dependency>
              <groupId>org.immutables</groupId>

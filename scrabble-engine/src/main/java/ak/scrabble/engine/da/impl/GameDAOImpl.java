@@ -23,8 +23,8 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
     private static final String S_EXISTS = "select 1 from sc_game where user_name = :" + P_USER;
     private static final String S_INSERT = "insert into sc_game (user_name, field, score_human, score_machine)"
             + " values (:" + P_USER
-            + ", :" + P_FIELD
-            + " :: jsonb, :" + P_HUMAN
+            + ", CAST (:" + P_FIELD + " as jsonb)"
+            + ", :" + P_HUMAN
             + ", :" + P_MACHINE
             + ")";
 

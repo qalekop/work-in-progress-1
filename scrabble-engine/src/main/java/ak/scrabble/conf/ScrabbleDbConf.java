@@ -1,7 +1,6 @@
 package ak.scrabble.conf;
 
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
-import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
