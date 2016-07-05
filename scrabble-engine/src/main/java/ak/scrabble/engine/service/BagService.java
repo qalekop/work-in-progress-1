@@ -34,9 +34,7 @@ public class BagService {
         List<String> result = new ArrayList<>(size);
         Optional<String> letter;
         for (int i=0; i<size; i++) {
-            LOG.info("bag size before = " + bag.size());
             letter = popRandom(bag);
-            LOG.info("bag size after = " + bag.size());
             if (letter.isPresent()) result.add(letter.get());
         }
         // todo persist bag

@@ -73,7 +73,7 @@ public class GameController {
     public String getField(Principal user) throws JsonProcessingException {
         // todo implement me
         // 1. retrieve game state for this particular gamer from the db.
-        LOG.info("geting game for " + user.getName());
+        LOG.info("getting game for " + user.getName());
         List<Cell> field = gameService.getGame(user.getName());
         ResponseSuccess response = ImmutableResponseSuccess.builder()
                 .cells(field)
