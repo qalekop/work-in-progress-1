@@ -16,13 +16,6 @@ class RackStore {
             handleTileReverted: Actions.TILE_REVERTED
         });
         this.exportAsync(Source);
-
-        /*
-        this.on('bootstrap', () => { console.log('--- bootstrap')});
-        this.on('snapshot', () => { console.log('--- snapshot')});
-        this.on('init', () => { console.log('--- init')});
-        this.on('error', () => { console.log('--- error')});
-        */
     }
 
     handleGetRack(letters) {

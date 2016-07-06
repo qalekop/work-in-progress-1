@@ -25,8 +25,9 @@ public class WordUtils {
         Word word;
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
-            int pos = translateIndex(i, index, dimension);
-            cell = field.get(pos);
+            cell = dimension == DimensionEnum.COLUMN
+                    ? ScrabbleUtils.getByCoords(i, index, field)
+                    : ScrabbleUtils.getByCoords(index, i, field);
             state = cell.getState();
             if (state != prevState) {
                 if (state == CellState.OCCUPIED) {
@@ -47,57 +48,4 @@ public class WordUtils {
         return result;
     }
 
-    public static boolean isTraceable(Point start, Point origin, List<Cell> cells) {
-        if (cells.get(translateIndex(start.x, start.y, DimensionEnum.ROW)).getState() != CellState.OCCUPIED) {
-            throw new IllegalStateException(String.format("Unexpected state: cell[%d, %d] = %s",
-                    start.x, start.y, cells.get(translateIndex(start.x, start.y, DimensionEnum.ROW)).getState()));
-        }
-        if (cells.get(translateIndex(origin.x, origin.y, DimensionEnum.ROW)).getState() == CellState.ACCEPTED) {
-            return true;
-        }
-        Stack<Point> neighbors = new Stack<>();
-        // up
-        if (start.y > 0) {
-            if (push(new Point(start.x, start.y - 1), origin, cells, neighbors)) return true;
-        }
-        // right
-        if (start.x < (Configuration.FIELD_SIZE - 1)) {
-            if (push(new Point(start.x + 1, start.y), origin, cells, neighbors)) return true;
-        }
-        // bottom
-        if (start.y < (Configuration.FIELD_SIZE - 1)) {
-            if (push(new Point(start.x, start.y + 1), origin, cells, neighbors)) return true;
-        }
-        // left
-        if (start.x > 0) {
-            if (push(new Point(start.x - 1, start.y), origin, cells, neighbors)) return true;
-        }
-
-        while (!neighbors.empty()) {
-            Point p = neighbors.pop();
-            if (cells.get(translateIndex(p.x, p.y, DimensionEnum.ROW)).getState() == CellState.ACCEPTED) return true;
-            if (isTraceable(p, start, cells)) return true;
-        }
-        return false;
-    }
-
-    private static boolean push(Point cell, Point origin, List<Cell> cells, Stack<Point> stack) {
-        if (!cell.equals(origin)) {
-            Cell c = cells.get(translateIndex(cell.x, cell.y, DimensionEnum.ROW));
-            if (c.getState() == CellState.OCCUPIED) {
-                stack.push(cell);
-            } else if (c.getState() == CellState.ACCEPTED) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static int translateIndex(final int row, final int column, final DimensionEnum dim) {
-        switch (dim) {
-            case COLUMN: return row * Configuration.FIELD_SIZE + column;
-            case ROW: return column * Configuration.FIELD_SIZE + row;
-        }
-        throw new IllegalArgumentException("wrong dimension" + dim);
-    }
 }

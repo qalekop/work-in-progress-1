@@ -11,9 +11,10 @@ import java.util.List;
  */
 @Value.Immutable
 @JsonSerialize(as = ImmutableResponseSuccess.class)
-public interface ResponseSuccess {
+public interface ResponseSuccess extends MoveResponse {
 
     List<Cell> cells();
+    //todo add scores
 
     @Value.Derived
     default boolean success() {

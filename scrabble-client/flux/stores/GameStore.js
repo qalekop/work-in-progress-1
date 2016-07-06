@@ -41,7 +41,6 @@ class GameStore {
     }
 
     handleGetField(response) {
-        console.log('*** get field: ' + response.isSuccess);
         if (response.success) {
             this.cells = response.cells;
         } else {

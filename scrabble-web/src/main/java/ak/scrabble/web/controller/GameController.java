@@ -3,6 +3,7 @@ package ak.scrabble.web.controller;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.ImmutableResponseError;
 import ak.scrabble.engine.model.ImmutableResponseSuccess;
+import ak.scrabble.engine.model.MoveResponse;
 import ak.scrabble.engine.model.Rack;
 import ak.scrabble.engine.model.ResponseError;
 import ak.scrabble.engine.model.ResponseSuccess;
@@ -14,6 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,26 +56,26 @@ public class GameController {
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
             , method = RequestMethod.POST)
-    @ResponseBody
     /**
      * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
      */
-    public String getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
 
         final String name = user.getName();
         final String existingLetters = letters.getFirst(LETTERS_FIELD);
         Rack rack = rackService.getRack(name, StringUtils.isEmpty(existingLetters) ? "" : existingLetters);
 
-        return mapper.writer().writeValueAsString(rack.getLetters());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(rack.getLetters()), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
             , method = RequestMethod.GET)
-    @ResponseBody
     /**
      * Returns JSON object describing game state (i.e., field cells).
      */
-    public String getField(Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> getField(Principal user) throws JsonProcessingException {
         // todo implement me
         // 1. retrieve game state for this particular gamer from the db.
         LOG.info("getting game for " + user.getName());
@@ -79,7 +84,9 @@ public class GameController {
                 .cells(field)
                 .build();
 
-        return mapper.writer().writeValueAsString(response);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(response), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
@@ -92,12 +99,12 @@ public class GameController {
     public String makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         // todo implement me
         LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
-        gameService.processHumanMove(user.getName(), cells);
+        MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
         // response with a FAKE error
         // 1. set payload with verbose description
         ResponseError response = ImmutableResponseError.builder()
-                .message("Oops!").cell(cells.get(0))
+                .message("Oops!").cells(((ResponseError)moveResponse).cells())
                 .build();
         return mapper.writer().writeValueAsString(response);
     }

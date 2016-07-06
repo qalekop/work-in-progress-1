@@ -11,7 +11,7 @@ const SIZE = 50;
 var Cell = React.createClass({
 
     getInitialState() {
-        return {letter: '', occupied: false}
+        return {letter: this.props.letter, occupied: this.props.state === 'ACCEPTED'}
     }
 
     , drop(event) {
@@ -65,7 +65,8 @@ var Cells = React.createClass({
                   return <Cell row={cell.row}
                                col={cell.col}
                                bonus={cell.bonus}
-                               state={cell.availability}
+                               state={cell.state}
+                               letter={cell.letter}
                                key={cell.row + '-' + cell.col}/>
               })}
           </div>

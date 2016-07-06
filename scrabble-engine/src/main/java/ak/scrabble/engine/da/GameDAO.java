@@ -9,6 +9,6 @@ import org.springframework.dao.DataAccessException;
 public interface GameDAO {
     boolean savedStateExists(String user) throws DataAccessException;
     Game getGame(String user);
-    void persistGame(String user, Game game);
+    void persistGame(String user, Game game, boolean create);
     void removeGame(String user);
 }

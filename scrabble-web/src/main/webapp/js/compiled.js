@@ -38,7 +38,7 @@ var SIZE = 50;
 var Cell = React.createClass({
     displayName: 'Cell',
     getInitialState: function getInitialState() {
-        return { letter: '', occupied: false };
+        return { letter: this.props.letter, occupied: this.props.state === 'ACCEPTED' };
     },
     drop: function drop(event) {
         event.preventDefault();
@@ -88,7 +88,8 @@ var Cells = React.createClass({
                 return React.createElement(Cell, { row: cell.row,
                     col: cell.col,
                     bonus: cell.bonus,
-                    state: cell.availability,
+                    state: cell.state,
+                    letter: cell.letter,
                     key: cell.row + '-' + cell.col });
             })
         );
@@ -331,7 +332,9 @@ var GameSource = {
         return {
             remote: function remote(state, field) {
                 console.log('*** Source.makeMove');
-                //field.forEach(cell => console.log(JSON.stringify(cell)));
+                field.forEach(function (cell) {
+                    return console.log(JSON.stringify(cell));
+                });
                 return new Promise(function (resolve) {
                     $.ajax({
                         method: 'POST',
@@ -523,8 +526,7 @@ var GameStore = function () {
     }, {
         key: 'handleGetField',
         value: function handleGetField(response) {
-            console.log('*** get field: ' + response.isSuccess);
-            if (response.isSuccess) {
+            if (response.success) {
                 this.cells = response.cells;
             } else {
                 console.log('*** Error:' + response.message + '; ' + response.cell.letter);
@@ -565,13 +567,6 @@ var RackStore = function () {
             handleTileReverted: Actions.TILE_REVERTED
         });
         this.exportAsync(Source);
-
-        /*
-        this.on('bootstrap', () => { console.log('--- bootstrap')});
-        this.on('snapshot', () => { console.log('--- snapshot')});
-        this.on('init', () => { console.log('--- init')});
-        this.on('error', () => { console.log('--- error')});
-        */
     }
 
     _createClass(RackStore, [{

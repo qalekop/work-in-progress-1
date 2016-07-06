@@ -5,6 +5,7 @@ import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +28,8 @@ public class WordsTest {
     public void testWordsBuilder() {
         List<Word> result = new ArrayList<>(2);
         List<Cell> field = buildTestField(CellState.OCCUPIED);
-        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.COLUMN, 2));
-        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.ROW, 1));
+        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.COLUMN, 3));
+        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.ROW, 3));
         assertEquals(2, result.size());
         for (Word word : result) System.out.println(word);
     }
@@ -37,27 +38,37 @@ public class WordsTest {
     public void testTraceability() {
         List<Cell> field = buildTestField(CellState.ACCEPTED);
         Point[] p = new Point[3];
-        p[0] = new Point(0, 1); p[1] = new Point(0, 2); p[2] = new Point(5, 1);
-        int index = WordUtils.translateIndex(p[0].y, p[0].x, DimensionEnum.COLUMN);
-        field.get(index).setLetter('X'); field.get(index).setState(CellState.OCCUPIED);
-        index = WordUtils.translateIndex(p[1].y, p[1].x, DimensionEnum.COLUMN);
-        field.get(index).setLetter('X'); field.get(index).setState(CellState.OCCUPIED);
-        index = WordUtils.translateIndex(p[2].y, p[2].x, DimensionEnum.COLUMN);
-        field.get(index).setLetter('X'); field.get(index).setState(CellState.OCCUPIED);
+        p[0] = new Point(1, 3); p[1] = new Point(1, 4); p[2] = new Point(1, 1);
 
-        assertTrue("Oops!", WordUtils.isTraceable(p[1], p[1], field));
-        assertFalse("Oops!", WordUtils.isTraceable(p[2], p[2], field));
+        Cell c = ScrabbleUtils.getByCoords(p[0].x, p[0].y, field);
+        c.setLetter('X'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(p[1].x, p[1].y, field);
+        c.setLetter('X'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(p[2].x, p[2].y, field);
+        c.setLetter('X'); c.setState(CellState.OCCUPIED);
+
+        assertTrue("Oops!", ScrabbleUtils.isTraceable(p[1], p[1], field));
+        assertFalse("Oops!", ScrabbleUtils.isTraceable(p[2], p[2], field));
     }
 
     private List<Cell> buildTestField(CellState state) {
         int size = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
         List<Cell> result = new ArrayList<>(size);
-        for (int i=0; i<size; i++) result.add(new Cell());
-        result.get(2).setLetter('Р'); result.get(2).setState(state);
-        result.get(8).setLetter('С'); result.get(8).setState(state);
-        result.get(9).setLetter('О'); result.get(9).setState(state);
-        result.get(10).setLetter('К'); result.get(10).setState(state);
-        result.get(16).setLetter('Г'); result.get(16).setState(state);
+        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
+            for (int row=0; row < Configuration.FIELD_SIZE; row++)
+                result.add(new Cell(col, row));
+        }
+
+        Cell c = ScrabbleUtils.getByCoords(3, 2, result);
+        c.setLetter('Р'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(2, 3, result);
+        c.setLetter('С'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(3, 3, result);
+        c.setLetter('О'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(4, 3, result);
+        c.setLetter('К'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(3, 4, result);
+        c.setLetter('Г'); c.setState(state);
 
         return result;
     }

@@ -53,20 +53,25 @@ public class RepoTest extends AbstractDBTest {
     }
 
     @Test
-    public void testSaveGame() {
+    public void testGameDAO() {
         final int two = 2;
         List<Cell> result = new ArrayList<>(2);
         for (int i=0; i<two; i++) {
             Cell cell = new Cell(i, i);
             cell.setBonus(Bonus.NONE);
-            cell.setLetter('Z');
+            cell.setLetter(i == 0 ? 'А' : 'Я');
             result.add(cell);
         }
         Game game = ImmutableGame.builder()
                 .cells(result).score(new ImmutablePair<>(two, two))
                 .build();
 
-        gameDAO.persistGame(USER_SUCCESS, game);
+        gameDAO.persistGame(USER_SUCCESS, game, true);
         assertTrue("Oops!", gameDAO.savedStateExists(USER_SUCCESS));
+
+        assertTrue("Oops!", gameDAO.getGame(USER_SUCCESS).cells().size() == two);
+
+        gameDAO.removeGame(USER_SUCCESS);
+        assertFalse("Oops!", gameDAO.savedStateExists(USER_SUCCESS));
     }
 }
