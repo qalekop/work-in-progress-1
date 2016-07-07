@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by akopylov on 02/02/16.
@@ -46,6 +47,9 @@ public class WordsTest {
         c.setLetter('X'); c.setState(CellState.OCCUPIED);
         c = ScrabbleUtils.getByCoords(p[2].x, p[2].y, field);
         c.setLetter('X'); c.setState(CellState.OCCUPIED);
+
+        assertTrue("Oops!",
+                field.stream().filter(cell -> cell.getState() == CellState.OCCUPIED).collect(Collectors.toList()).size() == 3);
 
         assertTrue("Oops!", ScrabbleUtils.isTraceable(p[1], p[1], field));
         assertFalse("Oops!", ScrabbleUtils.isTraceable(p[2], p[2], field));

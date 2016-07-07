@@ -97,8 +97,6 @@ public class GameController {
      * Accepts human's move, verifies it and, if OK, starts MachineMove process.
      */
     public String makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
-        // todo implement me
-        LOG.debug("*** " + (CollectionUtils.isEmpty(cells) ? "empty" : cells.size()));
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
         // response with a FAKE error

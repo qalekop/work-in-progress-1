@@ -1,26 +1,18 @@
 package ak.scrabble.engine.model;
 
+import org.immutables.value.Value;
+
 /**
  * Created by akopylov on 01/02/16.
  */
-public class Word {
+@Value.Immutable
+public interface Word {
     //todo enhance later with other properties
-    private String word;
 
-    @Override
-    public String toString() {
-        return "Word{" +
-                "word='" + word + '\'' +
-                '}';
-    }
+    String word();
 
-    //<editor-fold desc="Getters-'n'-Setters>
-    public String getWord() {
-        return word;
+    @Value.Default
+    default int score() {
+        return 0;
     }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-    //</editor-fold>
 }

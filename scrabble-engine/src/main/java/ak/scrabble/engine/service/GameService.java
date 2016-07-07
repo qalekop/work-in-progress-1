@@ -73,9 +73,12 @@ public class GameService {
                         .message("Misplaced tile")
                         .build();
             }
-            existingCell = cell; // ???
+            existingCell.setLetter(cell.getLetter());
             existingCell.setState(CellState.OCCUPIED);
+            existingCell.setPlayer(Player.HUMAN);
         };
+        List<Cell> occupiedCells = savedCells.stream()
+                .filter(cell -> cell.getState() == CellState.OCCUPIED).collect(Collectors.toList());
 
         // 0.5 verify if no hanging tiles
         for (Cell cell : cells) {

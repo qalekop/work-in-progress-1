@@ -1,13 +1,20 @@
 package ak.scrabble.engine;
 
 import ak.scrabble.engine.da.GameDAO;
+import ak.scrabble.engine.da.WordRepository;
 import ak.scrabble.engine.model.Bonus;
 import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.DictFlavor;
 import ak.scrabble.engine.model.Game;
 import ak.scrabble.engine.model.ImmutableGame;
+import ak.scrabble.engine.model.ImmutableSearchSpec;
+import ak.scrabble.engine.model.SearchSpec;
+import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.rules.RulesService;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +25,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,8 +35,13 @@ public class RepoTest extends AbstractDBTest {
 
     private static final String USER_FAILURE = "scrabble";
     private static final String USER_SUCCESS = "mbricker";
+
     @Autowired
     private GameDAO gameDAO;
+    @Autowired
+    private RulesService rulesService;
+    @Autowired
+    private WordRepository wordRepo;
 
     @Test
     public void testDictionary() throws SQLException {
@@ -73,5 +86,22 @@ public class RepoTest extends AbstractDBTest {
 
         gameDAO.removeGame(USER_SUCCESS);
         assertFalse("Oops!", gameDAO.savedStateExists(USER_SUCCESS));
+    }
+
+    @Test
+    public void testRulesService() {
+        final String P_UNIQUE = "абака";
+        final String P_MULTIPLE = "абр%";
+        final String P_WRONG = "cабака";
+
+        assertTrue(rulesService.valid(P_UNIQUE));
+        assertFalse(rulesService.valid(P_WRONG));
+
+        SearchSpec spec = ImmutableSearchSpec.builder()
+                .pattern(P_MULTIPLE)
+                .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
+                .build();
+        List<Word> sevenSamurais = wordRepo.find(spec);
+        assertTrue(sevenSamurais.size() == 7);
     }
 }

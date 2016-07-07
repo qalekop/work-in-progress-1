@@ -62,6 +62,13 @@ public class ScrabbleUtils {
         }
     }
 
+    public static Cell _getByCoords(int col, int row, List<Cell> cells) {
+        for (Cell cell : cells) {
+            if (cell.getCol() == col && cell.getRow() == row) return cell;
+        }
+        throw new IllegalArgumentException("Wrong coords: col=" + col + "; row=" + row);
+    }
+
     public static boolean isTraceable(Point start, Point origin, List<Cell> cells) {
         if (getByCoords(start.x, start.y, cells).getState() != CellState.OCCUPIED) {
             throw new IllegalStateException(String.format("Unexpected state: cell[%d, %d] = %s",

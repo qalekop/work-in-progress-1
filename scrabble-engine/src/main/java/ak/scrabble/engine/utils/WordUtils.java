@@ -4,6 +4,7 @@ import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
+import ak.scrabble.engine.model.ImmutableWord;
 import ak.scrabble.engine.model.Word;
 
 import java.awt.*;
@@ -35,8 +36,7 @@ public class WordUtils {
                     sb.append(cell.getLetter());
                 } else {
                     // end of a new word
-                    word = new Word();
-                    word.setWord(sb.toString());
+                    word = ImmutableWord.builder().word(sb.toString()).build();
                     sb = new StringBuilder();
                     result.add(word);
                 }

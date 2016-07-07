@@ -21,7 +21,7 @@ import java.util.List;
 @Repository
 public class GameDAOImpl extends BaseDAO implements GameDAO  {
 
-    private static final String P_USER = "user";
+    private static final String P_USER = "user_name";
     private static final String P_FIELD = "field";
     private static final String P_HUMAN = "score_human";
     private static final String P_MACHINE = "score_machine";
