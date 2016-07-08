@@ -55,7 +55,7 @@ public class RepoTest extends AbstractDBTest {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt(1);
-                assertEquals("Oops!", count, expectedCount);
+                assertEquals(count, expectedCount);
             }
         }
     }
@@ -80,12 +80,12 @@ public class RepoTest extends AbstractDBTest {
                 .build();
 
         gameDAO.persistGame(USER_SUCCESS, game, true);
-        assertTrue("Oops!", gameDAO.savedStateExists(USER_SUCCESS));
+        assertTrue(gameDAO.savedStateExists(USER_SUCCESS));
 
-        assertTrue("Oops!", gameDAO.getGame(USER_SUCCESS).cells().size() == two);
+        assertTrue(gameDAO.getGame(USER_SUCCESS).cells().size() == two);
 
         gameDAO.removeGame(USER_SUCCESS);
-        assertFalse("Oops!", gameDAO.savedStateExists(USER_SUCCESS));
+        assertFalse(gameDAO.savedStateExists(USER_SUCCESS));
     }
 
     @Test

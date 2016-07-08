@@ -1,15 +1,20 @@
 package ak.scrabble.engine;
 
 import ak.scrabble.conf.Configuration;
+import ak.scrabble.conf.ScrabbleDbConf;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -22,17 +27,28 @@ import java.util.stream.Collectors;
 /**
  * Created by akopylov on 02/02/16.
  */
-@RunWith(JUnit4.class)
+@ContextConfiguration(classes={ScrabbleDbConf.class})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class WordsTest {
+
+    @Autowired
+    private GameService gameService;
+
+    @Test
+    public void testMove() {
+        assertTrue(gameService.verifyMove(buildTestField(CellState.OCCUPIED)));
+    }
 
     @Test
     public void testWordsBuilder() {
-        List<Word> result = new ArrayList<>(2);
+        List<Word> result = new ArrayList<>();
         List<Cell> field = buildTestField(CellState.OCCUPIED);
-        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.COLUMN, 3));
-        result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.ROW, 3));
-        assertEquals(2, result.size());
+        for (int col=0; col<Configuration.FIELD_SIZE; col++)
+            result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.COLUMN, col));
+        for (int row=0;row<Configuration.FIELD_SIZE; row++)
+            result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.ROW, row));
         for (Word word : result) System.out.println(word);
+        assertEquals(3, result.size());
     }
 
     @Test
@@ -48,11 +64,10 @@ public class WordsTest {
         c = ScrabbleUtils.getByCoords(p[2].x, p[2].y, field);
         c.setLetter('X'); c.setState(CellState.OCCUPIED);
 
-        assertTrue("Oops!",
-                field.stream().filter(cell -> cell.getState() == CellState.OCCUPIED).collect(Collectors.toList()).size() == 3);
+        assertTrue(field.stream().filter(cell -> cell.getState() == CellState.OCCUPIED).collect(Collectors.toList()).size() == 3);
 
-        assertTrue("Oops!", ScrabbleUtils.isTraceable(p[1], p[1], field));
-        assertFalse("Oops!", ScrabbleUtils.isTraceable(p[2], p[2], field));
+        assertTrue(ScrabbleUtils.isTraceable(p[1], p[1], field));
+        assertFalse(ScrabbleUtils.isTraceable(p[2], p[2], field));
     }
 
     private List<Cell> buildTestField(CellState state) {
@@ -63,16 +78,29 @@ public class WordsTest {
                 result.add(new Cell(col, row));
         }
 
-        Cell c = ScrabbleUtils.getByCoords(3, 2, result);
+        Cell c = ScrabbleUtils.getByCoords(1, 0, result);
         c.setLetter('Р'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(2, 3, result);
+        c = ScrabbleUtils.getByCoords(0, 1, result);
         c.setLetter('С'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(3, 3, result);
+        c = ScrabbleUtils.getByCoords(1, 1, result);
         c.setLetter('О'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(4, 3, result);
+        c = ScrabbleUtils.getByCoords(2, 1, result);
         c.setLetter('К'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(3, 4, result);
+        c = ScrabbleUtils.getByCoords(1, 2, result);
         c.setLetter('Г'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(4, 1, result);
+        c.setLetter('У'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(5, 1, result);
+        c.setLetter('С'); c.setState(state);
+
+        c = ScrabbleUtils.getByCoords(0, 0, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(2, 0, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(0, 2, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(2, 2, result);
+        c.setState(CellState.RESTRICTED);
 
         return result;
     }

@@ -76,8 +76,6 @@ public class GameController {
      * Returns JSON object describing game state (i.e., field cells).
      */
     public ResponseEntity<String> getField(Principal user) throws JsonProcessingException {
-        // todo implement me
-        // 1. retrieve game state for this particular gamer from the db.
         LOG.info("getting game for " + user.getName());
         List<Cell> field = gameService.getGame(user.getName());
         ResponseSuccess response = ImmutableResponseSuccess.builder()
@@ -99,11 +97,11 @@ public class GameController {
     public String makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
-        // response with a FAKE error
-        // 1. set payload with verbose description
-        ResponseError response = ImmutableResponseError.builder()
-                .message("Oops!").cells(((ResponseError)moveResponse).cells())
-                .build();
-        return mapper.writer().writeValueAsString(response);
+/*
+        if (moveResponse instanceof ResponseSuccess) {
+            // todo (where to) fire Machine Move sequence?
+        }
+*/
+        return mapper.writer().writeValueAsString(moveResponse);
     }
 }

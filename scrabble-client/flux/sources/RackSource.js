@@ -9,7 +9,6 @@ var RackSource = {
     getRack() {
         return {
             remote(state, letters) {
-                console.log('*** Source.getRack ' + letters);
                 return new Promise(function(resolve) {
                     $.ajax({
                         method: 'POST',

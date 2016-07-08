@@ -4,13 +4,17 @@ import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.da.GameDAO;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.CellState;
+import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.Game;
 import ak.scrabble.engine.model.ImmutableGame;
 import ak.scrabble.engine.model.ImmutableResponseError;
 import ak.scrabble.engine.model.ImmutableResponseSuccess;
 import ak.scrabble.engine.model.MoveResponse;
 import ak.scrabble.engine.model.Player;
+import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.rules.RulesService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
+import ak.scrabble.engine.utils.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +41,9 @@ public class GameService {
     @Autowired
     private GameDAO gameDAO;
 
+    @Autowired
+    private RulesService rulesService;
+
     public List<Cell> getGame(final String user) {
         List<Cell> result;
         if (!gameDAO.savedStateExists(user)) {
@@ -42,11 +51,12 @@ public class GameService {
             result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
             for (int col=0; col<Configuration.FIELD_SIZE; col++) {
                 for (int row=0; row<Configuration.FIELD_SIZE; row++) {
-                    Cell cell = new Cell(row, col);
-                    cell.setBonus(ScrabbleUtils.bonusForCell(row, col));
+                    Cell cell = new Cell(col, row);
+                    cell.setBonus(ScrabbleUtils.bonusForCell(col, row));
                     result.add(cell);
                 }
             }
+            // todo code below only for dev purposes !!!
             Cell c = result.stream().filter(cell -> cell.getRow() == 3 && cell.getCol() == 3).findFirst().get();
             c.setState(CellState.ACCEPTED);
             c.setLetter('А');
@@ -62,7 +72,7 @@ public class GameService {
     }
 
     public MoveResponse processHumanMove(final String user, final List<Cell> cells) {
-        // 0. merge new cells with existing ones
+        // merge new cells with existing ones
         List<Cell> savedCells = gameDAO.getGame(user).cells();
         for (Cell cell : cells) {
             Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), savedCells);
@@ -77,10 +87,8 @@ public class GameService {
             existingCell.setState(CellState.OCCUPIED);
             existingCell.setPlayer(Player.HUMAN);
         };
-        List<Cell> occupiedCells = savedCells.stream()
-                .filter(cell -> cell.getState() == CellState.OCCUPIED).collect(Collectors.toList());
 
-        // 0.5 verify if no hanging tiles
+        // verify if no hanging tiles
         for (Cell cell : cells) {
             Point p = new Point(cell.getCol(), cell.getRow());
             if (!ScrabbleUtils.isTraceable(p, p, savedCells)) {
@@ -92,27 +100,22 @@ public class GameService {
             }
         }
 
-        List<String> newWords = new ArrayList<>();
-        String s;
-        // 1. rows
+        List<Word> newWords = new ArrayList<>();
         for (int row=0; row<Configuration.FIELD_SIZE; row++) {
-            final int dim = row;
-            s = savedCells.stream()
-                    .filter(cell -> cell.getRow() == dim)
-                    .sorted((cell1, cell2) -> Integer.valueOf(cell1.getCol()).compareTo(cell2.getCol()))
-                    .map(cell -> cell.getLetter() == (char) 0 ? " " : String.valueOf(cell.getLetter()))
-                    .reduce("", String::concat);
-            if (StringUtils.isNotBlank(s)) newWords.add(s.trim());
+            newWords.addAll(WordUtils.getWordsForDimension(savedCells, DimensionEnum.ROW, row));
         }
-        // 2. cols
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
-            final int dim = col;
-            s = savedCells.stream()
-                    .filter(cell -> cell.getCol() == dim)
-                    .sorted((cell1, cell2) -> Integer.valueOf(cell1.getRow()).compareTo(cell2.getRow()))
-                    .map(cell -> cell.getLetter() == (char) 0 ? " " : String.valueOf(cell.getLetter()))
-                    .reduce("", String::concat);
-            if (StringUtils.isNotBlank(s)) newWords.add(s.trim());
+            newWords.addAll(WordUtils.getWordsForDimension(savedCells, DimensionEnum.COLUMN, col));
+        }
+        for (Word w : newWords) {
+            String _w = w.word();
+            if(!rulesService.valid(_w)) {
+                LOG.debug("Wrong word: {}", _w);
+                return ImmutableResponseError.builder()
+                        .message("Wrong word: " + _w)
+                        .cells(Collections.emptyList())
+                        .build();
+            }
         }
 
         // todo implement me
@@ -120,5 +123,25 @@ public class GameService {
         return ImmutableResponseSuccess.builder()
                 .cells(savedCells)
                 .build();
+    }
+
+    public boolean verifyMove(List<Cell> cells) {
+        List<Word> newWords = new ArrayList<>();
+        // 1. rows
+        for (int row=0; row<Configuration.FIELD_SIZE; row++) {
+            newWords.addAll(WordUtils.getWordsForDimension(cells, DimensionEnum.ROW, row));
+        }
+        // 2. cols
+        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
+            newWords.addAll(WordUtils.getWordsForDimension(cells, DimensionEnum.COLUMN, col));
+        }
+        for (Word w : newWords) {
+            String _w = w.word();
+            if(!rulesService.valid(_w)) {
+                LOG.debug("Wrong word: {}", _w);
+                return false;
+            }
+        }
+        return true;
     }
 }

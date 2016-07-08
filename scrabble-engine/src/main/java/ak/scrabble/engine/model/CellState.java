@@ -6,6 +6,10 @@ package ak.scrabble.engine.model;
 public enum CellState {
     AVAILABLE,  // available
     OCCUPIED,   // occupied, but not yet accepted
-    UNALLOWED,  // free cell not allowed for next moves due to game rules
-    ACCEPTED,   // letter is accepted
+    RESTRICTED, // free cell not allowed for next moves due to game rules
+    ACCEPTED;   // letter is accepted
+
+    public boolean free() {
+        return this == AVAILABLE || this == RESTRICTED;
+    }
 }

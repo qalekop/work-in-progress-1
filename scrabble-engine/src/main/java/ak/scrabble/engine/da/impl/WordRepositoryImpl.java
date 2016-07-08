@@ -6,15 +6,12 @@ import ak.scrabble.engine.model.DictFlavor;
 import ak.scrabble.engine.model.ImmutableWord;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.Word;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by akopylov on 07/07/16.
@@ -24,9 +21,11 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
 
     private static final String P_WORD = "word";
 
+    private static final Locale LOCALE_RU_RU = new Locale("ru", "RU");
+
     private static final String S_EQUALS = "select word from dict where word = :" + P_WORD;
     // + " and flavor in (:" + P_FLAVOR + ")";
-    private static final String S_LIKE = "select word from dict where LOWER(word) like :" + P_WORD;
+    private static final String S_LIKE = "select word from dict where word like :" + P_WORD;
     // + " and flavor in (:" + P_FLAVOR + ")";
 
     @Override
@@ -46,7 +45,7 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
 
         String searchPattern = specification.pattern();
         return jdbc.query(searchPattern.matches(".*[_%]+.*") ? S_LIKE : S_EQUALS,
-                new MapSqlParameterSource(P_WORD, searchPattern),
+                new MapSqlParameterSource(P_WORD, searchPattern.toLowerCase(LOCALE_RU_RU)),
                 (resultSet, i) -> {
                     return ImmutableWord.builder().word(resultSet.getString("word")).build();
                 });

@@ -23,9 +23,10 @@ public class RulesService {
     /**
      * Verifies if the provided word:
      * <ul>
-     *     <li>Doesn't exist in the black list, and</li>
-     *     <li>Exists in the user dictionary, or</li>
-     *     <li>Exists in the default dictionary.</li>
+     *     <li>Doesn't exist in the black list;</li>
+     *     <li>Exists either in default or user dictionary;</li>
+     *     <li>Wasn't used earlier (to be imlemented);</li>
+     *     <li>Exceeds the minimum length (to be imlemented).</li>
      * </ul>
      * @param word word to look up
      * @return <code>true, if the above condition id met</code>, <code>false</code> otherwise.
@@ -42,5 +43,6 @@ public class RulesService {
                 .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                 .build();
         return !CollectionUtils.isEmpty(repo.find(spec));
+        // todo: implement the two last checks
     }
 }

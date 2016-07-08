@@ -20,28 +20,32 @@ public class WordUtils {
         if (index < 0 || index > Configuration.FIELD_SIZE) throw new IllegalArgumentException("invalid index: " + index);
 
         List<Word> result = new ArrayList<>(Configuration.FIELD_SIZE);
-        CellState prevState = CellState.AVAILABLE;
-        CellState state;
-        Cell cell;
+        Cell cell = dimension == DimensionEnum.COLUMN
+                ? ScrabbleUtils.getByCoords(0, index, field)
+                : ScrabbleUtils.getByCoords(index, 0, field);
+        boolean prevState = cell.getState().free();
+        boolean state;
         Word word;
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
             cell = dimension == DimensionEnum.COLUMN
                     ? ScrabbleUtils.getByCoords(i, index, field)
                     : ScrabbleUtils.getByCoords(index, i, field);
-            state = cell.getState();
+            state = cell.getState().free();
             if (state != prevState) {
-                if (state == CellState.OCCUPIED) {
+                if (!state) {
                     // start of a new word
                     sb.append(cell.getLetter());
                 } else {
-                    // end of a new word
-                    word = ImmutableWord.builder().word(sb.toString()).build();
+                    // end of a new word or single letter from another dimension
+                    if (sb.length() > 1) {
+                        word = ImmutableWord.builder().word(sb.toString()).build();
+                        result.add(word);
+                    }
                     sb = new StringBuilder();
-                    result.add(word);
                 }
                 prevState = state;
-            } else if (state == CellState.OCCUPIED) {
+            } else if (!state) {
                 sb.append(cell.getLetter());
             }
         }

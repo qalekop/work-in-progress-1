@@ -18,14 +18,12 @@ class ControlStore {
     }
 
     handleTileDropped(tile) {
-        console.log(`** ControlStore.tileDropped: ${tile.row}/${tile.col}`);
         var cell = ControlStore.findCell(tile.row, tile.col);
         if (!!cell) cell.availability = 'OCCUPIED';
         this.enabled = ControlStore.checkField();
     }
 
     handleTileReverted(tile) {
-        console.log(`** ControlStore.tileReverted: ${tile.row}/${tile.col}`);
         var cell = ControlStore.findCell(tile.row, tile.col);
         if (!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
         this.enabled = ControlStore.checkField();
