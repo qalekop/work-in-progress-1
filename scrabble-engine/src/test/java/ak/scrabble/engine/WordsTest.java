@@ -88,9 +88,9 @@ public class WordsTest {
         c.setLetter('К'); c.setState(state);
         c = ScrabbleUtils.getByCoords(1, 2, result);
         c.setLetter('Г'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(4, 1, result);
+        c = ScrabbleUtils.getByCoords(5, 6, result);
         c.setLetter('У'); c.setState(state);
-        c = ScrabbleUtils.getByCoords(5, 1, result);
+        c = ScrabbleUtils.getByCoords(6, 6, result);
         c.setLetter('С'); c.setState(state);
 
         c = ScrabbleUtils.getByCoords(0, 0, result);

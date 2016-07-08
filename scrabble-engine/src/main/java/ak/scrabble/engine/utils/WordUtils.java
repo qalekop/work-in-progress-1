@@ -49,6 +49,10 @@ public class WordUtils {
                 sb.append(cell.getLetter());
             }
         }
+        if (sb.length() > 1) {
+            word = ImmutableWord.builder().word(sb.toString()).build();
+            result.add(word);
+        }
         return result;
     }
 
