@@ -57,11 +57,11 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
 
     @Override
     public void persistGame(String user, Game game, boolean create) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue(P_USER, user);
-        params.addValue(P_FIELD, new XStream().toXML(game.cells()));
-        params.addValue(P_HUMAN, game.score().getLeft());
-        params.addValue(P_MACHINE, game.score().getRight());
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue(P_USER, user)
+                .addValue(P_FIELD, new XStream().toXML(game.cells()))
+                .addValue(P_HUMAN, game.score().getLeft())
+                .addValue(P_MACHINE, game.score().getRight());
         int rowCount = jdbc.update(create ? S_CREATE : S_UPDATE, params);
         LOG.trace("game state persisted for user={}, rowCount={}", user, rowCount);
     }

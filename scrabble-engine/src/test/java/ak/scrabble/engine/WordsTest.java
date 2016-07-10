@@ -55,7 +55,7 @@ public class WordsTest {
     public void testTraceability() {
         List<Cell> field = buildTestField(CellState.ACCEPTED);
         Point[] p = new Point[3];
-        p[0] = new Point(1, 3); p[1] = new Point(1, 4); p[2] = new Point(1, 1);
+        p[0] = new Point(3, 1); p[1] = new Point(4, 1); p[2] = new Point(0, 6);
 
         Cell c = ScrabbleUtils.getByCoords(p[0].x, p[0].y, field);
         c.setLetter('X'); c.setState(CellState.OCCUPIED);
@@ -91,7 +91,7 @@ public class WordsTest {
         c = ScrabbleUtils.getByCoords(5, 6, result);
         c.setLetter('У'); c.setState(state);
         c = ScrabbleUtils.getByCoords(6, 6, result);
-        c.setLetter('С'); c.setState(state);
+        c.setLetter('Ж'); c.setState(state);
 
         c = ScrabbleUtils.getByCoords(0, 0, result);
         c.setState(CellState.RESTRICTED);

@@ -101,7 +101,6 @@ public class RepoTest extends AbstractDBTest {
                 .pattern(P_MULTIPLE)
                 .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                 .build();
-        List<Word> sevenSamurais = wordRepo.find(spec);
-        assertTrue(sevenSamurais.size() == 7);
+        assertTrue(wordRepo.find(spec).size() == 7);
     }
 }

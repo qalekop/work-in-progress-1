@@ -27,8 +27,8 @@ public interface WordRepository {
      * Returns list of 'word' objects (to be specified later)
      * acording to a given specification (which includes the list of dictionaries
      * to look up - i.e., Black list means a check for banned words).
-     * @param specification what and ehere to search
+     * @param specification what and wehere to search
      * @return Collection of objects, possibly empty
      */
-    List<Word> find(SearchSpec specification);
+    List<String> find(SearchSpec specification);
 }

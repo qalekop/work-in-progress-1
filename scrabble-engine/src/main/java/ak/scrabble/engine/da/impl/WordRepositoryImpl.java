@@ -39,7 +39,7 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
     }
 
     @Override
-    public List<Word> find(SearchSpec specification) {
+    public List<String> find(SearchSpec specification) {
         // todo implement me
         if (specification.dictionaries().contains(DictFlavor.BLACK)) return Collections.emptyList();
 
@@ -47,7 +47,7 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
         return jdbc.query(searchPattern.matches(".*[_%]+.*") ? S_LIKE : S_EQUALS,
                 new MapSqlParameterSource(P_WORD, searchPattern.toLowerCase(LOCALE_RU_RU)),
                 (resultSet, i) -> {
-                    return ImmutableWord.builder().word(resultSet.getString("word")).build();
+                    return resultSet.getString("word");
                 });
     }
 }
