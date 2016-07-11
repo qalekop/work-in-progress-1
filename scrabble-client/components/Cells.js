@@ -11,7 +11,7 @@ const SIZE = 50;
 var Cell = React.createClass({
 
     getInitialState() {
-        return {letter: this.props.letter, occupied: this.props.state === 'ACCEPTED'}
+        return {'letter': this.props.letter, 'occupied': false};
     }
 
     , drop(event) {
@@ -38,9 +38,14 @@ var Cell = React.createClass({
     , render() {
         var row = this.props.row,
             col = this.props.col,
-            className = 'cell '
-                + (this.props.state == 'UNALLOWED' ? 'UNALLOWED' : '') + ' '
-                + (this.props.bonus == 'NONE' ? '' : this.props.bonus);
+            className = 'cell ';
+        if (this.state.occupied) {
+            className += this.props.state === 'REJECTED' ? 'REJECTED' : 'HUMAN';
+        } else if (this.props.state === 'AVAILABLE' || this.props.state === 'REJECTED') {
+            className += this.props.bonus == 'NONE' ? '' : this.props.bonus;
+        } else {
+            className += this.props.state;
+        }
         return (
             <div className={className}
                  onContextMenu={this.rightClicked}

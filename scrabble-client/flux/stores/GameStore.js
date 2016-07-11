@@ -41,11 +41,10 @@ class GameStore {
     }
 
     handleGetField(response) {
-        if (response.success) {
-            this.cells = response.cells;
-        } else {
-            console.log('*** Error:' + response.message + '; ' + response.cell.letter);
-            // implement me
+        this.cells = response.cells;
+        if (!response.success) {
+            console.log('*** Error:' + response.message);
+            window.alert(response.message);
         }
     }
 }
