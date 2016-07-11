@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -58,9 +59,8 @@ public class GameService {
             }
             // todo code below only for dev purposes !!!
             Cell c = result.stream().filter(cell -> cell.getRow() == 3 && cell.getCol() == 3).findFirst().get();
-            c.setState(CellState.ACCEPTED);
+            c.setState(CellState.MACHINE);
             c.setLetter('А');
-            c.setPlayer(Player.MACHINE);
             Game game = ImmutableGame.builder()
                     .cells(result).score(new ImmutablePair<>(0, 0))
                     .build();
@@ -78,14 +78,14 @@ public class GameService {
             Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), savedCells);
             if (existingCell.getState() != CellState.AVAILABLE) {
                 LOG.debug("Occupied cell: {} {}", cell.getCol(), cell.getRow());
+                existingCell.setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(Stream.of(cell).collect(Collectors.toList()))
+                        .cells(savedCells)
                         .message("Misplaced tile")
                         .build();
             }
             existingCell.setLetter(cell.getLetter());
             existingCell.setState(CellState.OCCUPIED);
-            existingCell.setPlayer(Player.HUMAN);
         };
 
         // verify if no hanging tiles
@@ -93,39 +93,18 @@ public class GameService {
             Point p = new Point(cell.getCol(), cell.getRow());
             if (!ScrabbleUtils.isTraceable(p, p, savedCells)) {
                 LOG.debug("Hanging cell: {} {}", cell.getCol(), cell.getRow());
+                ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), savedCells).setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(Stream.of(cell).collect(Collectors.toList()))
+                        .cells(savedCells)
                         .message("Misplaced tile")
                         .build();
             }
         }
 
-        List<Word> newWords = new ArrayList<>();
-        for (int row=0; row<Configuration.FIELD_SIZE; row++) {
-            newWords.addAll(WordUtils.getWordsForDimension(savedCells, DimensionEnum.ROW, row));
-        }
-        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
-            newWords.addAll(WordUtils.getWordsForDimension(savedCells, DimensionEnum.COLUMN, col));
-        }
-        for (Word w : newWords) {
-            String _w = w.word();
-            if(!rulesService.valid(_w)) {
-                LOG.debug("Wrong word: {}", _w);
-                return ImmutableResponseError.builder()
-                        .message("Wrong word: " + _w)
-                        .cells(Collections.emptyList())
-                        .build();
-            }
-        }
-
-        // todo implement me
-        newWords.stream().forEach(System.out::println);
-        return ImmutableResponseSuccess.builder()
-                .cells(savedCells)
-                .build();
+        return verifyMove(savedCells);
     }
 
-    public boolean verifyMove(List<Cell> cells) {
+    public MoveResponse verifyMove(List<Cell> cells) {
         List<Word> newWords = new ArrayList<>();
         // 1. rows
         for (int row=0; row<Configuration.FIELD_SIZE; row++) {
@@ -139,9 +118,29 @@ public class GameService {
             String _w = w.word();
             if(!rulesService.valid(_w)) {
                 LOG.debug("Wrong word: {}", _w);
-                return false;
+                w.cells().forEach(cell -> {
+                    Cell c = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), cells);
+                    if (c.getState() == CellState.OCCUPIED) {
+                        c.setState(CellState.REJECTED);
+                    }
+                });
+                return ImmutableResponseError.builder()
+                        .message("Wrong word: " + _w)
+                        .cells(cells)
+                        .build();
             }
         }
-        return true;
+        // todo implement me - save new words ?
+        newWords.stream().forEach(System.out::println);
+
+        return ImmutableResponseSuccess.builder()
+                .cells(cells.stream()
+                        .map(cell -> {
+                            if (cell.getState() == CellState.OCCUPIED) {
+                                cell.setState(CellState.HUMAN);
+                            }
+                            return cell;
+                        }).collect(Collectors.toList())
+                ).build();
     }
 }

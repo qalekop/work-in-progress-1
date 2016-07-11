@@ -5,6 +5,7 @@ import ak.scrabble.conf.ScrabbleDbConf;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
+import ak.scrabble.engine.model.MoveResponse;
 import ak.scrabble.engine.model.Word;
 import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
@@ -36,13 +37,16 @@ public class WordsTest {
 
     @Test
     public void testMove() {
-        assertTrue(gameService.verifyMove(buildTestField(CellState.OCCUPIED)));
+        MoveResponse response = gameService.verifyMove(buildValidTestField(CellState.OCCUPIED));
+        assertTrue(response.success());
+        response = gameService.verifyMove(buildInvalidTestField(CellState.OCCUPIED));
+        assertFalse(response.success());
     }
 
     @Test
     public void testWordsBuilder() {
         List<Word> result = new ArrayList<>();
-        List<Cell> field = buildTestField(CellState.OCCUPIED);
+        List<Cell> field = buildValidTestField(CellState.OCCUPIED);
         for (int col=0; col<Configuration.FIELD_SIZE; col++)
             result.addAll(WordUtils.getWordsForDimension(field, DimensionEnum.COLUMN, col));
         for (int row=0;row<Configuration.FIELD_SIZE; row++)
@@ -53,7 +57,7 @@ public class WordsTest {
 
     @Test
     public void testTraceability() {
-        List<Cell> field = buildTestField(CellState.ACCEPTED);
+        List<Cell> field = buildValidTestField(CellState.MACHINE);
         Point[] p = new Point[3];
         p[0] = new Point(3, 1); p[1] = new Point(4, 1); p[2] = new Point(0, 6);
 
@@ -70,7 +74,7 @@ public class WordsTest {
         assertFalse(ScrabbleUtils.isTraceable(p[2], p[2], field));
     }
 
-    private List<Cell> buildTestField(CellState state) {
+    private List<Cell> buildValidTestField(CellState state) {
         int size = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
         List<Cell> result = new ArrayList<>(size);
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
@@ -84,6 +88,40 @@ public class WordsTest {
         c.setLetter('С'); c.setState(state);
         c = ScrabbleUtils.getByCoords(1, 1, result);
         c.setLetter('О'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(2, 1, result);
+        c.setLetter('К'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(1, 2, result);
+        c.setLetter('Г'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(5, 6, result);
+        c.setLetter('У'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(6, 6, result);
+        c.setLetter('Ж'); c.setState(state);
+
+        c = ScrabbleUtils.getByCoords(0, 0, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(2, 0, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(0, 2, result);
+        c.setState(CellState.RESTRICTED);
+        c = ScrabbleUtils.getByCoords(2, 2, result);
+        c.setState(CellState.RESTRICTED);
+
+        return result;
+    }
+    private List<Cell> buildInvalidTestField(CellState state) {
+        int size = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
+        List<Cell> result = new ArrayList<>(size);
+        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
+            for (int row=0; row < Configuration.FIELD_SIZE; row++)
+                result.add(new Cell(col, row));
+        }
+
+        Cell c = ScrabbleUtils.getByCoords(1, 0, result);
+        c.setLetter('Р'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(0, 1, result);
+        c.setLetter('С'); c.setState(state);
+        c = ScrabbleUtils.getByCoords(1, 1, result);
+        c.setLetter('Z'); c.setState(state);
         c = ScrabbleUtils.getByCoords(2, 1, result);
         c.setLetter('К'); c.setState(state);
         c = ScrabbleUtils.getByCoords(1, 2, result);

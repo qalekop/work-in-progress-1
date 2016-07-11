@@ -7,10 +7,6 @@ public class Cell {
     private int row;
     private int col;
     private char letter;
-    /** <code>false</code> for the newly added letter (possible to be reverted), <code>true</code> after move is accepted. */
-    private boolean accepted;
-    /** to distinguish between Human and Machine players. Only for state == Occupied. */
-    private Player player;
     private Bonus bonus = Bonus.NONE;
     private CellState state = CellState.AVAILABLE;
 
@@ -43,24 +39,8 @@ public class Cell {
         return letter;
     }
 
-    public boolean isAccepted() {
-        return accepted;
-    }
-
-    public void setAccepted(boolean accepted) {
-        this.accepted = accepted;
-    }
-
     public void setLetter(char letter) {
         this.letter = letter;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public Bonus getBonus() {

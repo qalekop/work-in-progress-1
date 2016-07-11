@@ -74,7 +74,7 @@ public class ScrabbleUtils {
             throw new IllegalStateException(String.format("Unexpected state: cell[%d, %d] = %s",
                     start.x, start.y, getByCoords(start.x, start.y, cells).getState()));
         }
-        if (getByCoords(start.x, start.y, cells).getState() == CellState.ACCEPTED) {
+        if (getByCoords(start.x, start.y, cells).getState().accepted()) {
             return true;
         }
         Stack<Point> neighbors = new Stack<>();
@@ -97,7 +97,7 @@ public class ScrabbleUtils {
 
         while (!neighbors.empty()) {
             Point p = neighbors.pop();
-            if (getByCoords(p.x, p.y, cells).getState() == CellState.ACCEPTED) return true;
+            if (getByCoords(p.x, p.y, cells).getState().accepted()) return true;
             if (isTraceable(p, start, cells)) return true;
         }
         return false;
@@ -108,7 +108,7 @@ public class ScrabbleUtils {
             Cell c = getByCoords(cell.x, cell.y, cells);
             if (c.getState() == CellState.OCCUPIED) {
                 stack.push(cell);
-            } else if (c.getState() == CellState.ACCEPTED) {
+            } else if (c.getState().accepted()) {
                 return true;
             }
         }

@@ -94,7 +94,7 @@ public class GameController {
     /**
      * Accepts human's move, verifies it and, if OK, starts MachineMove process.
      */
-    public String makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
 /*
@@ -102,6 +102,8 @@ public class GameController {
             // todo (where to) fire Machine Move sequence?
         }
 */
-        return mapper.writer().writeValueAsString(moveResponse);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(moveResponse), headers, HttpStatus.OK);
     }
 }
