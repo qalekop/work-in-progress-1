@@ -19,6 +19,10 @@ import java.util.stream.Stream;
  * Created by akopylov on 01/02/16.
  */
 public class WordUtils {
+
+    private static final String PREFIX = "^";
+    private static final String SUFFIX = "$";
+
     public static Set<String> getPatternsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
         String slice = field.stream()
                 .filter(cell -> dimension == DimensionEnum.ROW ? cell.getRow() == index : cell.getCol() == index)
@@ -98,7 +102,7 @@ public class WordUtils {
                 if (iterator.hasNext()) {
                     s = iterator.next();
                 } else {
-                    result.add(pattern);
+                    result.add(PREFIX + pattern + SUFFIX);
                     pattern = "";
                 }
             }
@@ -107,14 +111,14 @@ public class WordUtils {
                 pattern += (".{0," + blankLength + "}");
             } else if (!iterator.hasNext()) {
                 pattern += ".{0," + blankLength + "}";
-                result.add(pattern);
+                result.add(PREFIX + pattern + SUFFIX);
             } else if (blankLength >= minLength) {
                 if (blankLength == 1) {
-                    result.add(pattern);
+                    result.add(PREFIX + pattern + SUFFIX);
                     pattern = "";
                 } else {
                     pattern += (".{0," + (blankLength - 1) + "}");
-                    result.add(pattern);
+                    result.add(PREFIX + pattern + SUFFIX);
                     pattern = ".{0," + (blankLength - 1) + "}";
                 }
             } else {

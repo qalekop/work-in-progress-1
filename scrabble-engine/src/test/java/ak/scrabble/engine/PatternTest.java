@@ -57,7 +57,7 @@ public class PatternTest {
         Set<String> wordsFound = new HashSet<>();
         for (String pattern : patterns) {
             SearchSpec spec = ImmutableSearchSpec.builder()
-                    .pattern("^" + pattern + "$")
+                    .pattern(pattern)
                     .regexp(true)
                     .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                     .build();

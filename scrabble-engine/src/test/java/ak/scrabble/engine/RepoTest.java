@@ -91,14 +91,14 @@ public class RepoTest extends AbstractDBTest {
     @Test
     public void testRulesService() {
         final String P_UNIQUE = "абака";
-        final String P_MULTIPLE = "абр.+";
+        final String P_MULTIPLE = "^абр.+$";
         final String P_WRONG = "cабака";
 
         assertTrue(rulesService.valid(P_UNIQUE));
         assertFalse(rulesService.valid(P_WRONG));
 
         SearchSpec spec = ImmutableSearchSpec.builder()
-                .pattern("^" + P_MULTIPLE + "$")
+                .pattern(P_MULTIPLE)
                 .regexp(true)
                 .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                 .build();
