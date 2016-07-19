@@ -16,8 +16,14 @@ public interface SearchSpec {
     List<DictFlavor> dictionaries();
 
     /**
-     * Search pattern, incl. '%' and '_'
+     * Search pattern, may be regexp
      * @return
      */
     String pattern();
+
+    /**
+     * <code>true</code> means regext pattern matching, <code>false</code> - 'equals' matching
+     * @return
+     */
+    boolean regexp();
 }

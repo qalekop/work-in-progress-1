@@ -25,7 +25,7 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
 
     private static final String S_EQUALS = "select word from dict where word = :" + P_WORD;
     // + " and flavor in (:" + P_FLAVOR + ")";
-    private static final String S_LIKE = "select word from dict where word like :" + P_WORD;
+    private static final String S_LIKE = "select word from dict where word ~ :" + P_WORD;
     // + " and flavor in (:" + P_FLAVOR + ")";
 
     @Override
@@ -44,10 +44,8 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
         if (specification.dictionaries().contains(DictFlavor.BLACK)) return Collections.emptyList();
 
         String searchPattern = specification.pattern();
-        return jdbc.query(searchPattern.matches(".*[_%]+.*") ? S_LIKE : S_EQUALS,
+        return jdbc.query(specification.regexp() ? S_LIKE : S_EQUALS,
                 new MapSqlParameterSource(P_WORD, searchPattern.toLowerCase(LOCALE_RU_RU)),
-                (resultSet, i) -> {
-                    return resultSet.getString("word");
-                });
+                (resultSet, i) -> resultSet.getString("word"));
     }
 }

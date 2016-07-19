@@ -108,6 +108,7 @@ public class WordsTest {
 
         return result;
     }
+
     private List<Cell> buildInvalidTestField(CellState state) {
         int size = Configuration.FIELD_SIZE * Configuration.FIELD_SIZE;
         List<Cell> result = new ArrayList<>(size);

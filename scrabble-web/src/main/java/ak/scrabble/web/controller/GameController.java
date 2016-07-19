@@ -54,11 +54,11 @@ public class GameController {
         return SecurityModel.SECURE_URI + GAME_URL;
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
-            , method = RequestMethod.POST)
     /**
      * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
      */
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
+            , method = RequestMethod.POST)
     public ResponseEntity<String> getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
 
         final String name = user.getName();
@@ -70,11 +70,11 @@ public class GameController {
         return new ResponseEntity<>(mapper.writer().writeValueAsString(rack.getLetters()), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
-            , method = RequestMethod.GET)
     /**
      * Returns JSON object describing game state (i.e., field cells).
      */
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
+            , method = RequestMethod.GET)
     public ResponseEntity<String> getField(Principal user) throws JsonProcessingException {
         LOG.info("getting game for " + user.getName());
         List<Cell> field = gameService.getGame(user.getName());
@@ -87,13 +87,13 @@ public class GameController {
         return new ResponseEntity<>(mapper.writer().writeValueAsString(response), headers, HttpStatus.OK);
     }
 
+    /**
+     * Accepts human's move, verifies it and, if OK, starts MachineMove process.
+     */
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
             , method = RequestMethod.POST
             , headers = {"Content-type=application/json"})
     @ResponseBody // todo response with 'success' to wait for the next PUSH or 'error' with a proper message
-    /**
-     * Accepts human's move, verifies it and, if OK, starts MachineMove process.
-     */
     public ResponseEntity<String> makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
