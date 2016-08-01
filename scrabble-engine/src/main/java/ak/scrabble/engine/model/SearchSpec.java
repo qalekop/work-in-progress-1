@@ -28,5 +28,6 @@ public interface SearchSpec {
     /**
      * available letters
      */
+    @Value.Default
     default String rack() { return StringUtils.EMPTY; };
 }

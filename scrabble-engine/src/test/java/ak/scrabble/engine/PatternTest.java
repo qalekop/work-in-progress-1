@@ -3,13 +3,8 @@ package ak.scrabble.engine;
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.conf.ScrabbleDbConf;
 import ak.scrabble.engine.da.WordRepository;
-import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellState;
-import ak.scrabble.engine.model.DictFlavor;
-import ak.scrabble.engine.model.DimensionEnum;
-import ak.scrabble.engine.model.ImmutableSearchSpec;
-import ak.scrabble.engine.model.Pattern;
-import ak.scrabble.engine.model.SearchSpec;
+import ak.scrabble.engine.model.*;
+import ak.scrabble.engine.service.DictService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.junit.Test;
@@ -35,6 +30,9 @@ public class PatternTest {
 
     @Autowired
     private WordRepository wordRepo;
+
+    @Autowired
+    private DictService dictService;
 
 
     private List<Cell> buildTestField() {
@@ -66,6 +64,27 @@ public class PatternTest {
         }
         assertTrue(wordsFound.size() == 31);
         assertTrue(wordsFound.contains("авиатор"));
+    }
+
+    @Test
+    public void testPatternsWithRack() {
+        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(), DimensionEnum.ROW, 0);
+        assertTrue(patterns.size() == 3);
+
+        final String rack = "аиар";
+        final String aviator = "авиатор";
+        Set<WordProposal> proposals = new HashSet<>();
+        for (Pattern pattern : patterns) {
+            SearchSpec spec = ImmutableSearchSpec.builder()
+                    .pattern(pattern)
+                    .regexp(true)
+                    .rack(rack)
+                    .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
+                    .build();
+            proposals.addAll(dictService.findPossibleWords(spec));
+        }
+        assertTrue(proposals.size() == 3);
+        assertTrue(proposals.stream().filter(candidate -> candidate.word().equalsIgnoreCase(aviator)).findAny().isPresent());
     }
 
 }

@@ -5,6 +5,7 @@ import ak.scrabble.engine.model.ImmutableWordProposal;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.WordProposal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Created by akopylov on 01/08/16.
  */
+@Service
 public class DictService {
 
     @Autowired
@@ -20,15 +22,17 @@ public class DictService {
 
 
     public List<WordProposal> findPossibleWords(final SearchSpec spec) {
+        char[] availableChars = (spec.rack() + spec.pattern().getLetters()).toLowerCase().toCharArray();
+        Arrays.sort(availableChars);
         return wordRepo.find(spec).stream()
-                .filter(candidate -> valid(spec.rack() + spec.pattern().getLetters(), candidate))
+                .filter(candidate -> valid(new String(availableChars), candidate.toLowerCase()))
                 .map(candidate -> ImmutableWordProposal.builder().word(candidate).pattern(spec.pattern()).build())
                 .collect(Collectors.toList());
     }
 
-    private boolean valid(String charSet, String test) {
-        char[] chars = test.toCharArray();
+    private boolean valid(String availableChars, String candidate) {
+        char[] chars = candidate.toCharArray();
         Arrays.sort(chars);
-        return charSet.contains(new String(chars));
+        return availableChars.contains(new String(chars));
     }
 }
