@@ -8,6 +8,7 @@ import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DictFlavor;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.ImmutableSearchSpec;
+import ak.scrabble.engine.model.Pattern;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
@@ -51,11 +52,11 @@ public class PatternTest {
 
     @Test
     public void testPattern() {
-        Set<String> patterns = WordUtils.getPatternsForDimension(buildTestField(), DimensionEnum.ROW, 0);
+        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(), DimensionEnum.ROW, 0);
         assertTrue(patterns.size() == 3);
 
         Set<String> wordsFound = new HashSet<>();
-        for (String pattern : patterns) {
+        for (Pattern pattern : patterns) {
             SearchSpec spec = ImmutableSearchSpec.builder()
                     .pattern(pattern)
                     .regexp(true)

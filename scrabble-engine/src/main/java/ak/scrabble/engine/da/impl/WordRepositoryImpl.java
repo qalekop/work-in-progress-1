@@ -43,7 +43,7 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
         // todo implement me
         if (specification.dictionaries().contains(DictFlavor.BLACK)) return Collections.emptyList();
 
-        String searchPattern = specification.pattern();
+        String searchPattern = specification.pattern().getPattern();
         return jdbc.query(specification.regexp() ? S_LIKE : S_EQUALS,
                 new MapSqlParameterSource(P_WORD, searchPattern.toLowerCase(LOCALE_RU_RU)),
                 (resultSet, i) -> resultSet.getString("word"));

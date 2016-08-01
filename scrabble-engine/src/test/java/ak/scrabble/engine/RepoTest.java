@@ -8,6 +8,7 @@ import ak.scrabble.engine.model.DictFlavor;
 import ak.scrabble.engine.model.Game;
 import ak.scrabble.engine.model.ImmutableGame;
 import ak.scrabble.engine.model.ImmutableSearchSpec;
+import ak.scrabble.engine.model.Pattern;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.Word;
 import ak.scrabble.engine.rules.RulesService;
@@ -98,7 +99,7 @@ public class RepoTest extends AbstractDBTest {
         assertFalse(rulesService.valid(P_WRONG));
 
         SearchSpec spec = ImmutableSearchSpec.builder()
-                .pattern(P_MULTIPLE)
+                .pattern(new Pattern.PatternBuilder().withPattern(P_MULTIPLE).build())
                 .regexp(true)
                 .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                 .build();

@@ -1,5 +1,6 @@
 package ak.scrabble.engine.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.immutables.value.Value;
 
 import java.util.List;
@@ -11,19 +12,21 @@ import java.util.List;
 public interface SearchSpec {
     /**
      * List of dictionaries to look up
-     * @return
      */
     List<DictFlavor> dictionaries();
 
     /**
      * Search pattern, may be regexp
-     * @return
      */
-    String pattern();
+    Pattern pattern();
 
     /**
      * <code>true</code> means regext pattern matching, <code>false</code> - 'equals' matching
-     * @return
      */
     boolean regexp();
+
+    /**
+     * available letters
+     */
+    default String rack() { return StringUtils.EMPTY; };
 }

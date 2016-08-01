@@ -23,12 +23,12 @@ public class WordUtils {
     private static final String PREFIX = "^";
     private static final String SUFFIX = "$";
 
-    public static Set<String> getPatternsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
+    public static Set<Pattern> getPatternsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
         String slice = field.stream()
                 .filter(cell -> dimension == DimensionEnum.ROW ? cell.getRow() == index : cell.getCol() == index)
                 .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
                 .reduce("", (a, b) -> a + b);
-        Set<String> patterns = new HashSet<>();
+        Set<Pattern> patterns = new HashSet<>();
         List<String> source = Arrays.asList(StringUtils.splitByCharacterType(slice));
         int maxLength = 0;
         maxLength = Stream.of(StringUtils.splitByCharacterType(slice))
@@ -37,15 +37,15 @@ public class WordUtils {
                 .max(Comparator.naturalOrder())
                 .get();
 
-        buildPatterns(source, patterns, maxLength);
-        buildPatterns(source, patterns, maxLength + 1);
+        patterns.addAll(buildPatterns(source, maxLength, dimension, index));
+        patterns.addAll(buildPatterns(source, maxLength + 1, dimension, index));
         return patterns;
     }
 
     public static List<Word> getWordsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
         if (index < 0 || index > Configuration.FIELD_SIZE) throw new IllegalArgumentException("invalid index: " + index);
 
-        List<Word> result = new ArrayList<>(Configuration.FIELD_SIZE);
+        List<Word> result = new ArrayList<>();
         Cell cell = dimension == DimensionEnum.COLUMN
                 ? ScrabbleUtils.getByCoords(0, index, field)
                 : ScrabbleUtils.getByCoords(index, 0, field);
@@ -90,7 +90,8 @@ public class WordUtils {
         return result;
     }
 
-    private static void buildPatterns(List<String> source, Set<String> result, int minLength) {
+    private static List<Pattern> buildPatterns(List<String> source, int minLength, DimensionEnum dimension, int dimIndex) {
+        List<Pattern> result = new ArrayList<>();
         String pattern = "";
         int blankLength;
         String s;
@@ -102,7 +103,10 @@ public class WordUtils {
                 if (iterator.hasNext()) {
                     s = iterator.next();
                 } else {
-                    result.add(PREFIX + pattern + SUFFIX);
+                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                            .forDimension(dimension)
+                            .atIndex(dimIndex)
+                            .build());
                     pattern = "";
                 }
             }
@@ -111,21 +115,29 @@ public class WordUtils {
                 pattern += (".{0," + blankLength + "}");
             } else if (!iterator.hasNext()) {
                 pattern += ".{0," + blankLength + "}";
-                result.add(PREFIX + pattern + SUFFIX);
+                result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                        .forDimension(dimension)
+                        .atIndex(dimIndex)
+                        .build());
             } else if (blankLength >= minLength) {
                 if (blankLength == 1) {
-                    result.add(PREFIX + pattern + SUFFIX);
+                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                            .forDimension(dimension)
+                            .atIndex(dimIndex)
+                            .build());
                     pattern = "";
                 } else {
                     pattern += (".{0," + (blankLength - 1) + "}");
-                    result.add(PREFIX + pattern + SUFFIX);
+                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                            .forDimension(dimension)
+                            .atIndex(dimIndex)
+                            .build());
                     pattern = ".{0," + (blankLength - 1) + "}";
                 }
             } else {
-                pattern += (blankLength == 1
-                        ? ".?"
-                        : ".{" + blankLength + "}");
+                pattern += ".{" + blankLength + "}";
             }
         }
+        return result;
     }
 }
