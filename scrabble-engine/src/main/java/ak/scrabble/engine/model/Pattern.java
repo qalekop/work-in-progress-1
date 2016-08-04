@@ -44,12 +44,16 @@ public class Pattern {
     }
 
     public static class PatternBuilder {
+
+        private static final String PREFIX = "^";
+        private static final String SUFFIX = "$";
+
         private String pattern;
         private DimensionEnum dimension;
         private int index;
 
         public PatternBuilder withPattern(String pattern) {
-            this.pattern = pattern;
+            this.pattern = PREFIX + pattern + SUFFIX;
             return this;
         }
 

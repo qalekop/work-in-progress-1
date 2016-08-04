@@ -6,6 +6,7 @@ import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.WordProposal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,8 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class DictService {
 
+    private final WordRepository wordRepo;
+
     @Autowired
-    private WordRepository wordRepo;
+    public DictService(WordRepository wordRepo) {
+        Assert.notNull(wordRepo, "WordRepository mustn't be null");
+        this.wordRepo = wordRepo;
+    }
 
 
     public List<WordProposal> findPossibleWords(final SearchSpec spec) {

@@ -7,6 +7,7 @@ import ak.scrabble.engine.model.Pattern;
 import ak.scrabble.engine.model.SearchSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.stream.Collectors;
@@ -18,8 +19,13 @@ import java.util.stream.Stream;
 @Service
 public class RulesService {
 
+    private final WordRepository repo;
+
     @Autowired
-    WordRepository repo;
+    public RulesService(WordRepository repo) {
+        Assert.notNull(repo, "WordRepository mustn't be null");
+        this.repo = repo;
+    }
 
     /**
      * Verifies if the provided word:

@@ -20,9 +20,6 @@ import java.util.stream.Stream;
  */
 public class WordUtils {
 
-    private static final String PREFIX = "^";
-    private static final String SUFFIX = "$";
-
     public static Set<Pattern> getPatternsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
         String slice = field.stream()
                 .filter(cell -> dimension == DimensionEnum.ROW ? cell.getRow() == index : cell.getCol() == index)
@@ -103,7 +100,7 @@ public class WordUtils {
                 if (iterator.hasNext()) {
                     s = iterator.next();
                 } else {
-                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                    result.add(new Pattern.PatternBuilder().withPattern(pattern)
                             .forDimension(dimension)
                             .atIndex(dimIndex)
                             .build());
@@ -115,20 +112,20 @@ public class WordUtils {
                 pattern += (".{0," + blankLength + "}");
             } else if (!iterator.hasNext()) {
                 pattern += ".{0," + blankLength + "}";
-                result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                result.add(new Pattern.PatternBuilder().withPattern(pattern)
                         .forDimension(dimension)
                         .atIndex(dimIndex)
                         .build());
             } else if (blankLength >= minLength) {
                 if (blankLength == 1) {
-                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                    result.add(new Pattern.PatternBuilder().withPattern(pattern)
                             .forDimension(dimension)
                             .atIndex(dimIndex)
                             .build());
                     pattern = "";
                 } else {
                     pattern += (".{0," + (blankLength - 1) + "}");
-                    result.add(new Pattern.PatternBuilder().withPattern(PREFIX + pattern + SUFFIX)
+                    result.add(new Pattern.PatternBuilder().withPattern(pattern)
                             .forDimension(dimension)
                             .atIndex(dimIndex)
                             .build());
