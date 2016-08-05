@@ -9,6 +9,4 @@ import org.immutables.value.Value;
 public interface WordProposal {
     String word();
     Pattern pattern();
-
-
 }

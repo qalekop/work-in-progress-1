@@ -2,12 +2,17 @@ package ak.scrabble.engine.model;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
+import java.util.regex.Matcher;
 
 /**
  * Created by akopylov on 01/08/16.
  */
 public class Pattern {
+
+    private static final String GROUP_CONTENT = "CONTENT";
+    private static final java.util.regex.Pattern STRIP_PATTERN = java.util.regex.Pattern.compile("[^А-Я]*(?<"
+            + GROUP_CONTENT + ">[А-Я]+).*");
+
     /** search pattern itself */
     private String pattern;
     /** pattern allocation - along ROW or COL */
@@ -41,6 +46,14 @@ public class Pattern {
 
     public String getLetters() {
         return pattern.replaceAll("[^А-Я]", StringUtils.EMPTY);
+    }
+
+    public String getFirstContent() {
+        Matcher m = STRIP_PATTERN.matcher(pattern);
+        if (!m.matches()) {
+            throw new IllegalStateException("internal pattern mismatch:" + pattern);
+        }
+        return m.group(GROUP_CONTENT);
     }
 
     public static class PatternBuilder {

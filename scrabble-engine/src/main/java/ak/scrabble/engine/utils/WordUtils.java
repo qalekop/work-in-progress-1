@@ -4,7 +4,6 @@ import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,7 +11,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Stream;
 
 /**
@@ -85,6 +83,63 @@ public class WordUtils {
             result.add(word);
         }
         return result;
+    }
+
+    public static int scoreWord(List<Cell> field, WordProposal proposal) {
+        Pattern p = proposal.pattern();
+        String slice = field.stream()
+                .filter(cell -> p.getDimension() == DimensionEnum.ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
+                .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
+                .reduce("", (a, b) -> a + b);
+
+        String content = p.getFirstContent();
+        String word = proposal.word().toUpperCase();
+        // todo combine the two indices below
+        int indexField = slice.indexOf(content);
+        int indexWord = word.indexOf(content);
+        int x = -1, y = -1;
+        Bonus wordBonus = Bonus.NONE;
+        int newWordScore = 0, existingWordScore = 0, letterScore = 0;
+        for (int i=0; i<word.length(); i++) {
+            switch (p.getDimension()) {
+                case COLUMN:
+                x = p.getIndex();
+                y = (indexField - indexWord) + i;
+                break;
+            case ROW:
+                x = (indexField - indexWord) + i;
+                y = p.getIndex();
+                break;
+            }
+            Cell c = ScrabbleUtils.getByCoords(x, y, field);
+            char letter = word.charAt(i);
+            letterScore = ScrabbleUtils.getLetterScore(letter);
+            Bonus b = c.getBonus();
+            if (b == Bonus.WORD_2X || b == Bonus.WORD_3X) {
+                if (b.compareTo(wordBonus) > 0) wordBonus = b;
+            }
+            int multiplier;
+            switch (b) {
+            case LETTER_2X:
+                multiplier = 2;
+                break;
+            case LETTER_3X:
+                multiplier = 3;
+                break;
+            default:
+                multiplier = 1;
+            }
+            if (c.getState().free()) {
+                newWordScore += (multiplier * letterScore);
+            }
+            existingWordScore += (multiplier * letterScore);
+        }
+        if (wordBonus != Bonus.NONE) {
+            existingWordScore *= (wordBonus == Bonus.WORD_2X ? 2 : 3);
+            return existingWordScore;
+        } else {
+            return newWordScore;
+        }
     }
 
     private static List<Pattern> buildPatterns(List<String> source, int minLength, DimensionEnum dimension, int dimIndex) {
