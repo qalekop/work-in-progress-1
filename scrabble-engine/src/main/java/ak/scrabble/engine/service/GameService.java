@@ -2,34 +2,21 @@ package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.da.GameDAO;
-import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.CellState;
-import ak.scrabble.engine.model.DimensionEnum;
-import ak.scrabble.engine.model.Game;
-import ak.scrabble.engine.model.ImmutableGame;
-import ak.scrabble.engine.model.ImmutableResponseError;
-import ak.scrabble.engine.model.ImmutableResponseSuccess;
-import ak.scrabble.engine.model.MoveResponse;
-import ak.scrabble.engine.model.Player;
-import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.model.*;
 import ak.scrabble.engine.rules.RulesService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by akopylov on 15/02/16.
@@ -44,6 +31,9 @@ public class GameService {
 
     @Autowired
     private RulesService rulesService;
+
+    @Autowired
+    private DictService dictService;
 
     public List<Cell> getGame(final String user) {
         List<Cell> result;
@@ -142,5 +132,34 @@ public class GameService {
                             return cell;
                         }).collect(Collectors.toList())
                 ).build();
+    }
+
+    public List<WordProposal> findProposals(List<Cell> field, String rack) {
+        List<WordProposal> result = new ArrayList<>();
+        // 1. rows
+        for (int row=0; row<Configuration.FIELD_SIZE; row++) {
+            for (Pattern pattern : WordUtils.getPatternsForDimension(field, DimensionEnum.ROW, row)) {
+                SearchSpec spec = ImmutableSearchSpec.builder()
+                        .pattern(pattern)
+                        .regexp(true)
+                        .rack(rack)
+                        .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
+                        .build();
+                result.addAll(dictService.findPossibleWords(spec));
+            }
+        }
+        // 2. columns
+        for (int col=0; col<Configuration.FIELD_SIZE; col++) {
+            for (Pattern pattern : WordUtils.getPatternsForDimension(field, DimensionEnum.COLUMN, col)) {
+                SearchSpec spec = ImmutableSearchSpec.builder()
+                        .pattern(pattern)
+                        .regexp(true)
+                        .rack(rack)
+                        .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
+                        .build();
+                result.addAll(dictService.findPossibleWords(spec));
+            }
+        }
+        return result;
     }
 }

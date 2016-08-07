@@ -20,6 +20,7 @@ public class Pattern {
     /** pattern's ROW or COL index */
     private int index;
 
+    //<editor-fold desc="Getters-'n'-Setters">
     public String getPattern() {
         return pattern;
     }
@@ -46,6 +47,27 @@ public class Pattern {
 
     public String getLetters() {
         return pattern.replaceAll("[^А-Я]", StringUtils.EMPTY);
+    }
+    //</editor-fold>
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Pattern pattern1 = (Pattern) o;
+
+        if (!pattern.equals(pattern1.pattern)) return false;
+        return dimension == pattern1.dimension;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pattern.hashCode();
+        result = 31 * result + dimension.hashCode();
+        return result;
     }
 
     public String getFirstContent() {

@@ -5,6 +5,7 @@ import ak.scrabble.conf.ScrabbleDbConf;
 import ak.scrabble.engine.da.WordRepository;
 import ak.scrabble.engine.model.*;
 import ak.scrabble.engine.service.DictService;
+import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.junit.Test;
@@ -36,6 +37,9 @@ public class PatternTest {
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    private GameService gameService;
 
 
     private List<Cell> buildTestField() {
@@ -94,12 +98,8 @@ public class PatternTest {
     @Test
     public void testWordPlacements() {
         List<Cell> field = buildTestField();
-        String slice = field.stream()
-                .filter(cell -> cell.getRow() == 0)
-                .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
-                .reduce("", (a, b) -> a + b);
 
-        Set<Pattern> patterns = WordUtils.getPatternsForDimension(field, DimensionEnum.ROW, 0);
+ /*       Set<Pattern> patterns = WordUtils.getPatternsForDimension(field, DimensionEnum.ROW, 0);
         assertTrue(patterns.size() == 3);
 
         Set<WordProposal> proposals = new HashSet<>();
@@ -112,11 +112,12 @@ public class PatternTest {
                     .build();
             proposals.addAll(dictService.findPossibleWords(spec));
         }
-        assertTrue(proposals.size() == 3);
+*/
+        List<WordProposal> proposals = gameService.findProposals(field, RACK);
+        assertTrue(proposals.size() == 7);
 
         for (WordProposal proposal : proposals) {
             System.out.println(proposal.word() + " = " + WordUtils.scoreWord(field, proposal));
         }
-
     }
-}
+ }

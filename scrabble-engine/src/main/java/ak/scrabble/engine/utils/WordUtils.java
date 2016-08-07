@@ -33,7 +33,9 @@ public class WordUtils {
                 .get();
 
         patterns.addAll(buildPatterns(source, maxLength, dimension, index));
-        patterns.addAll(buildPatterns(source, maxLength + 1, dimension, index));
+        if (maxLength < (Configuration.FIELD_SIZE - 1)) {
+            patterns.addAll(buildPatterns(source, maxLength + 1, dimension, index));
+        }
         return patterns;
     }
 
