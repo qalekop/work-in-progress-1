@@ -39,6 +39,11 @@ public class DictService {
     private boolean valid(String availableChars, String candidate) {
         char[] chars = candidate.toCharArray();
         Arrays.sort(chars);
-        return availableChars.contains(new String(chars));
+        int index = -1;
+        for (char c : chars) {
+            index = availableChars.indexOf(c, index + 1);
+            if (index < 0) return false;
+        }
+        return true;
     }
 }

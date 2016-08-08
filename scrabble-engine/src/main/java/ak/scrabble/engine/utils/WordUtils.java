@@ -1,7 +1,14 @@
 package ak.scrabble.engine.utils;
 
 import ak.scrabble.conf.Configuration;
-import ak.scrabble.engine.model.*;
+import ak.scrabble.engine.model.Bonus;
+import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.DimensionEnum;
+import ak.scrabble.engine.model.ImmutableWord;
+import ak.scrabble.engine.model.Pattern;
+import ak.scrabble.engine.model.Player;
+import ak.scrabble.engine.model.Word;
+import ak.scrabble.engine.model.WordProposal;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -13,6 +20,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static ak.scrabble.engine.model.DimensionEnum.COLUMN;
+import static ak.scrabble.engine.model.DimensionEnum.ROW;
+
 /**
  * Created by akopylov on 01/02/16.
  */
@@ -20,7 +30,7 @@ public class WordUtils {
 
     public static Set<Pattern> getPatternsForDimension(final List<Cell> field, final DimensionEnum dimension, final int index) {
         String slice = field.stream()
-                .filter(cell -> dimension == DimensionEnum.ROW ? cell.getRow() == index : cell.getCol() == index)
+                .filter(cell -> dimension == ROW ? cell.getRow() == index : cell.getCol() == index)
                 .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
                 .reduce("", (a, b) -> a + b);
         Set<Pattern> patterns = new HashSet<>();
@@ -43,7 +53,7 @@ public class WordUtils {
         if (index < 0 || index > Configuration.FIELD_SIZE) throw new IllegalArgumentException("invalid index: " + index);
 
         List<Word> result = new ArrayList<>();
-        Cell cell = dimension == DimensionEnum.COLUMN
+        Cell cell = dimension == COLUMN
                 ? ScrabbleUtils.getByCoords(0, index, field)
                 : ScrabbleUtils.getByCoords(index, 0, field);
         boolean prevState = cell.getState().free();
@@ -52,7 +62,7 @@ public class WordUtils {
         StringBuilder sb = new StringBuilder();
         List<Cell> cells = new ArrayList<>(Configuration.FIELD_SIZE);
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
-            cell = dimension == DimensionEnum.COLUMN
+            cell = dimension == COLUMN
                     ? ScrabbleUtils.getByCoords(i, index, field)
                     : ScrabbleUtils.getByCoords(index, i, field);
             state = cell.getState().free();
@@ -90,7 +100,7 @@ public class WordUtils {
     public static int scoreWord(List<Cell> field, WordProposal proposal) {
         Pattern p = proposal.pattern();
         String slice = field.stream()
-                .filter(cell -> p.getDimension() == DimensionEnum.ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
+                .filter(cell -> p.getDimension() == ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
                 .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
                 .reduce("", (a, b) -> a + b);
 

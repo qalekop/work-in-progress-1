@@ -3,7 +3,14 @@ package ak.scrabble.engine;
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.conf.ScrabbleDbConf;
 import ak.scrabble.engine.da.WordRepository;
-import ak.scrabble.engine.model.*;
+import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.CellState;
+import ak.scrabble.engine.model.DictFlavor;
+import ak.scrabble.engine.model.DimensionEnum;
+import ak.scrabble.engine.model.ImmutableSearchSpec;
+import ak.scrabble.engine.model.Pattern;
+import ak.scrabble.engine.model.SearchSpec;
+import ak.scrabble.engine.model.WordProposal;
 import ak.scrabble.engine.service.DictService;
 import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
@@ -31,6 +38,7 @@ public class PatternTest {
 
     private static final String RACK = "аиар";
     private static final String AVIATOR = "авиатор";
+    private static final int INDEX = 3;
 
     @Autowired
     private WordRepository wordRepo;
@@ -42,7 +50,7 @@ public class PatternTest {
     private GameService gameService;
 
 
-    private List<Cell> buildTestField() {
+    private List<Cell>buildTestField(int index) {
         List<Cell> result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
             for (int row=0; row < Configuration.FIELD_SIZE; row++) {
@@ -52,15 +60,15 @@ public class PatternTest {
             }
         }
         Cell c;
-        c = ScrabbleUtils.getByCoords(1, 0, result); c.setLetter('В'); c.setState(CellState.HUMAN);
-        c = ScrabbleUtils.getByCoords(4, 0, result); c.setLetter('Т'); c.setState(CellState.HUMAN);
-        c = ScrabbleUtils.getByCoords(5, 0, result); c.setLetter('О'); c.setState(CellState.HUMAN);
+        c = ScrabbleUtils.getByCoords(1, index, result); c.setLetter('В'); c.setState(CellState.HUMAN);
+        c = ScrabbleUtils.getByCoords(4, index, result); c.setLetter('Т'); c.setState(CellState.HUMAN);
+        c = ScrabbleUtils.getByCoords(5, index, result); c.setLetter('О'); c.setState(CellState.HUMAN);
         return result;
     }
 
     @Test
     public void testPattern() {
-        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(), DimensionEnum.ROW, 0);
+        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(INDEX), DimensionEnum.ROW, INDEX);
         assertTrue(patterns.size() == 3);
 
         Set<String> wordsFound = new HashSet<>();
@@ -78,7 +86,7 @@ public class PatternTest {
 
     @Test
     public void testPatternsWithRack() {
-        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(), DimensionEnum.ROW, 0);
+        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(INDEX), DimensionEnum.ROW, INDEX);
         assertTrue(patterns.size() == 3);
 
         Set<WordProposal> proposals = new HashSet<>();
@@ -97,7 +105,8 @@ public class PatternTest {
 
     @Test
     public void testWordPlacements() {
-        List<Cell> field = buildTestField();
+        List<Cell> field = buildTestField(INDEX);
+//        TestUtils.printField(field);
 
  /*       Set<Pattern> patterns = WordUtils.getPatternsForDimension(field, DimensionEnum.ROW, 0);
         assertTrue(patterns.size() == 3);
@@ -113,8 +122,8 @@ public class PatternTest {
             proposals.addAll(dictService.findPossibleWords(spec));
         }
 */
-        List<WordProposal> proposals = gameService.findProposals(field, RACK);
-        assertTrue(proposals.size() == 7);
+        List<WordProposal> proposals = gameService.findProposals(field, RACK + "то");
+//        assertTrue(proposals.size() == 7);
 
         for (WordProposal proposal : proposals) {
             System.out.println(proposal.word() + " = " + WordUtils.scoreWord(field, proposal));
