@@ -106,27 +106,32 @@ public class PatternTest {
     @Test
     public void testWordPlacements() {
         List<Cell> field = buildTestField(INDEX);
-//        TestUtils.printField(field);
+        TestUtils.printField(field);
 
- /*       Set<Pattern> patterns = WordUtils.getPatternsForDimension(field, DimensionEnum.ROW, 0);
-        assertTrue(patterns.size() == 3);
-
-        Set<WordProposal> proposals = new HashSet<>();
-        for (Pattern pattern : patterns) {
-            SearchSpec spec = ImmutableSearchSpec.builder()
-                    .pattern(pattern)
-                    .regexp(true)
-                    .rack(RACK)
-                    .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
-                    .build();
-            proposals.addAll(dictService.findPossibleWords(spec));
-        }
-*/
         List<WordProposal> proposals = gameService.findProposals(field, RACK + "то");
 //        assertTrue(proposals.size() == 7);
 
         for (WordProposal proposal : proposals) {
             System.out.println(proposal.word() + " = " + WordUtils.scoreWord(field, proposal));
         }
+    }
+
+    @Test
+    public void testPatternInternals() {
+        final String firsContent = "А";
+        Pattern pattern = new Pattern.PatternBuilder()
+                .withPattern(".{0,1}" + firsContent + ".{0,1}БВ.{0,1}")
+                .forDimension(DimensionEnum.COLUMN)
+                .atIndex(3)
+                .build();
+        assertTrue(firsContent.equals(pattern.getFirstContent()));
+
+        final String trata = "ТРАТА";
+        pattern = new Pattern.PatternBuilder()
+                .withPattern(".{0,3}Т.{0,3}")
+                .forDimension(DimensionEnum.COLUMN)
+                .atIndex(3)
+                .build();
+        assertTrue(pattern.getWordIndex(trata) == 3);
     }
  }

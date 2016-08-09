@@ -78,6 +78,24 @@ public class Pattern {
         return m.group(GROUP_CONTENT);
     }
 
+    private String getWordMatchingPattern() {
+        Matcher m = STRIP_PATTERN.matcher(pattern);
+        if (!m.matches()) {
+            throw new IllegalStateException("internal pattern mismatch:" + pattern);
+        }
+        String content = m.group(GROUP_CONTENT);
+        return pattern.replaceFirst(content, m.replaceFirst("(?<" + GROUP_CONTENT + ">" + content + ")"));
+    }
+
+    public int getWordIndex(String word) {
+        Matcher m = java.util.regex.Pattern.compile(getWordMatchingPattern()).matcher(word);
+        if (m.matches()) {
+            return m.start(Pattern.GROUP_CONTENT);
+        } else {
+            throw new IllegalStateException("internal pattern mismatch:" + pattern + " for word:" + word);
+        }
+    }
+
     public static class PatternBuilder {
 
         private static final String PREFIX = "^";
@@ -89,6 +107,11 @@ public class Pattern {
 
         public PatternBuilder withPattern(String pattern) {
             this.pattern = PREFIX + pattern + SUFFIX;
+            return this;
+        }
+
+        public PatternBuilder withWord(String word) {
+            this.pattern = word;
             return this;
         }
 

@@ -106,9 +106,7 @@ public class WordUtils {
 
         String content = p.getFirstContent();
         String word = proposal.word().toUpperCase();
-        // todo combine the two indices below
-        int indexField = slice.indexOf(content);
-        int indexWord = word.indexOf(content);
+        int shift = slice.indexOf(content) - proposal.pattern().getWordIndex(word);
         int x = -1, y = -1;
         Bonus wordBonus = Bonus.NONE;
         int newWordScore = 0, existingWordScore = 0, letterScore = 0;
@@ -116,10 +114,10 @@ public class WordUtils {
             switch (p.getDimension()) {
                 case COLUMN:
                 x = p.getIndex();
-                y = (indexField - indexWord) + i;
+                y = shift + i;
                 break;
             case ROW:
-                x = (indexField - indexWord) + i;
+                x = shift + i;
                 y = p.getIndex();
                 break;
             }

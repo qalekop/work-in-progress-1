@@ -40,14 +40,14 @@ public class RulesService {
      */
     public boolean valid(String word) {
         SearchSpec spec = ImmutableSearchSpec.builder()
-                .pattern(new Pattern.PatternBuilder().withPattern(word).build())
+                .pattern(new Pattern.PatternBuilder().withWord(word).build())
                 .regexp(false)
                 .dictionaries(Stream.of(DictFlavor.BLACK).collect(Collectors.toList()))
                 .build();
         if (!CollectionUtils.isEmpty(repo.find(spec))) return false;
 
         spec = ImmutableSearchSpec.builder()
-                .pattern(new Pattern.PatternBuilder().withPattern(word).build())
+                .pattern(new Pattern.PatternBuilder().withWord(word).build())
                 .regexp(false)
                 .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
                 .build();
