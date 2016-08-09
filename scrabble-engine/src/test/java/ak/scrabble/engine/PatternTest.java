@@ -100,7 +100,7 @@ public class PatternTest {
             proposals.addAll(dictService.findPossibleWords(spec));
         }
         assertTrue(proposals.size() == 3);
-        assertTrue(proposals.stream().filter(candidate -> candidate.word().equalsIgnoreCase(AVIATOR)).findAny().isPresent());
+        assertTrue(proposals.stream().filter(candidate -> candidate.getWord().equalsIgnoreCase(AVIATOR)).findAny().isPresent());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class PatternTest {
 //        assertTrue(proposals.size() == 7);
 
         for (WordProposal proposal : proposals) {
-            System.out.println(proposal.word() + " = " + WordUtils.scoreWord(field, proposal));
+            System.out.println(proposal.getWord() + " = " + WordUtils.scoreWord(field, proposal));
         }
     }
 

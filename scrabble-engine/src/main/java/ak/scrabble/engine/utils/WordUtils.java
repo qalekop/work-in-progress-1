@@ -98,15 +98,15 @@ public class WordUtils {
     }
 
     public static int scoreWord(List<Cell> field, WordProposal proposal) {
-        Pattern p = proposal.pattern();
+        Pattern p = proposal.getPattern();
         String slice = field.stream()
                 .filter(cell -> p.getDimension() == ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
                 .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
                 .reduce("", (a, b) -> a + b);
 
         String content = p.getFirstContent();
-        String word = proposal.word().toUpperCase();
-        int shift = slice.indexOf(content) - proposal.pattern().getWordIndex(word);
+        String word = proposal.getWord().toUpperCase();
+        int shift = slice.indexOf(content) - proposal.getPattern().getWordIndex(word);
         int x = -1, y = -1;
         Bonus wordBonus = Bonus.NONE;
         int newWordScore = 0, existingWordScore = 0, letterScore = 0;

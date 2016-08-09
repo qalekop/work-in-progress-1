@@ -134,7 +134,7 @@ public class GameService {
                 ).build();
     }
 
-    public List<WordProposal> findProposals(List<Cell> field, String rack) {
+    public List<WordProposal> findProposals(final List<Cell> field, String rack) {
         List<WordProposal> result = new ArrayList<>();
         // 1. rows
         for (int row=0; row<Configuration.FIELD_SIZE; row++) {
@@ -160,6 +160,9 @@ public class GameService {
                 result.addAll(dictService.findPossibleWords(spec));
             }
         }
-        return result;
+        result.forEach(proposal -> proposal.setScore(WordUtils.scoreWord(field, proposal)));
+        return result.stream()
+                .sorted((o1, o2) -> Integer.valueOf(o2.getScore()).compareTo(o1.getScore()))
+                .collect(Collectors.toList());
     }
 }

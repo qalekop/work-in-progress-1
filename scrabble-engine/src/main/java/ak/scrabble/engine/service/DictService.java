@@ -32,7 +32,7 @@ public class DictService {
         Arrays.sort(availableChars);
         return wordRepo.find(spec).stream()
                 .filter(candidate -> valid(new String(availableChars), candidate.toLowerCase()))
-                .map(candidate -> ImmutableWordProposal.builder().word(candidate).pattern(spec.pattern()).build())
+                .map(candidate -> new WordProposal(candidate, spec.pattern()))
                 .collect(Collectors.toList());
     }
 
