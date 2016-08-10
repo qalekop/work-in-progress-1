@@ -122,9 +122,8 @@ public class PatternTest {
             Pair<Integer, String> result = WordUtils.putWord(field, proposal, rack);
             score += result.getLeft();
             rack = result.getRight();
-            if (StringUtils.isBlank(rack)) break;
             proposals = gameService.findProposals(field, rack);
-        } while (!CollectionUtils.isEmpty(proposals));
+        } while (!CollectionUtils.isEmpty(proposals) && StringUtils.isNotBlank(rack));
         TestUtils.printField(field);
 
         assertTrue(score == 42);
