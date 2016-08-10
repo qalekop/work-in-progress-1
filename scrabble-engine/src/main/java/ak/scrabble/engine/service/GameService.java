@@ -104,18 +104,18 @@ public class GameService {
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
             newWords.addAll(WordUtils.getWordsForDimension(cells, DimensionEnum.COLUMN, col));
         }
-        for (Word w : newWords) {
-            String _w = w.word();
-            if(!rulesService.valid(_w)) {
-                LOG.debug("Wrong word: {}", _w);
-                w.cells().forEach(cell -> {
+        for (Word word : newWords) {
+            String w = word.word();
+            if(!rulesService.valid(w)) {
+                LOG.debug("Wrong word: {}", w);
+                word.cells().forEach(cell -> {
                     Cell c = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), cells);
                     if (c.getState() == CellState.OCCUPIED) {
                         c.setState(CellState.REJECTED);
                     }
                 });
                 return ImmutableResponseError.builder()
-                        .message("Wrong word: " + _w)
+                        .message("Wrong word: " + w)
                         .cells(cells)
                         .build();
             }

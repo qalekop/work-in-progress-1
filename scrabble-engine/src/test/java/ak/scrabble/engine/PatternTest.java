@@ -15,6 +15,8 @@ import ak.scrabble.engine.service.DictService;
 import ak.scrabble.engine.service.GameService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class PatternTest {
 
-    private static final String RACK = "аиар";
+    private static final String RACK = "АИАР";
     private static final String AVIATOR = "авиатор";
     private static final int INDEX = 3;
 
@@ -106,14 +108,26 @@ public class PatternTest {
     @Test
     public void testWordPlacements() {
         List<Cell> field = buildTestField(INDEX);
+        final String aviaRack = RACK + "ТО";
+
+        List<WordProposal> proposals = gameService.findProposals(field, aviaRack);
+        for (WordProposal proposal : proposals) {
+            System.out.println(proposal.getWord() + " = " + proposal.getScore());
+        }
+
+        String rack = aviaRack;
+        int score = 0;
+        do {
+            WordProposal proposal = proposals.get(0);
+            Pair<Integer, String> result = WordUtils.putWord(field, proposal, rack);
+            score += result.getLeft();
+            rack = result.getRight();
+            if (StringUtils.isBlank(rack)) break;
+            proposals = gameService.findProposals(field, rack);
+        } while (!CollectionUtils.isEmpty(proposals));
         TestUtils.printField(field);
 
-        List<WordProposal> proposals = gameService.findProposals(field, RACK + "то");
-//        assertTrue(proposals.size() == 7);
-
-        for (WordProposal proposal : proposals) {
-            System.out.println(proposal.getWord() + " = " + WordUtils.scoreWord(field, proposal));
-        }
+        assertTrue(score == 42);
     }
 
     @Test

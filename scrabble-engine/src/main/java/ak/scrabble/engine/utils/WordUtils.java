@@ -3,6 +3,7 @@ package ak.scrabble.engine.utils;
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Bonus;
 import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.ImmutableWord;
 import ak.scrabble.engine.model.Pattern;
@@ -10,14 +11,19 @@ import ak.scrabble.engine.model.Player;
 import ak.scrabble.engine.model.Word;
 import ak.scrabble.engine.model.WordProposal;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static ak.scrabble.engine.model.DimensionEnum.COLUMN;
@@ -35,12 +41,12 @@ public class WordUtils {
                 .reduce("", (a, b) -> a + b);
         Set<Pattern> patterns = new HashSet<>();
         List<String> source = Arrays.asList(StringUtils.splitByCharacterType(slice));
-        int maxLength = 0;
-        maxLength = Stream.of(StringUtils.splitByCharacterType(slice))
+        int maxLength = Stream.of(StringUtils.splitByCharacterType(slice))
                 .filter(StringUtils::isBlank)
                 .map(String::length)
                 .max(Comparator.naturalOrder())
-                .get();
+                .orElse(0);
+        if (maxLength == 0) return Collections.emptySet();
 
         patterns.addAll(buildPatterns(source, maxLength, dimension, index));
         if (maxLength < (Configuration.FIELD_SIZE - 1)) {
@@ -98,6 +104,30 @@ public class WordUtils {
     }
 
     public static int scoreWord(List<Cell> field, WordProposal proposal) {
+        return putWord(field, proposal, null).getLeft();
+    }
+
+    public static Pair<Integer, String> putWord(List<Cell> field, WordProposal proposal, String rack) {
+        Function<Bonus, Integer> multWord = bonus -> {
+            switch (bonus) {
+            case WORD_3X:
+                return 3;
+            case WORD_2X:
+                return 2;
+            default:
+                return 1;
+            }
+        };
+        Function<Bonus, Integer> multLetter = bonus -> {
+            switch (bonus) {
+            case LETTER_3X:
+                return 3;
+            case LETTER_2X:
+                return 2;
+            default:
+                return 1;
+            }
+        };
         Pattern p = proposal.getPattern();
         String slice = field.stream()
                 .filter(cell -> p.getDimension() == ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
@@ -110,9 +140,10 @@ public class WordUtils {
         int x = -1, y = -1;
         Bonus wordBonus = Bonus.NONE;
         int newWordScore = 0, existingWordScore = 0, letterScore = 0;
+        String r = rack;
         for (int i=0; i<word.length(); i++) {
             switch (p.getDimension()) {
-                case COLUMN:
+            case COLUMN:
                 x = p.getIndex();
                 y = shift + i;
                 break;
@@ -128,28 +159,27 @@ public class WordUtils {
             if (b == Bonus.WORD_2X || b == Bonus.WORD_3X) {
                 if (b.compareTo(wordBonus) > 0) wordBonus = b;
             }
-            int multiplier;
-            switch (b) {
-            case LETTER_2X:
-                multiplier = 2;
-                break;
-            case LETTER_3X:
-                multiplier = 3;
-                break;
-            default:
-                multiplier = 1;
-            }
+            int multiplier = multLetter.apply(b);
             if (c.getState().free()) {
+                if (r != null) {
+                    r = removeLetter(r, letter);
+                    c.setLetter(letter);
+                    c.setState(CellState.MACHINE);
+                }
                 newWordScore += (multiplier * letterScore);
             }
             existingWordScore += (multiplier * letterScore);
         }
-        if (wordBonus != Bonus.NONE) {
-            existingWordScore *= (wordBonus == Bonus.WORD_2X ? 2 : 3);
-            return existingWordScore;
-        } else {
-            return newWordScore;
-        }
+        int finalScore = wordBonus != Bonus.NONE
+                ? existingWordScore * multWord.apply(wordBonus)
+                : newWordScore;
+        return new ImmutablePair(finalScore, r);
+    }
+
+    private static String removeLetter(String source, char letter) {
+        int index = source.indexOf(letter);
+        if (index < 0) return source;
+        return source.substring(0, index) + source.substring(index + 1);
     }
 
     private static List<Pattern> buildPatterns(List<String> source, int minLength, DimensionEnum dimension, int dimIndex) {

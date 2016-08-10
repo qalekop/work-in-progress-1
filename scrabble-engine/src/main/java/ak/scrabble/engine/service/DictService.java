@@ -1,9 +1,9 @@
 package ak.scrabble.engine.service;
 
 import ak.scrabble.engine.da.WordRepository;
-import ak.scrabble.engine.model.ImmutableWordProposal;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.WordProposal;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -31,7 +31,8 @@ public class DictService {
         char[] availableChars = (spec.rack() + spec.pattern().getLetters()).toLowerCase().toCharArray();
         Arrays.sort(availableChars);
         return wordRepo.find(spec).stream()
-                .filter(candidate -> valid(new String(availableChars), candidate.toLowerCase()))
+                .filter(candidate -> (StringUtils.isNotBlank(spec.rack())
+                        && valid(new String(availableChars), candidate.toLowerCase())))
                 .map(candidate -> new WordProposal(candidate, spec.pattern()))
                 .collect(Collectors.toList());
     }
