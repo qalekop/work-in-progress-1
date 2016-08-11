@@ -62,42 +62,72 @@ public class WordUtils {
         Cell cell = dimension == COLUMN
                 ? ScrabbleUtils.getByCoords(0, index, field)
                 : ScrabbleUtils.getByCoords(index, 0, field);
-        boolean prevState = cell.getState().free();
-        boolean state;
+        boolean prevState = cell.getState().free(), state;
         Word word;
         StringBuilder sb = new StringBuilder();
         List<Cell> cells = new ArrayList<>(Configuration.FIELD_SIZE);
+        Bonus wordBonus = Bonus.NONE;
+        int newWordScore = 0, existingWordScore = 0;
         for (int i=0; i<Configuration.FIELD_SIZE; i++) {
             cell = dimension == COLUMN
                     ? ScrabbleUtils.getByCoords(i, index, field)
                     : ScrabbleUtils.getByCoords(index, i, field);
             state = cell.getState().free();
+            Bonus b = cell.getBonus();
+            if (b == Bonus.WORD_2X || b == Bonus.WORD_3X) {
+                if (b.compareTo(wordBonus) > 0) wordBonus = b;
+            }
             if (state != prevState) {
                 if (!state) {
-                    // start of a new word
-                    sb.append(cell.getLetter());
-                    if (!cell.getState().free()) {
-                        cells.add(cell);
+                    // start a new word
+                    char letter = cell.getLetter();
+                    int score = getLetterMultiplier(b) * ScrabbleUtils.getLetterScore(letter);
+                    if (cell.getState() == CellState.OCCUPIED) {
+                        newWordScore += score;
                     }
+                    existingWordScore += score;
+
+                    sb.append(letter);
+                    cells.add(cell);
                 } else {
                     // end of a new word or single letter from another dimension
                     if (sb.length() > 1) {
-                        word = ImmutableWord.builder().word(sb.toString()).cells(cells).player(Player.HUMAN).build();
+                        int finalScore = wordBonus != Bonus.NONE
+                                ? existingWordScore * getWordMultiplier(wordBonus)
+                                : newWordScore;
+                        word = ImmutableWord.builder()
+                                .word(sb.toString())
+                                .score(finalScore)
+                                .cells(cells)
+                                .player(Player.HUMAN).build();
                         result.add(word);
                     }
                     sb = new StringBuilder();
                     cells.clear();
+                    newWordScore = existingWordScore = 0;
                 }
                 prevState = state;
             } else if (!state) {
-                sb.append(cell.getLetter());
-                if (!cell.getState().free()) {
-                    cells.add(cell);
+                char letter = cell.getLetter();
+                int score = getLetterMultiplier(b) * ScrabbleUtils.getLetterScore(letter);
+                if (cell.getState() == CellState.OCCUPIED) {
+                    newWordScore += score;
                 }
+                existingWordScore += score;
+
+                sb.append(cell.getLetter());
+                cells.add(cell);
             }
         }
         if (sb.length() > 1) {
-            word = ImmutableWord.builder().word(sb.toString()).cells(cells).player(Player.HUMAN).build();
+            int finalScore = wordBonus != Bonus.NONE
+                    ? existingWordScore * getWordMultiplier(wordBonus)
+                    : newWordScore;
+            word = ImmutableWord.builder()
+                    .word(sb.toString())
+                    .score(finalScore)
+                    .cells(cells)
+                    .player(Player.HUMAN).build();
             result.add(word);
         }
         return result;
@@ -108,26 +138,6 @@ public class WordUtils {
     }
 
     public static Pair<Integer, String> putWord(List<Cell> field, WordProposal proposal, String rack) {
-        Function<Bonus, Integer> multWord = bonus -> {
-            switch (bonus) {
-            case WORD_3X:
-                return 3;
-            case WORD_2X:
-                return 2;
-            default:
-                return 1;
-            }
-        };
-        Function<Bonus, Integer> multLetter = bonus -> {
-            switch (bonus) {
-            case LETTER_3X:
-                return 3;
-            case LETTER_2X:
-                return 2;
-            default:
-                return 1;
-            }
-        };
         Pattern p = proposal.getPattern();
         String slice = field.stream()
                 .filter(cell -> p.getDimension() == ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
@@ -139,7 +149,7 @@ public class WordUtils {
         int shift = slice.indexOf(content) - proposal.getPattern().getWordIndex(word);
         int x = -1, y = -1;
         Bonus wordBonus = Bonus.NONE;
-        int newWordScore = 0, existingWordScore = 0, letterScore = 0;
+        int newWordScore = 0, existingWordScore = 0;
         String r = rack;
         for (int i=0; i<word.length(); i++) {
             switch (p.getDimension()) {
@@ -154,24 +164,23 @@ public class WordUtils {
             }
             Cell c = ScrabbleUtils.getByCoords(x, y, field);
             char letter = word.charAt(i);
-            letterScore = ScrabbleUtils.getLetterScore(letter);
             Bonus b = c.getBonus();
             if (b == Bonus.WORD_2X || b == Bonus.WORD_3X) {
                 if (b.compareTo(wordBonus) > 0) wordBonus = b;
             }
-            int multiplier = multLetter.apply(b);
+            int score = getLetterMultiplier(b) * ScrabbleUtils.getLetterScore(letter);
             if (c.getState().free()) {
                 if (r != null) {
                     r = removeLetter(r, letter);
                     c.setLetter(letter);
                     c.setState(CellState.MACHINE);
                 }
-                newWordScore += (multiplier * letterScore);
+                newWordScore += score;
             }
-            existingWordScore += (multiplier * letterScore);
+            existingWordScore += score;
         }
         int finalScore = wordBonus != Bonus.NONE
-                ? existingWordScore * multWord.apply(wordBonus)
+                ? existingWordScore * getWordMultiplier(wordBonus)
                 : newWordScore;
         return new ImmutablePair(finalScore, r);
     }
@@ -231,5 +240,27 @@ public class WordUtils {
             }
         }
         return result;
+    }
+
+    public static int getWordMultiplier(Bonus bonus) {
+        switch (bonus) {
+        case WORD_3X:
+            return 3;
+        case WORD_2X:
+            return 2;
+        default:
+            return 1;
+        }
+    }
+
+    public static int getLetterMultiplier(Bonus bonus) {
+        switch (bonus) {
+        case LETTER_3X:
+            return 3;
+        case LETTER_2X:
+            return 2;
+        default:
+            return 1;
+        }
     }
 }

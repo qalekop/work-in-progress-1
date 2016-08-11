@@ -63,14 +63,14 @@ public class GameService {
 
     public MoveResponse processHumanMove(final String user, final List<Cell> cells) {
         // merge new cells with existing ones
-        List<Cell> savedCells = gameDAO.getGame(user).cells();
+        List<Cell> existingCells = gameDAO.getGame(user).cells();
         for (Cell cell : cells) {
-            Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), savedCells);
+            Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells);
             if (existingCell.getState() != CellState.AVAILABLE) {
                 LOG.debug("Occupied cell: {} {}", cell.getCol(), cell.getRow());
                 existingCell.setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(savedCells)
+                        .cells(cells)   // todo better to report only the misplaced tile
                         .message("Misplaced tile")
                         .build();
             }
@@ -81,17 +81,16 @@ public class GameService {
         // verify if no hanging tiles
         for (Cell cell : cells) {
             Point p = new Point(cell.getCol(), cell.getRow());
-            if (!ScrabbleUtils.isTraceable(p, p, savedCells)) {
+            if (!ScrabbleUtils.isTraceable(p, p, existingCells)) {
                 LOG.debug("Hanging cell: {} {}", cell.getCol(), cell.getRow());
-                ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), savedCells).setState(CellState.REJECTED);
+                ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells).setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(savedCells)
+                        .cells(cells)   // todo better to report only the misplaced tile
                         .message("Misplaced tile")
                         .build();
             }
         }
-
-        return verifyMove(savedCells);
+        return verifyMove(existingCells);
     }
 
     public MoveResponse verifyMove(List<Cell> cells) {
@@ -116,14 +115,17 @@ public class GameService {
                 });
                 return ImmutableResponseError.builder()
                         .message("Wrong word: " + w)
-                        .cells(cells)
+                        .cells(cells)   // todo better to report only the wrong word
                         .build();
             }
         }
+        int score = newWords.stream().map(Word::score).reduce(0, (a, b) -> (a + b));
         // todo implement me - save new words ?
         newWords.stream().forEach(System.out::println);
 
+        // todo List<Cell> below only for demo purposes - to return Machie Move instead !
         return ImmutableResponseSuccess.builder()
+                .score(score)
                 .cells(cells.stream()
                         .map(cell -> {
                             if (cell.getState() == CellState.OCCUPIED) {

@@ -14,7 +14,7 @@ import java.util.List;
 public interface ResponseSuccess extends MoveResponse {
 
     List<Cell> cells();
-    //todo add scores
+    int score();
 
     @Value.Derived
     default boolean success() {

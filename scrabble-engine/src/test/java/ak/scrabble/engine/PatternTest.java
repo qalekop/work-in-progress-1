@@ -8,7 +8,9 @@ import ak.scrabble.engine.model.CellState;
 import ak.scrabble.engine.model.DictFlavor;
 import ak.scrabble.engine.model.DimensionEnum;
 import ak.scrabble.engine.model.ImmutableSearchSpec;
+import ak.scrabble.engine.model.MoveResponse;
 import ak.scrabble.engine.model.Pattern;
+import ak.scrabble.engine.model.ResponseSuccess;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.WordProposal;
 import ak.scrabble.engine.service.DictService;
@@ -127,6 +129,21 @@ public class PatternTest {
         TestUtils.printField(field);
 
         assertTrue(score == 42);
+    }
+
+    @Test
+    public void testHumanMoveScoring() {
+        List<Cell> field = buildTestField(INDEX);
+        Cell c;
+        c = ScrabbleUtils.getByCoords(0, INDEX, field); c.setLetter('А'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(2, INDEX, field); c.setLetter('И'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(3, INDEX, field); c.setLetter('А'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(6, INDEX, field); c.setLetter('Р'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(6, INDEX + 1, field); c.setLetter('О'); c.setState(CellState.OCCUPIED);
+        c = ScrabbleUtils.getByCoords(6, INDEX + 2, field); c.setLetter('Т'); c.setState(CellState.OCCUPIED);
+
+        MoveResponse response = gameService.verifyMove(field);
+        assertTrue(response.success() && ((ResponseSuccess) response).score() == 42);
     }
 
     @Test
