@@ -24,9 +24,5 @@ class Actions {
     getField(response) {
         this.dispatch(response);
     }
-
-    toggleModal(type) {
-        this.dispatch(type);
-    }
 }
 module.exports = alt.createActions(Actions);

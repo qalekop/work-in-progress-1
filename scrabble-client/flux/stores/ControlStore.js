@@ -16,7 +16,8 @@ class ControlStore {
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED,
 
-            handleToggleModal: Actions.TOGGLE_MODAL
+            showModal: Actions.MAKE_MOVE,
+            hideModal: Actions.GET_FIELD
         });
     }
 
@@ -32,9 +33,12 @@ class ControlStore {
         this.enabled = ControlStore.checkField();
     }
 
-    handleToggleModal(type) {
-        console.log('*** ControlStore.handleToggleModal ' + type);
-        this.modalShown = !this.modalShown;
+    showModal() {
+        this.modalShown = true;
+    }
+
+    hideModal() {
+        this.modalShown = false;
     }
 
     static checkField() {
