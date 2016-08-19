@@ -2,11 +2,11 @@
  * Created by alexeikopylov on 16.02.16.
  */
 
-var Actions = require('../actions/Actions');
-var GAME_URL = '/scrabble/game/game/',
-    MOVE_URL = '/scrabble/game/move/';
+const Actions = require('../actions/Actions');
+const GAME_URL = '/scrabble/game/game/',
+      MOVE_URL = '/scrabble/game/move/';
 
-var GameSource = {
+const GameSource = {
     getField() {
         return {
             remote(state) {
@@ -47,6 +47,6 @@ var GameSource = {
             , success: Actions.getField
         }
     }
-
 };
+
 module.exports = GameSource;

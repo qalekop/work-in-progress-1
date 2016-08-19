@@ -6,6 +6,7 @@ const React = require('react');
 const Cells = require('./Cells');
 const Rack = require('./Rack');
 const ControlPanel = require('./ControlPanel');
+const ScModal = require('./ScModal');
 
 const AltContainer = require('alt-container');
 const RackStore = require('../flux/stores/RackStore');
@@ -24,6 +25,7 @@ const Scrabble = React.createClass({
                 </AltContainer>
                 <AltContainer store={ControlStore}>
                     <ControlPanel/>
+                    <ScModal/>
                 </AltContainer>
             </div>
         )

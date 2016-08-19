@@ -6,7 +6,7 @@ var React = require('react');
 var Actions = require('../flux/actions/Actions');
 var ControlStore = require('../flux/stores/ControlStore');
 
-var ButtonGo = React.createClass({
+const ButtonGo = React.createClass({
     getInitialState() {
         return {'hover': false};
     }
@@ -31,12 +31,33 @@ var ButtonGo = React.createClass({
     }
 });
 
-var ControlPanel = React.createClass({
+const ButtonToggleModal = React.createClass({
     getInitialState() {
-        return {'enabled': false};
+        return {'hover': false};
     }
 
-    , componentDidMount(){
+    , clicked(event) {
+        if (this.props.enabled) Actions.toggleModal("button");
+    }
+
+    , hover() {
+        this.setState({'hover': !this.state.hover});
+    }
+
+    , render() {
+        let className = 'button' + (this.props.enabled ? (this.state.hover ? ' hilighted' : '') : ' disabled');
+        return(
+            <div className={className}
+                 onMouseEnter={this.hover}
+                 onMouseLeave={this.hover}
+                 onClick={this.clicked}>Modal!
+            </div>
+        )
+    }
+});
+
+const ControlPanel = React.createClass({
+    componentDidMount(){
         ControlStore.listen(this.onChange);
     }
 
@@ -52,8 +73,10 @@ var ControlPanel = React.createClass({
         return (
             <div className="rack">
                 <ButtonGo enabled={this.props.enabled}/>
+                <ButtonToggleModal enabled="true"/>
             </div>
         )
     }
 });
+
 module.exports = ControlPanel;

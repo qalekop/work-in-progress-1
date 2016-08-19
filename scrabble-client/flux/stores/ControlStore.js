@@ -10,10 +10,13 @@ const GameStore = require('./GameStore');
 class ControlStore {
     constructor() {
         this.enabled = false;
+        this.modalShown = false;
 
         this.bindListeners({
             handleTileDropped: Actions.TILE_DROPPED,
-            handleTileReverted: Actions.TILE_REVERTED
+            handleTileReverted: Actions.TILE_REVERTED,
+
+            handleToggleModal: Actions.TOGGLE_MODAL
         });
     }
 
@@ -27,6 +30,11 @@ class ControlStore {
         var cell = ControlStore.findCell(tile.row, tile.col);
         if (!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
         this.enabled = ControlStore.checkField();
+    }
+
+    handleToggleModal(type) {
+        console.log('*** ControlStore.handleToggleModal ' + type);
+        this.modalShown = !this.modalShown;
     }
 
     static checkField() {

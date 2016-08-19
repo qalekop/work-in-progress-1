@@ -80,6 +80,7 @@ public class GameController {
         List<Cell> field = gameService.getGame(user.getName());
         ResponseSuccess response = ImmutableResponseSuccess.builder()
                 .cells(field)
+                .score(0) // todo return saved score if any
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
