@@ -24,5 +24,9 @@ class Actions {
     getField(response) {
         this.dispatch(response);
     }
+
+    hideDialog() {
+        this.dispatch();
+    }
 }
 module.exports = alt.createActions(Actions);

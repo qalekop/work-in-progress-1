@@ -6,12 +6,13 @@ const React = require('react');
 const Cells = require('./Cells');
 const Rack = require('./Rack');
 const ControlPanel = require('./ControlPanel');
-const ScModal = require('./ScModal');
+const ScrabbleDialog = require('./ScrabbleDialog');
 
 const AltContainer = require('alt-container');
 const RackStore = require('../flux/stores/RackStore');
 const GameStore = require('../flux/stores/GameStore');
 const ControlStore = require('../flux/stores/ControlStore');
+const DialogStore = require('../flux/stores/DialogStore');
 
 const Scrabble = React.createClass({
     render() {
@@ -25,7 +26,9 @@ const Scrabble = React.createClass({
                 </AltContainer>
                 <AltContainer store={ControlStore}>
                     <ControlPanel/>
-                    <ScModal/>
+                </AltContainer>
+                <AltContainer store={DialogStore}>
+                    <ScrabbleDialog/>
                 </AltContainer>
             </div>
         )

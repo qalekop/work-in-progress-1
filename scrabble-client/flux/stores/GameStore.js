@@ -42,10 +42,6 @@ class GameStore {
 
     handleGetField(response) {
         this.cells = response.cells;
-        if (!response.success) {
-            console.log('*** Error:' + response.message);
-            // window.alert(response.message);
-        }
     }
 }
 
