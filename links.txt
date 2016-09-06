@@ -1,3 +1,4 @@
 https://blog.openshift.com/how-to-build-java-websocket-applications-using-the-jsr-356-api/
 https://tomcat.apache.org/tomcat-8.0-doc/web-socket-howto.html
 http://www.hascode.com/2013/08/creating-a-chat-application-using-java-ee-7-websockets-and-glassfish-4/
+https://www.npmjs.com/package/react-websocket

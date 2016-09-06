@@ -25,7 +25,7 @@ class Actions {
         this.dispatch(response);
     }
 
-    hideDialog() {
+    hideDialog(message) {
         this.dispatch();
     }
 }

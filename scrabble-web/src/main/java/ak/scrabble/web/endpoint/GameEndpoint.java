@@ -6,27 +6,36 @@ import org.slf4j.LoggerFactory;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.security.Principal;
 
 /**
  * Created by akopylov on 02/09/16.
  */
-@ServerEndpoint(value="/scrabble/game/feedback/{user}")
+@ServerEndpoint(value="/scrabble/game/feedback/")
 public class GameEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(GameEndpoint.class);
-    private static final String USER = "user";
+    private String user;
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("user") String user) {
-        LOG.info("websocket session opened for user=" + user);
-        session.getUserProperties().put(USER, user);
+    public void onOpen(Session session) {
+        Principal p = session.getUserPrincipal();
+        if (p == null) {
+            throw new IllegalStateException("No auth user");
+        }
+        user = p.getName();
+        LOG.info("websocket session opened: " + user);
     }
 
     @OnMessage
-    public void onMessage(Session session, String message /* ? */) throws IOException {
-        String user = (String) session.getUserProperties().get(USER);
-        session.getBasicRemote().sendText("Hello, " + user + ": " + message);
+    public String onMessage(String message /* ? */) throws IOException {
+        // long operation
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+        return "Hello, " + user + ": " + message;
     }
 }

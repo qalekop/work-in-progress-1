@@ -5,6 +5,9 @@
 const alt = require('../../alt');
 
 const Actions = require('../actions/Actions');
+const ENDPOINT_URL = '/scrabble/game/feedback/';
+
+var ws;
 
 class DialogStore {
     constructor() {
@@ -17,6 +20,20 @@ class DialogStore {
             hideDialog: Actions.HIDE_DIALOG,
             proceedWithDialog: Actions.GET_FIELD
         });
+
+        var endpointUrl = (window.location.protocol == 'http:' ? 'ws://' : 'wss://')
+            + window.location.host + ENDPOINT_URL;
+        if ('WebSocket' in window) {
+            ws = new WebSocket(endpointUrl);
+        } else if ('MozWebSocket' in window) {
+            ws = new MozWebSocket(endpointUrl);
+        } else {
+            console.log('WebSocket is not supported by this browser.');
+        }
+        if (!!ws) ws.onmessage = function(event) {
+            console.log('*** response received: ' + event.data);
+            Actions.hideDialog();
+        };
     }
 
     hideDialog() {
@@ -26,7 +43,7 @@ class DialogStore {
     showDialog() {
         this.modalShown = true;
         this.showCloseButton = false;
-        this.text = 'Please wait&hellip;';
+        this.text = 'Please wait...';
     }
 
     proceedWithDialog(response) {
@@ -34,8 +51,8 @@ class DialogStore {
             console.log('*** Error:' + response.message);
             this.showCloseButton = true;
             this.text = response.message;
-        } else {
-            this.modalShown = false;
+        } else if (this.modalShown) {
+            if (!!ws) ws.send('waiting for machine move');
         }
     }
 }

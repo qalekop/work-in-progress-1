@@ -22,12 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -103,8 +103,12 @@ public class GameController {
             // todo (where to) fire Machine Move sequence?
         }
 */
+
+        ////////////////////////////////////
+        MoveResponse mr = ImmutableResponseSuccess.builder().score(0).cells(Collections.emptyList()).build();
+        ////////////////////////////////////
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(mapper.writer().writeValueAsString(moveResponse), headers, HttpStatus.OK);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(/*moveResponse*/mr), headers, HttpStatus.OK);
     }
 }

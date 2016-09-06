@@ -18,7 +18,6 @@ const ScrabbleDialog = React.createClass({
     }
 
     , hideModal() {
-        console.log('*** ScrabbleDialog hide');
         Actions.hideDialog();
     }
 
@@ -26,7 +25,7 @@ const ScrabbleDialog = React.createClass({
         if (this.props.showCloseButton) {
             return (
                 <Modal isOpen={this.props.modalShown} onCancel={this.hideModal} width="medium">
-                    <ModalHeader text="Web Scrabble" showCloseButton="true" onClose={this.hideModal}/>
+                    <ModalHeader text="Web Scrabble" showCloseButton={this.props.showCloseButton} onClose={this.hideModal}/>
                     <ModalBody>{this.props.text}</ModalBody>
                     <ModalFooter>
                         <Button type="link-cancel" onClick={this.hideModal}>Close</Button>
@@ -36,7 +35,7 @@ const ScrabbleDialog = React.createClass({
         } else {
             return (
                 <Modal isOpen={this.props.modalShown} width="medium">
-                    <ModalHeader text="Web Scrabble" showCloseButton="false"/>
+                    <ModalHeader text="Web Scrabble" showCloseButton={this.props.showCloseButton}/>
                     <ModalBody>{this.props.text}</ModalBody>
                 </Modal>
             );
