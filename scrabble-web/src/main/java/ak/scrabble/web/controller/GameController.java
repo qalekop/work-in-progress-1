@@ -107,8 +107,9 @@ public class GameController {
         ////////////////////////////////////
         MoveResponse mr = ImmutableResponseSuccess.builder().score(0).cells(Collections.emptyList()).build();
         ////////////////////////////////////
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(mapper.writer().writeValueAsString(/*moveResponse*/mr), headers, HttpStatus.OK);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(/*moveResponse*/ mr), headers, HttpStatus.OK);
     }
 }

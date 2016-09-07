@@ -25,8 +25,11 @@ class Actions {
         this.dispatch(response);
     }
 
-    hideDialog(message) {
+    hideDialog() {
         this.dispatch();
+    }
+    handleResponse(response) {
+        this.dispatch(response);
     }
 }
 module.exports = alt.createActions(Actions);

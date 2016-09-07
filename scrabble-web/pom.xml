@@ -95,20 +95,20 @@
             <version>${org.springsecurity.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring3</artifactId>
-            <version>${org.thymeleaf.version}</version>
-        </dependency>
+         <dependency>
+             <groupId>org.thymeleaf</groupId>
+             <artifactId>thymeleaf-spring3</artifactId>
+             <version>${org.thymeleaf.version}</version>
+         </dependency>
          <dependency>
              <groupId>com.fasterxml.jackson.core</groupId>
              <artifactId>jackson-databind</artifactId>
-             <version>2.5.0</version>
+             <version>${com.fasterxml.jackson.core.version}</version>
          </dependency>
          <dependency>
              <groupId>org.codehaus.jackson</groupId>
              <artifactId>jackson-mapper-asl</artifactId>
-             <version>1.9.13</version>
+             <version>${org.codehaus.jackson.version}</version>
          </dependency>
          <dependency>
              <groupId>javax</groupId>

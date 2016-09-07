@@ -44,7 +44,7 @@ const GameSource = {
                 })
             }
             , local() { return null; }
-            , success: Actions.getField
+            , success: Actions.handleResponse
         }
     }
 };
