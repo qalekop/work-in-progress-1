@@ -41,7 +41,7 @@ class GameStore {
     }
 
     handleGetField(response) {
-        this.cells = response.cells;
+        if (!!response) this.cells = response.cells;
     }
 }
 

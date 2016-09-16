@@ -8,7 +8,6 @@ import ak.scrabble.engine.model.Rack;
 import ak.scrabble.engine.model.ResponseError;
 import ak.scrabble.engine.model.ResponseSuccess;
 import ak.scrabble.engine.service.GameService;
-import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.security.SecurityModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,9 +23,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,8 +43,6 @@ public class GameController {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    RackService rackService;
-    @Autowired
     GameService gameService;
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL, method = RequestMethod.GET)
@@ -59,11 +56,11 @@ public class GameController {
      */
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
             , method = RequestMethod.POST)
-    public ResponseEntity<String> getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException, SQLException {
 
         final String name = user.getName();
         final String existingLetters = letters.getFirst(LETTERS_FIELD);
-        Rack rack = rackService.getRack(name, StringUtils.isEmpty(existingLetters) ? "" : existingLetters);
+        Rack rack = gameService.getGame(user.getName()).rack().getLeft();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -75,9 +72,9 @@ public class GameController {
      */
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
             , method = RequestMethod.GET)
-    public ResponseEntity<String> getField(Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> getField(Principal user) throws JsonProcessingException, SQLException {
         LOG.info("getting game for " + user.getName());
-        List<Cell> field = gameService.getGame(user.getName());
+        List<Cell> field = gameService.getGame(user.getName()).cells();
         ResponseSuccess response = ImmutableResponseSuccess.builder()
                 .cells(field)
                 .score(0) // todo return saved score if any

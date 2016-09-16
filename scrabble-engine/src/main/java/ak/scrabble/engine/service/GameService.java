@@ -6,6 +6,7 @@ import ak.scrabble.engine.model.*;
 import ak.scrabble.engine.rules.RulesService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,30 +37,44 @@ public class GameService {
     @Autowired
     private DictService dictService;
 
-    public List<Cell> getGame(final String user) {
-        List<Cell> result;
+    @Autowired
+    private BagService bagService;
+
+    @Autowired
+    private RackService rackService;
+
+    public Game getGame(final String user) throws SQLException {
+        Game game;
+        List<Cell> cells;
         if (!gameDAO.savedStateExists(user)) {
             LOG.debug("No prev. state found for user={}", user);
-            result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
+            cells = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
             for (int col=0; col<Configuration.FIELD_SIZE; col++) {
                 for (int row=0; row<Configuration.FIELD_SIZE; row++) {
                     Cell cell = new Cell(col, row);
                     cell.setBonus(ScrabbleUtils.bonusForCell(col, row));
-                    result.add(cell);
+                    cells.add(cell);
                 }
             }
-            // todo code below only for dev purposes !!!
-            Cell c = result.stream().filter(cell -> cell.getRow() == 3 && cell.getCol() == 3).findFirst().get();
+            // todo 3 lines below only for dev purposes !!!
+            Cell c = cells.stream().filter(cell -> cell.getRow() == 3 && cell.getCol() == 3).findFirst().get();
             c.setState(CellState.MACHINE);
             c.setLetter('А');
-            Game game = ImmutableGame.builder()
-                    .cells(result).score(new ImmutablePair<>(0, 0))
+
+            List<Character> bag = bagService.initBag();
+            Rack rackHuman = rackService.getRack(bag, StringUtils.EMPTY);
+            Rack rackMachine = rackService.getRack(bag, StringUtils.EMPTY);
+            game = ImmutableGame.builder()
+                    .cells(cells)
+                    .score(new ImmutablePair<>(0, 0))
+                    .rack(new ImmutablePair<>(rackHuman, rackMachine))
+                    .bag(bag)
                     .build();
             gameDAO.persistGame(user, game, true);
         } else {
-            result = gameDAO.getGame(user).cells();
+            game = gameDAO.getGame(user);
         }
-        return result;
+        return game;
     }
 
     public MoveResponse processHumanMove(final String user, final List<Cell> cells) {
@@ -123,7 +139,7 @@ public class GameService {
         // todo implement me - save new words ?
         newWords.stream().forEach(System.out::println);
 
-        // todo List<Cell> below only for demo purposes - to return Machie Move instead !
+        // todo List<Cell> below only for demo purposes - to return Machine Move instead !
         return ImmutableResponseSuccess.builder()
                 .score(score)
                 .cells(cells.stream()

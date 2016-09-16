@@ -13,4 +13,6 @@ import java.util.List;
 public interface Game {
     List<Cell> cells();
     Pair<Integer, Integer> score();
+    Pair<Rack, Rack> rack();
+    List<Character> bag();
 }

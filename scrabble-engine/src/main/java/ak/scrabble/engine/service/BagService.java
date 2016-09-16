@@ -18,31 +18,12 @@ public class BagService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BagService.class);
 
-    public List<String> getBag(final String user) {
-        // todo Ask db
-        List<String> bag = new ArrayList<>();
+    public List<Character> initBag() {
+        List<Character> bag = new ArrayList<>();
         Configuration.getAllLetters().stream().forEach(letter -> {
             int quantity = Configuration.getQuantity(letter);
             for (int i = 0; i < quantity; i++) bag.add(letter);
         });
-        // todo persist bag
         return bag;
-    }
-
-    public List<String> refillRack(List<String> bag, byte count) {
-        int size = Configuration.RACK_SIZE - count;
-        List<String> result = new ArrayList<>(size);
-        Optional<String> letter;
-        for (int i=0; i<size; i++) {
-            letter = popRandom(bag);
-            if (letter.isPresent()) result.add(letter.get());
-        }
-        // todo persist bag
-        return result;
-    }
-
-    private Optional<String> popRandom(List<String> bag) {
-        if (CollectionUtils.isEmpty(bag)) return Optional.empty();
-        return Optional.of(bag.remove((int) (Math.random() * bag.size())));
     }
 }

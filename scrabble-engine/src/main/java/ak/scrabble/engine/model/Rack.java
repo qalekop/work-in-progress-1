@@ -28,7 +28,7 @@ public class Rack {
         this.letters = letters;
     }
 
-    public boolean addPair(String letter, byte score) {
+    public boolean addPair(char letter, byte score) {
         return letters.size() < length && letters.add(new Pair(letter, score));
     }
 
@@ -39,15 +39,15 @@ public class Rack {
 
     //<editor-fold desc="Internal class(es)">
     private class Pair {
-        private String letter;
+        private char letter;
         private byte score;
 
-        public Pair(String letter, byte score) {
+        public Pair(char letter, byte score) {
             this.letter = letter;
             this.score = score;
         }
 
-        public String getLetter() {
+        public char getLetter() {
             return letter;
         }
 

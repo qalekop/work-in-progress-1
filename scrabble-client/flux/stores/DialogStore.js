@@ -21,6 +21,7 @@ class DialogStore {
             proceedWithDialog: Actions.HANDLE_RESPONSE
         });
 
+/*
         var endpointUrl = (window.location.protocol == 'http:' ? 'ws://' : 'wss://')
             + window.location.host + ENDPOINT_URL;
         if ('WebSocket' in window) {
@@ -35,6 +36,7 @@ class DialogStore {
             Actions.hideDialog();
             //Actions.getField();
         };
+*/
     }
 
     hideDialog() {

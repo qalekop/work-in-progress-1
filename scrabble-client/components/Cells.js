@@ -59,7 +59,8 @@ var Cell = React.createClass({
 var Cells = React.createClass({
 
     componentDidMount() {
-        GameStore.getField();
+        console.log('*** Cells.componentDidMount');
+        // GameStore.getField();
     }
 
     , render() {

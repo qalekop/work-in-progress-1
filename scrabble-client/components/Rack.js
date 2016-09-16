@@ -19,7 +19,8 @@ var Tile = React.createClass({
 var Rack = React.createClass({
     componentDidMount() {
         // todo implement me!
-        RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
+        console.log('*** RackStore.componentDidMount');
+        // RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
     }
 
     , render() {

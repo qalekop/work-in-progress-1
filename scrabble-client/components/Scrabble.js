@@ -13,9 +13,21 @@ const RackStore = require('../flux/stores/RackStore');
 const GameStore = require('../flux/stores/GameStore');
 const ControlStore = require('../flux/stores/ControlStore');
 const DialogStore = require('../flux/stores/DialogStore');
+const ScrabbleStore = require('../flux/stores/ScrabbleStore');
+
+const Actions = require('../flux/actions/Actions');
 
 const Scrabble = React.createClass({
-    render() {
+    componentDidMount(){
+        ScrabbleStore.listen(this.onChange);
+        Actions.bootstrapRequest();
+    }
+
+    , componentWillUnmount() {
+        ScrabbleStore.unlisten(this.onChange);
+    }
+
+    , render() {
         return(
             <div>
                 <AltContainer store={GameStore}>

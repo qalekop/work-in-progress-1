@@ -35,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 public class RepoTest extends AbstractDBTest {
 
     private static final String USER_FAILURE = "scrabble";
+    private static final String USER_SCARBBLE = "scrabble";
     private static final String USER_SUCCESS = "mbricker";
 
     @Autowired
@@ -67,7 +68,7 @@ public class RepoTest extends AbstractDBTest {
     }
 
     @Test
-    public void testGameDAO() {
+    public void testGameDAO() throws SQLException {
         final int two = 2;
         List<Cell> result = new ArrayList<>(2);
         for (int i=0; i<two; i++) {
@@ -87,6 +88,12 @@ public class RepoTest extends AbstractDBTest {
 
         gameDAO.removeGame(USER_SUCCESS);
         assertFalse(gameDAO.savedStateExists(USER_SUCCESS));
+    }
+
+    @Test
+    public void testGameForScrabble() {
+        Game game = gameDAO.getGame(USER_SCARBBLE);
+        assertTrue(game.bag().size() == 3);
     }
 
     @Test
