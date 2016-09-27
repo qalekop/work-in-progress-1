@@ -31,9 +31,9 @@ class ScrabbleStore {
         console.log('*** endpoint url=' + endpointUrl + "; " + ws);
         if (!!ws) {
             ws.onmessage = function(event) {
-                // todo implement me
                 var response = JSON.parse(event.data);
-                console.log('*** response received: ' + response.value);
+                console.log('*** response received');
+                Actions.getField(response);
             };
             ws.onopen = function(event) {
                 console.log('*** ws open');
