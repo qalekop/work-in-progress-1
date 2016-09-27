@@ -5,10 +5,8 @@ import ak.scrabble.engine.da.GameDAO;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.Game;
 import ak.scrabble.engine.model.ImmutableGame;
-import ak.scrabble.engine.model.Rack;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -66,8 +64,10 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
                 new MapSqlParameterSource(P_USER, user),
                 (RowMapper<Game>) (resultSet, i) -> ImmutableGame.builder()
                         .cells((Iterable<? extends Cell>) new XStream().fromXML(resultSet.getString(P_FIELD)))
-                        .score(new ImmutablePair<>(resultSet.getInt(SCORE_HUMAN), resultSet.getInt(SCORE_MACHINE)))
-                        .rack(fromStrings(resultSet.getString(RACK_HUMAN), resultSet.getString(RACK_MACHINE)))
+                        .scoreHuman(resultSet.getInt(SCORE_HUMAN))
+                        .scoreMachine(resultSet.getInt(SCORE_MACHINE))
+                        .rackHuman((Iterable<? extends Pair<Character, Byte>>) new XStream().fromXML(resultSet.getString(RACK_HUMAN)))
+                        .rackMachine((Iterable<? extends Pair<Character, Byte>>) new XStream().fromXML(resultSet.getString(RACK_MACHINE)))
                         .bag(toCharArray(resultSet.getString(P_BAG)))
                         .build());
     }
@@ -77,10 +77,10 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue(P_USER, user)
                 .addValue(P_FIELD, new XStream().toXML(game.cells()))
-                .addValue(SCORE_HUMAN, game.score().getLeft())
-                .addValue(SCORE_MACHINE, game.score().getRight())
-                .addValue(RACK_HUMAN, new XStream().toXML(game.rack().getLeft()))
-                .addValue(RACK_MACHINE, new XStream().toXML(game.rack().getRight()))
+                .addValue(SCORE_HUMAN, game.scoreHuman())
+                .addValue(SCORE_MACHINE, game.scoreMachine())
+                .addValue(RACK_HUMAN, new XStream().toXML(game.rackHuman()))
+                .addValue(RACK_MACHINE, new XStream().toXML(game.rackMachine()))
                 .addValue(P_BAG, game.bag().stream().map(String::valueOf).reduce("", (a, b) -> (a + b)))
                 ;
         int rowCount = jdbc.update(create ? S_CREATE : S_UPDATE, params);
@@ -93,12 +93,6 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
     }
 
     //<editor-fold desc="private util methods>
-
-    private Pair<Rack, Rack> fromStrings(String human, String machine) {
-        Rack rackHuman = (Rack) new XStream().fromXML(human);
-        Rack rackMachine = (Rack) new XStream().fromXML(machine);
-        return new ImmutablePair<>(rackHuman, rackMachine);
-    }
 
     private List<Character> toCharArray(String string) {
         if (StringUtils.isBlank(string)) {

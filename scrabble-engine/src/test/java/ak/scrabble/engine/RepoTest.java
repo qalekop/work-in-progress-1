@@ -78,7 +78,8 @@ public class RepoTest extends AbstractDBTest {
             result.add(cell);
         }
         Game game = ImmutableGame.builder()
-                .cells(result).score(new ImmutablePair<>(two, two))
+                .cells(result)
+                .scoreHuman(two).scoreMachine(two)
                 .build();
 
         gameDAO.persistGame(USER_SUCCESS, game, true);

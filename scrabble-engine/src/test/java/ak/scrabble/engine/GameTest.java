@@ -34,8 +34,8 @@ public class GameTest {
     public void testCreateGame() throws SQLException {
         assertFalse("Oops!", gameDAO.savedStateExists(USER_SCARBBLE));
         Game game = gameService.getGame(USER_SCARBBLE);
-        assertTrue(game.rack().getLeft().getLetters().size() == Configuration.RACK_SIZE);
-        assertTrue(game.rack().getRight().getLetters().size() == Configuration.RACK_SIZE);
+        assertTrue(game.rackHuman().size() == Configuration.RACK_SIZE);
+        assertTrue(game.rackMachine().size() == Configuration.RACK_SIZE);
         assertTrue(game.bag().size() == 88);
     }
 }

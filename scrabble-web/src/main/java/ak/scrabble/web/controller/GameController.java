@@ -1,10 +1,8 @@
 package ak.scrabble.web.controller;
 
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.ImmutableResponseError;
 import ak.scrabble.engine.model.ImmutableResponseSuccess;
 import ak.scrabble.engine.model.MoveResponse;
-import ak.scrabble.engine.model.Rack;
 import ak.scrabble.engine.model.ResponseError;
 import ak.scrabble.engine.model.ResponseSuccess;
 import ak.scrabble.engine.service.GameService;
@@ -49,22 +47,6 @@ public class GameController {
     public String scrabble(Model model, SecurityContextHolderAwareRequestWrapper request) {
         model.addAttribute("name", request.getRemoteUser());
         return SecurityModel.SECURE_URI + GAME_URL;
-    }
-
-    /**
-     * Updates human's rack (when initing game or after a successful move/shuffle and returns it to the client.
-     */
-    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
-            , method = RequestMethod.POST)
-    public ResponseEntity<String> getRack(@RequestBody MultiValueMap<String, String> letters, Principal user) throws JsonProcessingException, SQLException {
-
-        final String name = user.getName();
-        final String existingLetters = letters.getFirst(LETTERS_FIELD);
-        Rack rack = gameService.getGame(user.getName()).rack().getLeft();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(mapper.writer().writeValueAsString(rack.getLetters()), headers, HttpStatus.OK);
     }
 
     /**

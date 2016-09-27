@@ -8,6 +8,7 @@ import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +63,12 @@ public class GameService {
             c.setLetter('А');
 
             List<Character> bag = bagService.initBag();
-            Rack rackHuman = rackService.getRack(bag, StringUtils.EMPTY);
-            Rack rackMachine = rackService.getRack(bag, StringUtils.EMPTY);
+            List<Pair<Character, Byte>> rackHuman = rackService.getRack(bag, StringUtils.EMPTY);
+            List<Pair<Character, Byte>> rackMachine = rackService.getRack(bag, StringUtils.EMPTY);
             game = ImmutableGame.builder()
                     .cells(cells)
-                    .score(new ImmutablePair<>(0, 0))
-                    .rack(new ImmutablePair<>(rackHuman, rackMachine))
+                    .scoreHuman(0).scoreMachine(0)
+                    .rackHuman(rackHuman).rackMachine(rackMachine)
                     .bag(bag)
                     .build();
             gameDAO.persistGame(user, game, true);

@@ -1,5 +1,6 @@
 package ak.scrabble.engine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang3.tuple.Pair;
 import org.immutables.value.Value;
@@ -14,7 +15,14 @@ import java.util.List;
 @JsonSerialize(as = ImmutableGame.class)
 public interface Game {
     List<Cell> cells();
-    Pair<Integer, Integer> score();
-    Pair<Rack, Rack> rack();
+
+    int scoreHuman();
+    int scoreMachine();
+
+    List<Pair<Character, Byte>> rackHuman();
+    @JsonIgnore
+    List<Pair<Character, Byte>> rackMachine();
+
+    @JsonIgnore
     List<Character> bag();
 }
