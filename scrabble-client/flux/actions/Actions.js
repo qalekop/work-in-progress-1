@@ -6,7 +6,6 @@ var alt = require('../../alt');
 
 class Actions {
     getRack(rack) {
-        // todo reconsider, since there's going to be one single umblella 'game state' object
         this.dispatch(rack);
     }
 
@@ -22,8 +21,8 @@ class Actions {
         this.dispatch();
     }
     
-    getField(response) {
-        this.dispatch(response);
+    getField(cells) {
+        this.dispatch(cells);
     }
 
     hideDialog() {
@@ -31,7 +30,6 @@ class Actions {
     }
 
     handleResponse(response) {
-        // todo do I really need it?
         this.dispatch(response);
     }
 

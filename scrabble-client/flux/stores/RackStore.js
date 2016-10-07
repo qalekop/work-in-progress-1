@@ -5,7 +5,6 @@
 var alt = require('../../alt');
 
 var Actions = require('../actions/Actions');
-var Source = require('../sources/RackSource');
 
 class RackStore {
     constructor() {
@@ -15,7 +14,6 @@ class RackStore {
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED
         });
-        this.exportAsync(Source);
     }
 
     handleGetRack(letters) {

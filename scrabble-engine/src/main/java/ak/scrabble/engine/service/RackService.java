@@ -1,6 +1,7 @@
 package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
+import ak.scrabble.engine.model.Tile;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,13 @@ public class RackService {
      * @param existingLetters Letters to keep when shuffling
      * @return rack
      */
-    public List<Pair<Character, Byte>> getRack(List<Character> bag, final String existingLetters) {
-        List<Pair<Character, Byte>> result = new ArrayList<>(Configuration.RACK_SIZE);
+    public List<Tile> getRack(List<Character> bag, final String existingLetters) {
+        List<Tile> result = new ArrayList<>(Configuration.RACK_SIZE);
         List<Character> letters = refillRack(bag, (byte) existingLetters.length());
         for (int i=0; i< existingLetters.length(); i++) {
             letters.add(existingLetters.charAt(i));
         }
-        letters.forEach(letter -> result.add(new ImmutablePair<>(letter, Configuration.getScore(letter))));
+        letters.forEach(letter -> result.add(new Tile(letter, Configuration.getScore(letter))));
         return result;
     }
 

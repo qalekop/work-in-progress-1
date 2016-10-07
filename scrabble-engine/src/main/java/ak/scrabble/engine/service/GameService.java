@@ -63,8 +63,8 @@ public class GameService {
             c.setLetter('А');
 
             List<Character> bag = bagService.initBag();
-            List<Pair<Character, Byte>> rackHuman = rackService.getRack(bag, StringUtils.EMPTY);
-            List<Pair<Character, Byte>> rackMachine = rackService.getRack(bag, StringUtils.EMPTY);
+            List<Tile> rackHuman = rackService.getRack(bag, StringUtils.EMPTY);
+            List<Tile> rackMachine = rackService.getRack(bag, StringUtils.EMPTY);
             game = ImmutableGame.builder()
                     .cells(cells)
                     .scoreHuman(0).scoreMachine(0)
@@ -87,7 +87,7 @@ public class GameService {
                 LOG.debug("Occupied cell: {} {}", cell.getCol(), cell.getRow());
                 existingCell.setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(cells)   // todo better to report only the misplaced tile
+                        .cells(cells)   // todo better to report only the misplaced tile(s)
                         .message("Misplaced tile")
                         .build();
             }

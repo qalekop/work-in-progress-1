@@ -5,6 +5,7 @@ import ak.scrabble.engine.da.GameDAO;
 import ak.scrabble.engine.model.Cell;
 import ak.scrabble.engine.model.Game;
 import ak.scrabble.engine.model.ImmutableGame;
+import ak.scrabble.engine.model.Tile;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -66,8 +67,8 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
                         .cells((Iterable<? extends Cell>) new XStream().fromXML(resultSet.getString(P_FIELD)))
                         .scoreHuman(resultSet.getInt(SCORE_HUMAN))
                         .scoreMachine(resultSet.getInt(SCORE_MACHINE))
-                        .rackHuman((Iterable<? extends Pair<Character, Byte>>) new XStream().fromXML(resultSet.getString(RACK_HUMAN)))
-                        .rackMachine((Iterable<? extends Pair<Character, Byte>>) new XStream().fromXML(resultSet.getString(RACK_MACHINE)))
+                        .rackHuman((Iterable<? extends Tile>) new XStream().fromXML(resultSet.getString(RACK_HUMAN)))
+                        .rackMachine((Iterable<? extends Tile>) new XStream().fromXML(resultSet.getString(RACK_MACHINE)))
                         .bag(toCharArray(resultSet.getString(P_BAG)))
                         .build());
     }

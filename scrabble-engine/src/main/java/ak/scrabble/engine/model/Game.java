@@ -19,9 +19,9 @@ public interface Game {
     int scoreHuman();
     int scoreMachine();
 
-    List<Pair<Character, Byte>> rackHuman();
+    List<Tile> rackHuman();
     @JsonIgnore
-    List<Pair<Character, Byte>> rackMachine();
+    List<Tile> rackMachine();
 
     @JsonIgnore
     List<Character> bag();

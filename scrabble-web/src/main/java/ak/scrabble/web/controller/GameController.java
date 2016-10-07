@@ -68,27 +68,17 @@ public class GameController {
     }
 
     /**
-     * Accepts human's move, verifies it and, if OK, starts MachineMove process.
+     * Accepts human's move, verifies it and sends appropriate response to the client.
      */
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/move"
             , method = RequestMethod.POST
             , headers = {"Content-type=application/json"})
-    @ResponseBody // todo response with 'success' to wait for the next PUSH or 'error' with a proper message
+    @ResponseBody
     public ResponseEntity<String> makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
-/*
-        if (moveResponse instanceof ResponseSuccess) {
-            // todo (where to) fire Machine Move sequence?
-        }
-*/
-
-        ////////////////////////////////////
-        MoveResponse mr = ImmutableResponseSuccess.builder().score(0).cells(Collections.emptyList()).build();
-        ////////////////////////////////////
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(mapper.writer().writeValueAsString(/*moveResponse*/ mr), headers, HttpStatus.OK);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(moveResponse), headers, HttpStatus.OK);
     }
 }

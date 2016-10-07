@@ -5,7 +5,6 @@
 const alt = require('../../alt');
 
 const Actions = require('../actions/Actions');
-const GameStore = require('./GameStore');
 
 class ControlStore {
     constructor() {

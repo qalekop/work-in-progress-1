@@ -10,7 +10,6 @@ const ScrabbleDialog = require('./ScrabbleDialog');
 
 const AltContainer = require('alt-container');
 const RackStore = require('../flux/stores/RackStore');
-const GameStore = require('../flux/stores/GameStore');
 const ControlStore = require('../flux/stores/ControlStore');
 const DialogStore = require('../flux/stores/DialogStore');
 const ScrabbleStore = require('../flux/stores/ScrabbleStore');
@@ -20,6 +19,7 @@ const Actions = require('../flux/actions/Actions');
 const Scrabble = React.createClass({
     componentDidMount(){
         ScrabbleStore.listen(this.onChange);
+        console.log('*** Scrabble.componentDidMount');
         Actions.bootstrapRequest();
     }
 
@@ -30,7 +30,7 @@ const Scrabble = React.createClass({
     , render() {
         return(
             <div>
-                <AltContainer store={GameStore}>
+                <AltContainer store={ScrabbleStore}>
                     <Cells/>
                 </AltContainer>
                 <AltContainer store={RackStore}>

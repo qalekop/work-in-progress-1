@@ -4,7 +4,6 @@
 var React = require('react');
 
 var Actions = require('../flux/actions/Actions');
-var GameStore = require('../flux/stores/GameStore');
 
 const SIZE = 50;
 
@@ -60,7 +59,6 @@ var Cells = React.createClass({
 
     componentDidMount() {
         console.log('*** Cells.componentDidMount');
-        // GameStore.getField();
     }
 
     , render() {
