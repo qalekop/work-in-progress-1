@@ -20,7 +20,6 @@ class ScrabbleStore {
         this.bindListeners({
             handleMakeMove: Actions.MAKE_MOVE,
             handleGetField: Actions.GET_FIELD,
-            handleGetRack: Actions.GET_RACK,
             handleBootstrapRequest: Actions.BOOTSTRAP_REQUEST,
             handleWsReady: Actions.WS_READY
         });
@@ -81,7 +80,6 @@ class ScrabbleStore {
     }
 
     handleBootstrapRequest() {
-        console.log('*** ScrabbleStore.handleBootstrapRequest', this.wsReady, this.bootstrapRequest);
         if (this.wsReady) {
             this.bootstrapRequest = false;
             ws.send('waiting for machine move');
@@ -90,9 +88,9 @@ class ScrabbleStore {
             this.bootstrapRequest = true;
         }
     }
+
     handleWsReady() {
         this.wsReady = true;
-        console.log('*** ScrabbleStore.handleWsReady', this.wsReady, this.bootstrapRequest);
         if (this.bootstrapRequest) {
             ws.send('waiting for machine move');
             // Actions.getField();
@@ -101,10 +99,6 @@ class ScrabbleStore {
 
     handleGetField(cells) {
         this.cells = cells;
-    }
-
-    handleGetRack(tiles) {
-        console.log("*** ScrabbleStore.handleGetRack", tiles);
     }
 }
 

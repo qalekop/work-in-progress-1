@@ -18,13 +18,9 @@ const Actions = require('../flux/actions/Actions');
 
 const Scrabble = React.createClass({
     componentDidMount(){
-        ScrabbleStore.listen(this.onChange);
+        // ScrabbleStore.listen(this.onChange);
         console.log('*** Scrabble.componentDidMount');
         Actions.bootstrapRequest();
-    }
-
-    , componentWillUnmount() {
-        ScrabbleStore.unlisten(this.onChange);
     }
 
     , render() {

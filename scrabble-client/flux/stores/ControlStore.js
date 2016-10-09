@@ -5,6 +5,7 @@
 const alt = require('../../alt');
 
 const Actions = require('../actions/Actions');
+const ScrabbleStore = require('./ScrabbleStore');
 
 class ControlStore {
     constructor() {
@@ -19,7 +20,9 @@ class ControlStore {
     handleTileDropped(tile) {
         var cell = ControlStore.findCell(tile.row, tile.col);
         if (!!cell) cell.availability = 'OCCUPIED';
+        console.log('*** ControlStore.tileDropped', tile.row, tile.col, cell);
         this.enabled = ControlStore.checkField();
+        console.log('*** ControlStore.tileDropped', this.enabled);
     }
 
     handleTileReverted(tile) {
@@ -29,14 +32,14 @@ class ControlStore {
     }
 
     static checkField() {
-        return GameStore.getState().cells
+        return ScrabbleStore.getState().cells
             .some(function(cell) { return cell.occupied && cell.availability == 'OCCUPIED';})
             // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability})`)})
         ;
     }
 
     static findCell(row, col) {
-        return GameStore.getState().cells.find(function(cell) {
+        return ScrabbleStore.getState().cells.find(function(cell) {
             return cell.row == row && cell.col == col;
         })
     }

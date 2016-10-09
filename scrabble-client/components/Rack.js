@@ -2,7 +2,6 @@
  * Created by akopylov on 29.09.2015.
  */
 var React = require('react');
-var RackStore = require('../flux/stores/RackStore');
 
 var Tile = React.createClass({
     drag(event) {
@@ -18,9 +17,7 @@ var Tile = React.createClass({
 
 var Rack = React.createClass({
     componentDidMount() {
-        // todo implement me!
-        console.log('*** RackStore.componentDidMount');
-        // RackStore.getRack(['Ё', 'Ё', '?'].reduce(function(prev, next) {return prev + next}, ''));
+        console.log('*** Rack.componentDidMount');
     }
 
     , render() {
