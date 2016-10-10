@@ -54,7 +54,7 @@ class ScrabbleStore {
     }
 
     handleMakeMove() {
-        var field = this.cells.filter(function(cell) { return cell.occupied;});
+        var field = this.cells.filter(function(cell) { return cell.availability == 'OCCUPIED';});
         // this.getInstance().makeMove(field);
         new Promise(function(resolve) {
             $.ajax({
@@ -71,10 +71,19 @@ class ScrabbleStore {
         }).then(function (response) {
             console.log('*** Promise responsed with ', response.success);
             //todo update modal depending on response
+            Actions.handleResponse(response);
             return response.success;
+/*
+            let success = response.success;
+            if (success) {
+
+            }
+            return success;
+*/
         }).then(function (success) {
-            // todo start machine move sequence or simply get field
-            ws.send('waiting for machine move');
+            // start machine move sequence or simply get field
+            console.log('*** Promise.then', success);
+            ws.send(success ? "MOVE" : "GET_FIELD");
         });
 
     }
@@ -82,7 +91,7 @@ class ScrabbleStore {
     handleBootstrapRequest() {
         if (this.wsReady) {
             this.bootstrapRequest = false;
-            ws.send('waiting for machine move');
+            ws.send("GET_FIELD");
             // Actions.getField();
         } else {
             this.bootstrapRequest = true;
@@ -92,7 +101,7 @@ class ScrabbleStore {
     handleWsReady() {
         this.wsReady = true;
         if (this.bootstrapRequest) {
-            ws.send('waiting for machine move');
+            ws.send("GET_FIELD");
             // Actions.getField();
         }
     }

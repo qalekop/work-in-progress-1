@@ -19,22 +19,25 @@ class ControlStore {
 
     handleTileDropped(tile) {
         var cell = ControlStore.findCell(tile.row, tile.col);
-        if (!!cell) cell.availability = 'OCCUPIED';
-        console.log('*** ControlStore.tileDropped', tile.row, tile.col, cell);
-        this.enabled = ControlStore.checkField();
-        console.log('*** ControlStore.tileDropped', this.enabled);
+        if (!!cell) {
+            cell.availability = 'OCCUPIED';
+            cell.letter = tile.letter;
+        }
+        let enabled = ControlStore.checkField();
+        this.enabled = enabled;
     }
 
     handleTileReverted(tile) {
         var cell = ControlStore.findCell(tile.row, tile.col);
-        if (!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
-        this.enabled = ControlStore.checkField();
+        if (!!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
+        let enabled = ControlStore.checkField();
+        this.enabled = enabled;
     }
 
     static checkField() {
         return ScrabbleStore.getState().cells
-            .some(function(cell) { return cell.occupied && cell.availability == 'OCCUPIED';})
-            // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability})`)})
+            .some(function(cell) { return cell.availability == 'OCCUPIED';})
+            // .forEach(function(cell) {console.log(`cell[${cell.row}][${cell.col}]=${cell.letter} (${cell.availability == 'OCCUPIED'})`)})
         ;
     }
 
