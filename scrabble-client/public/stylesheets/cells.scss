@@ -22,7 +22,6 @@ $margin: 50px;
   text-align: center;
   font-size: $size;
   line-height: 90%;
-  margin: -1px;
 }
 
 body {
@@ -63,7 +62,7 @@ body {
 }
 
 .tile {
-  @include tile(blue);
+  @include tile($color-tile + #ffdead);
   display: inline-block;
   background-color: $color-tile;
   border-radius: $size / 10;

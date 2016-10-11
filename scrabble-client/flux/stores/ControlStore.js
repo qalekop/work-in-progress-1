@@ -12,6 +12,7 @@ class ControlStore {
         this.enabled = false;
 
         this.bindListeners({
+            handleMakeMove: Actions.MAKE_MOVE,
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED,
         });
@@ -23,15 +24,17 @@ class ControlStore {
             cell.availability = 'OCCUPIED';
             cell.letter = tile.letter;
         }
-        let enabled = ControlStore.checkField();
-        this.enabled = enabled;
+        this.enabled = ControlStore.checkField();
     }
 
     handleTileReverted(tile) {
         var cell = ControlStore.findCell(tile.row, tile.col);
-        if (!!cell) cell.availability = 'ALLOWED'; // todo: rollback to the previous state
-        let enabled = ControlStore.checkField();
-        this.enabled = enabled;
+        if (!!cell) cell.availability = 'ALLOWED';
+        this.enabled = ControlStore.checkField();
+    }
+
+    handleMakeMove() {
+        this.enabled = false;
     }
 
     static checkField() {

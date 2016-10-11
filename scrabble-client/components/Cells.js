@@ -13,6 +13,10 @@ var Cell = React.createClass({
         return {'letter': this.props.letter, 'occupied': false};
     }
 
+    , componentWillReceiveProps(nextProps) {
+        this.setState({'letter': nextProps.letter, 'occupied': false});
+    }
+
     , drop(event) {
         event.preventDefault();
         var letter = event.dataTransfer.getData('text');
@@ -57,11 +61,7 @@ var Cell = React.createClass({
 
 var Cells = React.createClass({
 
-    componentDidMount() {
-        console.log('*** Cells.componentDidMount');
-    }
-
-    , render() {
+    render() {
         if (!this.props.cells) return null;
         return (
           <div className="gamefield">
