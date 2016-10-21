@@ -33,6 +33,7 @@
          <junit.version>4.12</junit.version>
          <postgresql.version>9.4-1201-jdbc41</postgresql.version>
          <org.apache.commons.lang3.version>3.4</org.apache.commons.lang3.version>
+         <org.apache.commons.collections4.version>4.1</org.apache.commons.collections4.version>
          <tomcat.version>8.0.27</tomcat.version>
      </properties>
 

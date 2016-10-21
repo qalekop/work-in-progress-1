@@ -1,9 +1,9 @@
 /**
  * Created by akopylov on 29.09.2015.
  */
-var React = require('react');
+const React = require('react');
 
-var Tile = React.createClass({
+const Tile = React.createClass({
     drag(event) {
         event.dataTransfer.setData('text', this.props.letter);
     }
@@ -15,12 +15,8 @@ var Tile = React.createClass({
     }
 });
 
-var Rack = React.createClass({
-    componentDidMount() {
-        console.log('*** Rack.componentDidMount');
-    }
-
-    , render() {
+const Rack = React.createClass({
+    render() {
         return (
             <div className="rack">
                 {this.props.letters

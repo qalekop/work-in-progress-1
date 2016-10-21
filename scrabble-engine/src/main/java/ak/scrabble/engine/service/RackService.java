@@ -2,12 +2,11 @@ package ak.scrabble.engine.service;
 
 import ak.scrabble.conf.Configuration;
 import ak.scrabble.engine.model.Tile;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,29 @@ public class RackService {
         return result;
     }
 
-    public List<Character> refillRack(List<Character> bag, byte count) {
+    /**
+     *
+     * @param bag Bag with letters
+     * @param usedLetters Removed letters
+     * @param rack inital rack
+     * @return rack
+     */
+    public List<Tile> getRack(List<Character> bag, List<Tile> rack, List<String> usedLetters) {
+        List<Tile> result = new ArrayList<>(Configuration.RACK_SIZE);
+        Collection<String> cRack = new ArrayList<>(Configuration.RACK_SIZE);
+        for (Tile t : rack) {
+            cRack.add(String.valueOf(t.getLetter()));
+        }
+        Collection<String> existingLetters = CollectionUtils.disjunction(cRack, usedLetters);
+        List<Character> letters = refillRack(bag, (byte) existingLetters.size());
+        for (String s : existingLetters) {
+            letters.add(s.charAt(0));
+        }
+        letters.forEach(letter -> result.add(new Tile(letter, Configuration.getScore(letter))));
+        return result;
+    }
+
+    private List<Character> refillRack(List<Character> bag, byte count) {
         int size = Configuration.RACK_SIZE - count;
         List<Character> result = new ArrayList<>(size);
         Optional<Character> letter;

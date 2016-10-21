@@ -5,6 +5,7 @@
 const alt = require('../../alt');
 
 const Actions = require('../actions/Actions');
+const RackStore = require('./RackStore');
 const ENDPOINT_URL = '/scrabble/game/feedback/',
     MOVE_URL = '/scrabble/game/move/';
 
@@ -55,7 +56,6 @@ class ScrabbleStore {
 
     handleMakeMove() {
         var field = this.cells.filter(function(cell) { return cell.availability == 'OCCUPIED';});
-        // this.getInstance().makeMove(field);
         new Promise(function(resolve) {
             $.ajax({
                 method: 'POST',
@@ -73,13 +73,6 @@ class ScrabbleStore {
             //todo update modal depending on response
             Actions.handleResponse(response);
             return response.success;
-/*
-            let success = response.success;
-            if (success) {
-
-            }
-            return success;
-*/
         }).then(function (success) {
             // start machine move sequence or simply get field
             console.log('*** Promise.then', success);

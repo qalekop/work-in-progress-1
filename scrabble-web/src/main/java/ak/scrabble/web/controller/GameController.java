@@ -36,7 +36,6 @@ public class GameController {
     private static final Logger LOG = LoggerFactory.getLogger(GameController.class);
 
     public static final String GAME_URL = "/game";
-    private static final String LETTERS_FIELD = "letters";
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -74,7 +73,9 @@ public class GameController {
             , method = RequestMethod.POST
             , headers = {"Content-type=application/json"})
     @ResponseBody
-    public ResponseEntity<String> makeMove(@RequestBody List<Cell> cells, Principal user) throws JsonProcessingException {
+    public ResponseEntity<String> makeMove(@RequestBody List<Cell> cells, Principal user)
+            throws JsonProcessingException, SQLException {
+
         MoveResponse moveResponse = gameService.processHumanMove(user.getName(), cells);
 
         HttpHeaders headers = new HttpHeaders();

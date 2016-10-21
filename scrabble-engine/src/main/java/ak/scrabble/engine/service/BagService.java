@@ -20,7 +20,7 @@ public class BagService {
 
     public List<Character> initBag() {
         List<Character> bag = new ArrayList<>();
-        Configuration.getAllLetters().stream().forEach(letter -> {
+        Configuration.getAllLetters().forEach(letter -> {
             int quantity = Configuration.getQuantity(letter);
             for (int i = 0; i < quantity; i++) bag.add(letter);
         });

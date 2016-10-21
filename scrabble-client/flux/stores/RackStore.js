@@ -14,6 +14,9 @@ class RackStore {
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED
         });
+        this.exportPublicMethods({
+            getRest: this.getRest
+        });
     }
 
     handleGetRack(letters) {
@@ -28,6 +31,10 @@ class RackStore {
     handleTileReverted(letter) {
         var index = this.letters.findIndex(tile => tile.hidden && tile.letter == letter.letter);
         if (index >= 0) this.letters[index].hidden = false;
+    }
+
+    getRest() {
+        return this.getInstance().letters.filter(tile => !tile.hidden).reduce(function(prev, next) {return prev + next}, '');
     }
 
 }

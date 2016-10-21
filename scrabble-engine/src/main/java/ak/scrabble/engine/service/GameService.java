@@ -78,8 +78,9 @@ public class GameService {
         return game;
     }
 
-    public MoveResponse processHumanMove(final String user, final List<Cell> cells) {
+    public MoveResponse processHumanMove(final String user, final List<Cell> cells) throws SQLException {
         // merge new cells with existing ones
+        // todo rename cells -> newCells, existingCells -> cells
         List<Cell> existingCells = gameDAO.getGame(user).cells();
         for (Cell cell : cells) {
             Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells);
@@ -102,12 +103,36 @@ public class GameService {
                 LOG.debug("Hanging cell: {} {}", cell.getCol(), cell.getRow());
                 ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells).setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(cells)   // todo better to report only the misplaced tile
+                        .cells(cells)   // todo remove it
                         .message("Misplaced tile")
                         .build();
             }
         }
-        return verifyMove(existingCells);
+        MoveResponse response = verifyMove(existingCells);
+        if (response.success()) {
+            // todo save new words in a dedicated (yet non-existing) table
+            // 1. update field
+            existingCells.stream()
+                    .filter(cell -> cell.getState() == CellState.OCCUPIED)
+                    .forEach(cell -> cell.setState(CellState.HUMAN));
+
+            // 2. calculate new human's rack
+            Game game = getGame(user);
+            List<Character> bag = new ArrayList<>(game.bag());
+            List<String> usedLetters = cells.stream().map(cell -> String.valueOf(cell.getLetter())).collect(Collectors.toList());
+            List<Tile> rackHuman = rackService.getRack(bag, game.rackHuman(), usedLetters);
+
+            // 3. save field
+            // todo machine's rack? scores?
+            game = ImmutableGame.builder()
+                    .cells(existingCells)
+                    .scoreHuman(0).scoreMachine(0)
+                    .rackHuman(rackHuman).rackMachine(game.rackMachine())
+                    .bag(bag)
+                    .build();
+            gameDAO.persistGame(user, game, false);
+        }
+        return response;
     }
 
     public MoveResponse verifyMove(List<Cell> cells) {
@@ -132,25 +157,13 @@ public class GameService {
                 });
                 return ImmutableResponseError.builder()
                         .message("Wrong word: " + w)
-                        .cells(cells)   // todo better to report only the wrong word
                         .build();
             }
         }
         int score = newWords.stream().map(Word::score).reduce(0, (a, b) -> (a + b));
-        // todo implement me - save new words ?
-        newWords.stream().forEach(System.out::println);
-
-        // todo List<Cell> below only for demo purposes - to return Machine Move instead !
         return ImmutableResponseSuccess.builder()
                 .score(score)
-                .cells(cells.stream()
-                        .map(cell -> {
-                            if (cell.getState() == CellState.OCCUPIED) {
-                                cell.setState(CellState.HUMAN);
-                            }
-                            return cell;
-                        }).collect(Collectors.toList())
-                ).build();
+                .build();
     }
 
     public List<WordProposal> findProposals(final List<Cell> field, String rack) {
