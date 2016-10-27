@@ -38,4 +38,10 @@ public class GameTest {
         assertTrue(game.rackMachine().size() == Configuration.RACK_SIZE);
         assertTrue(game.bag().size() == 88);
     }
+
+    @Test
+    public void printGame() throws SQLException {
+        Game game = gameService.getGame(USER_SCARBBLE);
+        TestUtils.printField(game.cells());
+    }
 }

@@ -138,42 +138,42 @@ public class WordUtils {
     }
 
     public static Pair<Integer, String> putWord(List<Cell> field, WordProposal proposal, String rack) {
-        Pattern p = proposal.getPattern();
+        Pattern pattern = proposal.getPattern();
         String slice = field.stream()
-                .filter(cell -> p.getDimension() == ROW ? cell.getRow() == p.getIndex() : cell.getCol() == p.getIndex())
+                .filter(cell -> pattern.getDimension() == ROW ? cell.getRow() == pattern.getIndex() : cell.getCol() == pattern.getIndex())
                 .map(cell -> cell.getState().free() ? " " : String.valueOf(cell.getLetter()))
                 .reduce("", (a, b) -> a + b);
 
-        String content = p.getFirstContent();
+        String content = pattern.getFirstContent();
         String word = proposal.getWord().toUpperCase();
         int shift = slice.indexOf(content) - proposal.getPattern().getWordIndex(word);
         int x = -1, y = -1;
         Bonus wordBonus = Bonus.NONE;
         int newWordScore = 0, existingWordScore = 0;
-        String r = rack;
+        String tempRack = rack;
         for (int i=0; i<word.length(); i++) {
-            switch (p.getDimension()) {
+            switch (pattern.getDimension()) {
             case COLUMN:
-                x = p.getIndex();
+                x = pattern.getIndex();
                 y = shift + i;
                 break;
             case ROW:
                 x = shift + i;
-                y = p.getIndex();
+                y = pattern.getIndex();
                 break;
             }
-            Cell c = ScrabbleUtils.getByCoords(x, y, field);
+            Cell cell = ScrabbleUtils.getByCoords(x, y, field);
             char letter = word.charAt(i);
-            Bonus b = c.getBonus();
+            Bonus b = cell.getBonus();
             if (b == Bonus.WORD_2X || b == Bonus.WORD_3X) {
                 if (b.compareTo(wordBonus) > 0) wordBonus = b;
             }
             int score = getLetterMultiplier(b) * ScrabbleUtils.getLetterScore(letter);
-            if (c.getState().free()) {
-                if (r != null) {
-                    r = removeLetter(r, letter);
-                    c.setLetter(letter);
-                    c.setState(CellState.MACHINE);
+            if (cell.getState().free()) {
+                if (tempRack != null) {
+                    tempRack = removeLetter(tempRack, letter);
+                    cell.setLetter(letter);
+                    cell.setState(CellState.MACHINE);
                 }
                 newWordScore += score;
             }
@@ -182,7 +182,7 @@ public class WordUtils {
         int finalScore = wordBonus != Bonus.NONE
                 ? existingWordScore * getWordMultiplier(wordBonus)
                 : newWordScore;
-        return new ImmutablePair(finalScore, r);
+        return new ImmutablePair(finalScore, tempRack);
     }
 
     private static String removeLetter(String source, char letter) {

@@ -57,7 +57,7 @@ public class GameService {
                     cells.add(cell);
                 }
             }
-            // todo 3 lines below only for dev purposes !!!
+            // FIXME 3 lines below only for dev purposes !!!
             Cell c = cells.stream().filter(cell -> cell.getRow() == 3 && cell.getCol() == 3).findFirst().get();
             c.setState(CellState.MACHINE);
             c.setLetter('А');
@@ -78,17 +78,15 @@ public class GameService {
         return game;
     }
 
-    public MoveResponse processHumanMove(final String user, final List<Cell> cells) throws SQLException {
+    public MoveResponse processHumanMove(final String user, final List<Cell> newCells) throws SQLException {
         // merge new cells with existing ones
-        // todo rename cells -> newCells, existingCells -> cells
-        List<Cell> existingCells = gameDAO.getGame(user).cells();
-        for (Cell cell : cells) {
-            Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells);
+        List<Cell> cells = gameDAO.getGame(user).cells();
+        for (Cell cell : newCells) {
+            Cell existingCell = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), cells);
             if (existingCell.getState() != CellState.AVAILABLE) {
                 LOG.debug("Occupied cell: {} {}", cell.getCol(), cell.getRow());
                 existingCell.setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(cells)   // todo better to report only the misplaced tile(s)
                         .message("Misplaced tile")
                         .build();
             }
@@ -97,42 +95,47 @@ public class GameService {
         };
 
         // verify if no hanging tiles
-        for (Cell cell : cells) {
+        for (Cell cell : newCells) {
             Point p = new Point(cell.getCol(), cell.getRow());
-            if (!ScrabbleUtils.isTraceable(p, p, existingCells)) {
+            if (!ScrabbleUtils.isTraceable(p, p, cells)) {
                 LOG.debug("Hanging cell: {} {}", cell.getCol(), cell.getRow());
-                ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), existingCells).setState(CellState.REJECTED);
+                ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), cells).setState(CellState.REJECTED);
                 return ImmutableResponseError.builder()
-                        .cells(cells)   // todo remove it
                         .message("Misplaced tile")
                         .build();
             }
         }
-        MoveResponse response = verifyMove(existingCells);
+        MoveResponse response = _verifyMove(cells);
         if (response.success()) {
             // todo save new words in a dedicated (yet non-existing) table
             // 1. update field
-            existingCells.stream()
+            cells.stream()
                     .filter(cell -> cell.getState() == CellState.OCCUPIED)
                     .forEach(cell -> cell.setState(CellState.HUMAN));
 
             // 2. calculate new human's rack
             Game game = getGame(user);
             List<Character> bag = new ArrayList<>(game.bag());
-            List<String> usedLetters = cells.stream().map(cell -> String.valueOf(cell.getLetter())).collect(Collectors.toList());
+            List<String> usedLetters = newCells.stream().map(cell -> String.valueOf(cell.getLetter())).collect(Collectors.toList());
             List<Tile> rackHuman = rackService.getRack(bag, game.rackHuman(), usedLetters);
 
             // 3. save field
             // todo machine's rack? scores?
             game = ImmutableGame.builder()
-                    .cells(existingCells)
+                    .cells(cells)
                     .scoreHuman(0).scoreMachine(0)
                     .rackHuman(rackHuman).rackMachine(game.rackMachine())
                     .bag(bag)
                     .build();
-            gameDAO.persistGame(user, game, false);
+//            gameDAO.persistGame(user, game, false);
         }
         return response;
+    }
+
+    private MoveResponse _verifyMove(List<Cell> cells) {
+        return ImmutableResponseSuccess.builder()
+                .score(0)
+                .build();
     }
 
     public MoveResponse verifyMove(List<Cell> cells) {
@@ -166,6 +169,7 @@ public class GameService {
                 .build();
     }
 
+    @SuppressWarnings("unchecked")
     public List<WordProposal> findProposals(final List<Cell> field, String rack) {
         List<WordProposal> result = new ArrayList<>();
         // 1. rows
@@ -196,5 +200,38 @@ public class GameService {
         return result.stream()
                 .sorted((o1, o2) -> Integer.valueOf(o2.getScore()).compareTo(o1.getScore()))
                 .collect(Collectors.toList());
+    }
+
+    public int processMachineMove(String user) throws SQLException {
+        // 1. get game state. Assuming it exists for the given user
+        Game game = gameDAO.getGame(user);
+        String rack = game.rackMachine().stream().map(tile -> String.valueOf(tile.getLetter())).reduce("", (a, b) -> a + b);
+        List<Cell> field = game.cells();
+        List<Character> bag = new ArrayList<>(game.bag());
+
+        // 2. machine move
+        List<WordProposal> proposals = findProposals(field, rack);
+        // FIXME check if proposals aren't empty
+        int score = 0;
+        do {
+            WordProposal proposal = proposals.get(0);
+            Pair<Integer, String> result = WordUtils.putWord(field, proposal, rack);
+            score += result.getLeft();
+            rack = result.getRight();
+            proposals = findProposals(field, rack);
+        } while (!CollectionUtils.isEmpty(proposals) && StringUtils.isNotBlank(rack));
+
+        // 3. refill the machine rack
+        List<Tile> newRack = rackService.getRack(bag, rack);
+
+        // 4. build the new game state and persist it
+        Game newGameState = ImmutableGame.builder()
+                .cells(field)
+                .scoreHuman(game.scoreHuman()).scoreMachine(score)
+                .rackHuman(game.rackHuman()).rackMachine(newRack)
+                .bag(bag)
+                .build();
+        gameDAO.persistGame(user, newGameState, false);
+        return score; // todo really score?
     }
 }

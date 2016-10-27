@@ -19,6 +19,11 @@ import java.security.Principal;
 @Component
 public class ScrabbleWSHandler extends TextWebSocketHandler {
 
+    private enum Command {
+        GET_FIELD,  // get game state and send it to the client
+        MOVE        // start machine move sequence, then
+    }
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -29,6 +34,11 @@ public class ScrabbleWSHandler extends TextWebSocketHandler {
         Principal principal = session.getPrincipal();
         if (principal == null) {
             throw new IllegalStateException("not authenticated");
+        }
+        if (Command.MOVE.name().equals(message.getPayload())) {
+            // start machine move sequence
+            // then save the new state to be retrieved next
+            gameService.processMachineMove(principal.getName());
         }
         Game game = gameService.getGame(principal.getName());
         String response;

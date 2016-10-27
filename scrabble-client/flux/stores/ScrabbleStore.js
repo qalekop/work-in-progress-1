@@ -41,6 +41,7 @@ class ScrabbleStore {
                 console.log('*** response received');
                 Actions.getField(response.cells);
                 Actions.getRack(response.rackHuman);
+                Actions.hideDialog();
             };
             ws.onopen = function(event) {
                 console.log('*** ws open');

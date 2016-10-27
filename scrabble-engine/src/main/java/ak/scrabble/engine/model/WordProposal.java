@@ -1,23 +1,29 @@
 package ak.scrabble.engine.model;
 
-import org.immutables.value.Value;
-
 /**
  * Created by akopylov on 01/08/16.
  */
 public class WordProposal {
-    /** word found*/
-    String word;
+    /** word found */
+    private String word;
 
     /** corresponding pattern */
-    Pattern pattern;
+    private Pattern pattern;
 
     /** calculated score */
-    int score;
+    private int score;
 
     public WordProposal(String word, Pattern pattern) {
         this.word = word;
         this.pattern = pattern;
+    }
+
+    @Override
+    public String toString() {
+        return "WordProposal{" +
+                "word='" + word + '\'' +
+                ", score=" + score +
+                '}';
     }
 
     //<editor-fold desc="Getters-'n'-Setters>

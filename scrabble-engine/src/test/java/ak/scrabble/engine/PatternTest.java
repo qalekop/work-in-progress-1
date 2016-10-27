@@ -27,6 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import static org.junit.Assert.assertTrue;
  */
 @ContextConfiguration(classes={ScrabbleDbConf.class})
 @RunWith(SpringJUnit4ClassRunner.class)
+@SuppressWarnings("unchecked")
 public class PatternTest {
 
     private static final String RACK = "АИАР";
@@ -55,6 +57,25 @@ public class PatternTest {
 
 
     private List<Cell>buildTestField(int index) {
+        List<Cell> result = buildEmptyField();
+        Cell c;
+        c = ScrabbleUtils.getByCoords(1, index, result); c.setLetter('В'); c.setState(CellState.HUMAN);
+        c = ScrabbleUtils.getByCoords(4, index, result); c.setLetter('Т'); c.setState(CellState.HUMAN);
+        c = ScrabbleUtils.getByCoords(5, index, result); c.setLetter('О'); c.setState(CellState.HUMAN);
+        return result;
+    }
+
+    private List<Cell>buildTestField(int index, char... word) {
+        List<Cell> result = buildEmptyField();
+        Cell c;
+        int ix = index;
+        for (char ch : word) {
+            c = ScrabbleUtils.getByCoords(ix++, 0, result); c.setLetter(ch); c.setState(CellState.HUMAN);
+        }
+        return result;
+    }
+
+    private List<Cell> buildEmptyField() {
         List<Cell> result = new ArrayList<>(Configuration.FIELD_SIZE * Configuration.FIELD_SIZE);
         for (int col=0; col<Configuration.FIELD_SIZE; col++) {
             for (int row=0; row < Configuration.FIELD_SIZE; row++) {
@@ -63,10 +84,6 @@ public class PatternTest {
                 result.add(cell);
             }
         }
-        Cell c;
-        c = ScrabbleUtils.getByCoords(1, index, result); c.setLetter('В'); c.setState(CellState.HUMAN);
-        c = ScrabbleUtils.getByCoords(4, index, result); c.setLetter('Т'); c.setState(CellState.HUMAN);
-        c = ScrabbleUtils.getByCoords(5, index, result); c.setLetter('О'); c.setState(CellState.HUMAN);
         return result;
     }
 
@@ -86,6 +103,20 @@ public class PatternTest {
         }
         assertTrue(wordsFound.size() == 31);
         assertTrue(wordsFound.contains("авиатор"));
+    }
+
+    @Test
+    public void testPredefinedPattern() {
+        Set<Pattern> patterns = WordUtils.getPatternsForDimension(buildTestField(0, 'Л', 'О', 'Ж', 'А'), DimensionEnum.ROW, 0);
+        assertTrue(patterns.size() == 1);
+        SearchSpec spec = ImmutableSearchSpec.builder()
+                .pattern(patterns.iterator().next())
+                .regexp(true)
+                .rack("ЛААТЕЖО")
+                .dictionaries(CollectionUtils.arrayToList(new DictFlavor[]{DictFlavor.USHAKOV, DictFlavor.WHITE}))
+                .build();
+        Collection<WordProposal> proposals = dictService.findPossibleWords(spec);
+        assertTrue(CollectionUtils.isEmpty(proposals));
     }
 
     @Test
@@ -113,9 +144,7 @@ public class PatternTest {
         final String aviaRack = RACK + "ТО";
 
         List<WordProposal> proposals = gameService.findProposals(field, aviaRack);
-        for (WordProposal proposal : proposals) {
-            System.out.println(proposal.getWord() + " = " + proposal.getScore());
-        }
+        proposals.forEach(System.out::println);
 
         String rack = aviaRack;
         int score = 0;

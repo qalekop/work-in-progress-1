@@ -30,9 +30,11 @@ public class DictService {
     public List<WordProposal> findPossibleWords(final SearchSpec spec) {
         char[] availableChars = (spec.rack() + spec.pattern().getLetters()).toLowerCase().toCharArray();
         Arrays.sort(availableChars);
+        final String word = spec.regexp() ? spec.pattern().getFirstContent() : "";
         return wordRepo.find(spec).stream()
                 .filter(candidate -> (StringUtils.isNotBlank(spec.rack())
                         && valid(new String(availableChars), candidate.toLowerCase())))
+                .filter(candidate -> !candidate.equalsIgnoreCase(word))
                 .map(candidate -> new WordProposal(candidate, spec.pattern()))
                 .collect(Collectors.toList());
     }
