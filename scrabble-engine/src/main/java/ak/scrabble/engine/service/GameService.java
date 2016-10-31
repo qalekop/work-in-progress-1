@@ -7,7 +7,6 @@ import ak.scrabble.engine.rules.RulesService;
 import ak.scrabble.engine.utils.ScrabbleUtils;
 import ak.scrabble.engine.utils.WordUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ak.scrabble.engine.da.GameDAO.Mode.*;
+
 
 /**
  * Created by akopylov on 15/02/16.
@@ -71,7 +73,7 @@ public class GameService {
                     .rackHuman(rackHuman).rackMachine(rackMachine)
                     .bag(bag)
                     .build();
-            gameDAO.persistGame(user, game, true);
+            gameDAO.persistGame(user, game, CREATE);
         } else {
             game = gameDAO.getGame(user);
         }
@@ -105,7 +107,7 @@ public class GameService {
                         .build();
             }
         }
-        MoveResponse response = _verifyMove(cells);
+        MoveResponse response = verifyMove(cells);
         if (response.success()) {
             // todo save new words in a dedicated (yet non-existing) table
             // 1. update field
@@ -127,7 +129,7 @@ public class GameService {
                     .rackHuman(rackHuman).rackMachine(game.rackMachine())
                     .bag(bag)
                     .build();
-//            gameDAO.persistGame(user, game, false);
+            gameDAO.persistGame(user, game, UPDATE);
         }
         return response;
     }
@@ -152,12 +154,6 @@ public class GameService {
             String w = word.word();
             if(!rulesService.valid(w)) {
                 LOG.debug("Wrong word: {}", w);
-                word.cells().forEach(cell -> {
-                    Cell c = ScrabbleUtils.getByCoords(cell.getCol(), cell.getRow(), cells);
-                    if (c.getState() == CellState.OCCUPIED) {
-                        c.setState(CellState.REJECTED);
-                    }
-                });
                 return ImmutableResponseError.builder()
                         .message("Wrong word: " + w)
                         .build();
@@ -213,12 +209,27 @@ public class GameService {
         List<WordProposal> proposals = findProposals(field, rack);
         // FIXME check if proposals aren't empty
         int score = 0;
+        int indexOfNextProposal = 0;
         do {
-            WordProposal proposal = proposals.get(0);
+            WordProposal proposal = proposals.get(indexOfNextProposal);
             Pair<Integer, String> result = WordUtils.putWord(field, proposal, rack);
-            score += result.getLeft();
-            rack = result.getRight();
-            proposals = findProposals(field, rack);
+            MoveResponse response = verifyMove(field);
+            if (response.success()) {
+                score += result.getLeft();
+                rack = result.getRight();
+                field.stream()
+                        .filter(cell -> cell.getState() == CellState.OCCUPIED)
+                        .forEach(cell -> cell.setState(CellState.MACHINE));
+                proposals = findProposals(field, rack);
+            } else {
+                field.stream()
+                        .filter(cell -> cell.getState() == CellState.OCCUPIED)
+                        .forEach(cell -> cell.setState(CellState.AVAILABLE));
+                indexOfNextProposal++;
+                if (indexOfNextProposal >= (proposals.size()) - 1) {
+                    break;
+                }
+            }
         } while (!CollectionUtils.isEmpty(proposals) && StringUtils.isNotBlank(rack));
 
         // 3. refill the machine rack
@@ -231,7 +242,7 @@ public class GameService {
                 .rackHuman(game.rackHuman()).rackMachine(newRack)
                 .bag(bag)
                 .build();
-        gameDAO.persistGame(user, newGameState, false);
+        gameDAO.persistGame(user, newGameState, UPDATE);
         return score; // todo really score?
     }
 }

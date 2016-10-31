@@ -51,7 +51,7 @@ public class Configuration {
         letters.put('Э', (byte)1);
         letters.put('Ю', (byte)1);
         letters.put('Я', (byte)2);
-        letters.put('*', (byte)2);
+//        letters.put('*', (byte)2);
 
         letterScores.put('А', (byte)1);
         letterScores.put('Б', (byte)3);

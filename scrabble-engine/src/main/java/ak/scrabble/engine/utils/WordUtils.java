@@ -173,7 +173,7 @@ public class WordUtils {
                 if (tempRack != null) {
                     tempRack = removeLetter(tempRack, letter);
                     cell.setLetter(letter);
-                    cell.setState(CellState.MACHINE);
+                    cell.setState(CellState.OCCUPIED);
                 }
                 newWordScore += score;
             }

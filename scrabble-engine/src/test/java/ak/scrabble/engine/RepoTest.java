@@ -10,9 +10,7 @@ import ak.scrabble.engine.model.ImmutableGame;
 import ak.scrabble.engine.model.ImmutableSearchSpec;
 import ak.scrabble.engine.model.Pattern;
 import ak.scrabble.engine.model.SearchSpec;
-import ak.scrabble.engine.model.Word;
 import ak.scrabble.engine.rules.RulesService;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -26,8 +24,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import static ak.scrabble.engine.da.GameDAO.Mode.*;
 
 /**
  * Created by akopylov on 06.11.2015.
@@ -82,7 +81,7 @@ public class RepoTest extends AbstractDBTest {
                 .scoreHuman(two).scoreMachine(two)
                 .build();
 
-        gameDAO.persistGame(USER_SUCCESS, game, true);
+        gameDAO.persistGame(USER_SUCCESS, game, CREATE);
         assertTrue(gameDAO.savedStateExists(USER_SUCCESS));
 
         assertTrue(gameDAO.getGame(USER_SUCCESS).cells().size() == two);

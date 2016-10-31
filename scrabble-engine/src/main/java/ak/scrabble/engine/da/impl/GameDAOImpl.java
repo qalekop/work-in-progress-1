@@ -74,7 +74,7 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
     }
 
     @Override
-    public void persistGame(String user, Game game, boolean create) throws SQLException {
+    public void persistGame(String user, Game game, Mode mode) throws SQLException {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue(P_USER, user)
                 .addValue(P_FIELD, new XStream().toXML(game.cells()))
@@ -84,7 +84,7 @@ public class GameDAOImpl extends BaseDAO implements GameDAO  {
                 .addValue(RACK_MACHINE, new XStream().toXML(game.rackMachine()))
                 .addValue(P_BAG, game.bag().stream().map(String::valueOf).reduce("", (a, b) -> (a + b)))
                 ;
-        int rowCount = jdbc.update(create ? S_CREATE : S_UPDATE, params);
+        int rowCount = jdbc.update(mode == Mode.CREATE ? S_CREATE : S_UPDATE, params);
         LOG.trace("game state persisted for user={}, rowCount={}", user, rowCount);
     }
 
