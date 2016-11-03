@@ -1,13 +1,13 @@
 /**
  * Created by akopylov on 23.09.2015.
  */
-var React = require('react');
+const React = require('react');
 
-var Actions = require('../flux/actions/Actions');
+const Actions = require('../flux/actions/Actions');
 
 const SIZE = 50;
 
-var Cell = React.createClass({
+const Cell = React.createClass({
 
     getInitialState() {
         return {'letter': this.props.letter, 'occupied': false};
@@ -19,7 +19,7 @@ var Cell = React.createClass({
 
     , drop(event) {
         event.preventDefault();
-        var letter = event.dataTransfer.getData('text');
+        let letter = event.dataTransfer.getData('text');
         this.setState({letter: letter, occupied: true});
         Actions.tileDropped({'row': this.props.row,
             'col': this.props.col,
@@ -39,7 +39,7 @@ var Cell = React.createClass({
     }
 
     , render() {
-        var row = this.props.row,
+        let row = this.props.row,
             col = this.props.col,
             className = 'cell ';
         if (this.state.occupied) {

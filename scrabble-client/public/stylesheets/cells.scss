@@ -24,6 +24,28 @@ $margin: 50px;
   line-height: 90%;
 }
 
+@mixin control-panel__button($flex-direction : column) {
+  width: $size * 3;
+  height: $size;
+  background-color: $color-button;
+  border-radius: $size / 10;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: $flex-direction;
+}
+
+@mixin container($justify-content : flex-start) {
+  @include h-align-center;
+  margin-top: $margin;
+  width: $count * $size;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: $justify-content;
+}
+
 body {
   background-image: url("../images/3.jpg");
 }
@@ -45,15 +67,12 @@ body {
   border: 1px solid red;
 }
 
-.rack {
-  @include h-align-center;
-  margin-top: $margin;
-  width: $count * $size;
-  border: 1px solid black;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+.rack-container {
+  @include container;
+}
+
+.controlpanel-container {
+  @include container(space-between);
 }
 
 .cell {
@@ -73,24 +92,34 @@ body {
   background-color: $color-tile-hover;
 }
 
-.button {
-  width: $size * 3;
-  height: $size;
-  background-color: $color-button;
-  border-radius: $size / 10;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  /*align-content: center;*/
-  flex-direction: column;
+.control-panel__move-button {
+  @include control-panel__button(column);
 }
 
-.hilighted {
+.control-panel__move-button_hilighted {
   background-color: $color-button-hover;
 }
 
-.disabled {
+.control-panel__move-button_disabled {
   background-color: $color-disabled;
+}
+
+.control-panel__trashcan-button {
+  @include control-panel__button(row);
+}
+
+.control-panel__trashcan {
+  width: 45px;
+  height: 45px;
+  background-image: url(../images/trash.png);
+}
+
+.control-panel__trashcan_hilighted {
+  background-position: 100px;
+}
+
+.control-panel__trashcan_full {
+  background-position: 500px;
 }
 
 .WORD_3X {
@@ -120,4 +149,8 @@ body {
 
 .HUMAN {
   background-color: $color-tile-human;
+}
+
+.MACHINE {
+  background-color: $color-tile-machine;
 }

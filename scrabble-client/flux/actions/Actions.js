@@ -17,6 +17,14 @@ class Actions {
         this.dispatch(letter);
     }
 
+    tileDroppedToTrashcan(letter) {
+        this.dispatch(letter);
+    }
+
+    trashcanReverted() {
+        this.dispatch();
+    }
+
     makeMove() {
         this.dispatch();
     }

@@ -18,7 +18,7 @@ const Tile = React.createClass({
 const Rack = React.createClass({
     render() {
         return (
-            <div className="rack">
+            <div className="rack-container">
                 {this.props.letters
                     .filter(tile => !tile.hidden)
                     .map((tile, i) => { return <Tile letter={tile.letter} score={tile.score} key={i}/> })}
