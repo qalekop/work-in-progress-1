@@ -8,12 +8,13 @@ var Actions = require('../actions/Actions');
 
 class RackStore {
     constructor() {
-        this.letters = []; // todo rename to 'tiles'
+        this.tiles = [];
+        this.shuffle = [];
         this.bindListeners({
             handleGetRack: Actions.GET_RACK,
             handleTileDroppedToField: Actions.TILE_DROPPED,
-            handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
             handleTileReverted: Actions.TILE_REVERTED,
+            handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
             handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
         });
         this.exportPublicMethods({
@@ -22,32 +23,34 @@ class RackStore {
     }
 
     handleGetRack(letters) {
-        this.letters = letters;
+        this.tiles = letters;
     }
 
     handleTileReverted(letter) {
-        var index = this.letters.findIndex(tile => tile.hidden && tile.letter == letter.letter);
+        var index = this.tiles.findIndex(tile => tile.hidden && tile.letter == letter.letter);
         if (index >= 0) {
-            this.letters[index].hidden = false;
+            this.tiles[index].hidden = false;
         }
     }
 
     getRest() {
-        return this.getInstance().letters.filter(tile => !tile.hidden).reduce(function(prev, next) {return prev + next}, '');
+        return this.getInstance().tiles.filter(tile => !tile.hidden).reduce(function(prev, next) {return prev + next}, '');
     }
 
     handleTileDroppedToField(letter) {
-        let index = this.letters.findIndex(tile => tile.letter == letter.letter);
-        this.letters[index].hidden = true;
+        let index = this.tiles.findIndex(tile => tile.letter == letter.letter);
+        this.tiles[index].hidden = true;
     }
 
     handleTileDroppedToTrashcan(letter) {
-        let index = this.letters.findIndex(tile => tile.letter == letter);
-        this.letters[index].hidden = true;
+        let index = this.tiles.findIndex(tile => tile.letter == letter);
+        this.tiles[index].hidden = true;
+        this.shuffle.push[letter];
     }
 
     handleTrashcanReverted() {
-        this.letters.forEach(tile => tile.hidden = false);
+        this.tiles.forEach(tile => tile.hidden = false);
+        this.shuffle = [];
     }
 
 }

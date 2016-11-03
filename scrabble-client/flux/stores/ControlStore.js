@@ -10,12 +10,23 @@ const ScrabbleStore = require('./ScrabbleStore');
 class ControlStore {
     constructor() {
         this.enabled = false;
+        this.moveButtonEnabled = true;
 
         this.bindListeners({
             handleMakeMove: Actions.MAKE_MOVE,
             handleTileDropped: Actions.TILE_DROPPED,
             handleTileReverted: Actions.TILE_REVERTED,
+            handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
+            handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
         });
+    }
+
+    handleTileDroppedToTrashcan() {
+        this.moveButtonEnabled = false;
+    }
+
+    handleTrashcanReverted() {
+        this.moveButtonEnabled = true;
     }
 
     handleTileDropped(tile) {

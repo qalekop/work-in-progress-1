@@ -108,6 +108,10 @@ body {
   @include control-panel__button(row);
 }
 
+.control-panel__shuffle-button {
+  @include control-panel__button(column);
+}
+
 .control-panel__trashcan {
   width: 45px;
   height: 45px;

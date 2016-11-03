@@ -4,7 +4,6 @@
 var React = require('react');
 
 var Actions = require('../flux/actions/Actions');
-var ControlStore = require('../flux/stores/ControlStore');
 
 const ButtonGo = React.createClass({
     getInitialState() {
@@ -12,7 +11,9 @@ const ButtonGo = React.createClass({
     }
 
     , clicked(event) {
-        if (this.props.enabled) Actions.makeMove();
+        if (this.props.enabled) {
+            Actions.makeMove();
+        }
     }
     
     , hover() {
@@ -21,8 +22,10 @@ const ButtonGo = React.createClass({
 
     , render() {
         let className = 'control-panel__move-button'
-            + (this.props.enabled ? (this.state.hover ? ' control-panel__move-button_hilighted' : '') : ' control-panel__move-button_disabled');
-        return(
+            + (this.props.enabled
+                ? (this.state.hover ? ' control-panel__move-button_hilighted' : '')
+                : ' control-panel__move-button_disabled');
+        return (
             <div className={className}
                  onMouseEnter={this.hover}
                  onMouseLeave={this.hover}
@@ -32,9 +35,26 @@ const ButtonGo = React.createClass({
     }
 });
 
+const ButtonShuffle = React.createClass({
+
+    clicked(event) {
+        if (this.props.enabled) {
+            Actions.shuffle();
+        }
+    }
+
+    , render() {
+         return (
+            <div className='control-panel__shuffle-button'
+                 onClick={this.clicked}>Shuffle!
+            </div>
+        )
+    }
+});
+
 const TrashCan = React.createClass({
     getInitialState() {
-        return {'hover': false, 'letters': [], 'empty': true};
+        return {'hover': false, 'empty': true};
     }
 
     , hover() {
@@ -43,7 +63,7 @@ const TrashCan = React.createClass({
 
     , clicked(event) {
         if (!this.state.empty) {
-            this.setState({'empty': true, 'letters': []});
+            this.setState({'empty': true});
             Actions.trashcanReverted();
         }
     }
@@ -55,7 +75,6 @@ const TrashCan = React.createClass({
     , drop(event) {
         event.preventDefault();
         let letter = event.dataTransfer.getData('text');
-        this.state.letters.push(letter);
         this.setState({'empty': false});
         Actions.tileDroppedToTrashcan(letter);
     }
@@ -79,25 +98,21 @@ const TrashCan = React.createClass({
 });
 
 const ControlPanel = React.createClass({
-    componentDidMount(){
-        ControlStore.listen(this.onChange);
-    }
 
-    , componentWillUnmount() {
-        ControlStore.unlisten(this.onChange);
-    }
-
-    , onChange() {
-        this.forceUpdate();
-    }
-
-    , render() {
-        return (
-            <div className="controlpanel-container">
-                <ButtonGo enabled={this.props.enabled}/>
-                <TrashCan enabled="true"/>
-            </div>
-        )
+    render() {
+        return this.props.moveButtonEnabled
+            ? (
+                <div className="controlpanel-container">
+                    <ButtonGo enabled={this.props.enabled}/>
+                    <TrashCan enabled="true"/>
+                </div>
+            )
+            : (
+                <div className="controlpanel-container">
+                    <ButtonShuffle/>
+                    <TrashCan enabled="true"/>
+                </div>
+            )
     }
 });
 
