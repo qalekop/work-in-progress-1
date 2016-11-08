@@ -2,7 +2,7 @@
  * Created by akopylov on 18/12/15.
  */
 
-var alt = require('../../alt');
+const alt = require('../../alt');
 
 class Actions {
     getRack(rack) {
@@ -22,6 +22,10 @@ class Actions {
     }
 
     trashcanReverted() {
+        this.dispatch();
+    }
+
+    shuffle() {
         this.dispatch();
     }
 

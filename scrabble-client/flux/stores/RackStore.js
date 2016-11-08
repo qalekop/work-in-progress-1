@@ -2,9 +2,10 @@
  * Created by akopylov on 18/12/15.
  */
 
-var alt = require('../../alt');
+const alt = require('../../alt');
 
-var Actions = require('../actions/Actions');
+const Actions = require('../actions/Actions');
+const RackSource = require('../sources/RackSource');
 
 class RackStore {
     constructor() {
@@ -16,10 +17,10 @@ class RackStore {
             handleTileReverted: Actions.TILE_REVERTED,
             handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
             handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
+            handleShuffle: Actions.SHUFFLE,
         });
-        this.exportPublicMethods({
-            getRest: this.getRest
-        });
+
+        this.exportAsync(RackSource);
     }
 
     handleGetRack(letters) {
@@ -33,19 +34,15 @@ class RackStore {
         }
     }
 
-    getRest() {
-        return this.getInstance().tiles.filter(tile => !tile.hidden).reduce(function(prev, next) {return prev + next}, '');
-    }
-
     handleTileDroppedToField(letter) {
-        let index = this.tiles.findIndex(tile => tile.letter == letter.letter);
+        let index = this.tiles.findIndex(tile => (tile.letter == letter.letter && !tile.hidden));
         this.tiles[index].hidden = true;
     }
 
     handleTileDroppedToTrashcan(letter) {
         let index = this.tiles.findIndex(tile => tile.letter == letter);
         this.tiles[index].hidden = true;
-        this.shuffle.push[letter];
+        this.shuffle.push(letter);
     }
 
     handleTrashcanReverted() {
@@ -53,5 +50,15 @@ class RackStore {
         this.shuffle = [];
     }
 
+    handleShuffle() {
+        let rest = this.tiles
+            .filter(tile => !tile.hidden)
+            .map(tile => tile.letter)
+            .reduce((prev, next) => prev + next, '');
+        let shuffle = this.shuffle.reduce((prev, next) => prev + next, '');
+        console.log("*** RackStore.handleShuffle", rest, shuffle);
+        this.getInstance().shuffleRack(rest, shuffle);
+    }
 }
+
 module.exports = alt.createStore(RackStore, 'RackStore');

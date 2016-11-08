@@ -1,11 +1,14 @@
 package ak.scrabble.web.controller;
 
 import ak.scrabble.engine.model.Cell;
+import ak.scrabble.engine.model.Game;
+import ak.scrabble.engine.model.ImmutableGame;
 import ak.scrabble.engine.model.ImmutableResponseSuccess;
 import ak.scrabble.engine.model.MoveResponse;
-import ak.scrabble.engine.model.ResponseError;
 import ak.scrabble.engine.model.ResponseSuccess;
+import ak.scrabble.engine.model.Tile;
 import ak.scrabble.engine.service.GameService;
+import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.security.SecurityModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,12 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +42,10 @@ public class GameController {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    GameService gameService;
+    private GameService gameService;
+
+    @Autowired
+    private RackService rackService;
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL, method = RequestMethod.GET)
     public String scrabble(Model model, SecurityContextHolderAwareRequestWrapper request) {
@@ -49,7 +54,28 @@ public class GameController {
     }
 
     /**
-     * Returns JSON object describing game state (i.e., field cells).
+     * Updates human's rack after shuffle request and returns it to the client.
+     */
+    @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/rack"
+            , method = RequestMethod.POST
+            , headers = {"Content-type=application/json; charset=utf-8"})
+    public ResponseEntity<String> getRack(@RequestBody() ShuffleRequest shuffleRequest,
+                                          Principal user) throws JsonProcessingException, SQLException {
+
+        final String existingLetters = shuffleRequest.getRest();
+        final String shuffle = shuffleRequest.getShuffle();
+        //todo move the calls below to a dedicated service
+        Game game = gameService.getGame(user.getName());
+        List<Character> bag = new ArrayList<>(game.bag());
+        List<Tile> rack = rackService.getRack(bag, existingLetters, shuffle);
+        gameService.updateGame(user.getName(), bag, rack);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return new ResponseEntity<>(mapper.writer().writeValueAsString(rack), headers, HttpStatus.OK);
+    }
+    /**
+     * Returns JSON object describing game state.
      */
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL + "/game"
             , method = RequestMethod.GET)
@@ -81,5 +107,26 @@ public class GameController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return new ResponseEntity<>(mapper.writer().writeValueAsString(moveResponse), headers, HttpStatus.OK);
+    }
+
+    private static class ShuffleRequest {
+        private String rest;
+        private String shuffle;
+
+        public String getRest() {
+            return rest;
+        }
+
+        public void setRest(String rest) {
+            this.rest = rest;
+        }
+
+        public String getShuffle() {
+            return shuffle;
+        }
+
+        public void setShuffle(String shuffle) {
+            this.shuffle = shuffle;
+        }
     }
 }

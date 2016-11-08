@@ -109,7 +109,7 @@ const ControlPanel = React.createClass({
             )
             : (
                 <div className="controlpanel-container">
-                    <ButtonShuffle/>
+                    <ButtonShuffle enabled={true}/>
                     <TrashCan enabled="true"/>
                 </div>
             )

@@ -20,8 +20,8 @@ import java.security.Principal;
 public class ScrabbleWSHandler extends TextWebSocketHandler {
 
     private enum Command {
-        GET_FIELD,  // get game state and send it to the client
-        MOVE        // start machine move sequence, then
+        MOVE,      // start machine move sequence, then
+        GET_FIELD  // get game state and send it to the client
     }
 
     private ObjectMapper mapper = new ObjectMapper();

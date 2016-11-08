@@ -2,20 +2,22 @@
  * Created by akopylov on 18/12/15.
  */
 
-var Actions = require('../actions/Actions');
-var RACK_URL = '/scrabble/game/rack/';
+const Actions = require('../actions/Actions');
+const RACK_URL = '/scrabble/game/rack/';
 
 var RackSource = {
-    getRack() {
+    shuffleRack() {
         return {
-            remote(state, letters) {
+            remote(state, rest, shuffle) {
                 return new Promise(function(resolve) {
+                    console.log("*** RackSource.getRest", shuffle);
                     $.ajax({
                         method: 'POST',
                         url: RACK_URL,
-                        data: {'letters': letters},
+                        data: JSON.stringify({'rest': rest, 'shuffle': shuffle}),
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
                         success: function(data) { resolve(data); },
-                        dataType: 'json'
                     });
                 })
             }
