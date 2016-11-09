@@ -10,7 +10,6 @@ var RackSource = {
         return {
             remote(state, rest, shuffle) {
                 return new Promise(function(resolve) {
-                    console.log("*** RackSource.getRest", shuffle);
                     $.ajax({
                         method: 'POST',
                         url: RACK_URL,

@@ -4,6 +4,7 @@
 const React = require('react');
 
 const Actions = require('../flux/actions/Actions');
+const ScrabbleStore = require("../flux/stores/ScrabbleStore");
 
 const SIZE = 50;
 
@@ -27,7 +28,7 @@ const Cell = React.createClass({
     }
 
     , dragOver(event) {
-        if (!this.state.occupied) event.preventDefault();
+        if (ScrabbleStore.getState().dropEnabled && !this.state.occupied) event.preventDefault();
     }
 
     , rightClicked(event) {
@@ -54,7 +55,7 @@ const Cell = React.createClass({
                  onContextMenu={this.rightClicked}
                  onDragOver={this.dragOver}
                  style={{left: col * SIZE +'px', top: row * SIZE + 'px'}}
-                 onDrop={this.drop}>{this.state.letter}</div>
+                 onDrop={this.drop}>{this.state.occupied ? this.state.letter : ''}</div>
         );
     }
 });

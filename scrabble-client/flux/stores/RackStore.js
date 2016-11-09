@@ -25,6 +25,7 @@ class RackStore {
 
     handleGetRack(letters) {
         this.tiles = letters;
+        this.shuffle = [];
     }
 
     handleTileReverted(letter) {
@@ -56,7 +57,6 @@ class RackStore {
             .map(tile => tile.letter)
             .reduce((prev, next) => prev + next, '');
         let shuffle = this.shuffle.reduce((prev, next) => prev + next, '');
-        console.log("*** RackStore.handleShuffle", rest, shuffle);
         this.getInstance().shuffleRack(rest, shuffle);
     }
 }

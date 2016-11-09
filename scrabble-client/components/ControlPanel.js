@@ -1,9 +1,10 @@
 /**
  * Created by akopylov on 21/01/16.
  */
-var React = require('react');
+const React = require('react');
 
-var Actions = require('../flux/actions/Actions');
+const Actions = require('../flux/actions/Actions');
+const ControlStore = require('../flux/stores/ControlStore');
 
 const ButtonGo = React.createClass({
     getInitialState() {
@@ -37,15 +38,27 @@ const ButtonGo = React.createClass({
 
 const ButtonShuffle = React.createClass({
 
-    clicked(event) {
+    getInitialState() {
+        return {'hover': false};
+    }
+
+    , clicked(event) {
         if (this.props.enabled) {
             Actions.shuffle();
         }
     }
 
+    , hover() {
+        this.setState({'hover': !this.state.hover});
+    }
+
     , render() {
+        let className = 'control-panel__shuffle-button'
+            + (this.state.hover ? ' control-panel__shuffle-button_hilighted' : '');
          return (
-            <div className='control-panel__shuffle-button'
+            <div className={className}
+                 onMouseEnter={this.hover}
+                 onMouseLeave={this.hover}
                  onClick={this.clicked}>Shuffle!
             </div>
         )
@@ -69,7 +82,7 @@ const TrashCan = React.createClass({
     }
 
     , dragOver(event) {
-        event.preventDefault();
+        if (!ControlStore.getState().goButtonEnabled) event.preventDefault();
     }
 
     , drop(event) {
@@ -100,17 +113,17 @@ const TrashCan = React.createClass({
 const ControlPanel = React.createClass({
 
     render() {
-        return this.props.moveButtonEnabled
+        return this.props.moveButtonShown
             ? (
                 <div className="controlpanel-container">
-                    <ButtonGo enabled={this.props.enabled}/>
-                    <TrashCan enabled="true"/>
+                    <ButtonGo enabled={this.props.goButtonEnabled}/>
+                    <TrashCan/>
                 </div>
             )
             : (
                 <div className="controlpanel-container">
-                    <ButtonShuffle enabled={true}/>
-                    <TrashCan enabled="true"/>
+                    <ButtonShuffle/>
+                    <TrashCan/>
                 </div>
             )
     }

@@ -9,8 +9,8 @@ const ScrabbleStore = require('./ScrabbleStore');
 
 class ControlStore {
     constructor() {
-        this.enabled = false;
-        this.moveButtonEnabled = true;
+        this.goButtonEnabled = false;
+        this.moveButtonShown = true;
 
         this.bindListeners({
             handleMakeMove: Actions.MAKE_MOVE,
@@ -18,15 +18,20 @@ class ControlStore {
             handleTileReverted: Actions.TILE_REVERTED,
             handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
             handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
+            handleGetRack: Actions.GET_RACK,
         });
     }
 
+    handleGetRack() {
+        this.moveButtonShown = true;
+    }
+
     handleTileDroppedToTrashcan() {
-        this.moveButtonEnabled = false;
+        this.moveButtonShown = false;
     }
 
     handleTrashcanReverted() {
-        this.moveButtonEnabled = true;
+        this.moveButtonShown = true;
     }
 
     handleTileDropped(tile) {
@@ -35,17 +40,17 @@ class ControlStore {
             cell.availability = 'OCCUPIED';
             cell.letter = tile.letter;
         }
-        this.enabled = ControlStore.checkField();
+        this.goButtonEnabled = ControlStore.checkField();
     }
 
     handleTileReverted(tile) {
         var cell = ControlStore.findCell(tile.row, tile.col);
         if (!!cell) cell.availability = 'ALLOWED';
-        this.enabled = ControlStore.checkField();
+        this.goButtonEnabled = ControlStore.checkField();
     }
 
     handleMakeMove() {
-        this.enabled = false;
+        this.goButtonEnabled = false;
     }
 
     static checkField() {
