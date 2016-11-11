@@ -44,6 +44,7 @@ class ScrabbleStore {
                 console.log('*** response received');
                 Actions.getField(response.cells);
                 Actions.getRack(response.rackHuman);
+                Actions.getScore({'human': response.scoreHuman, 'machine': response.scoreMachine});
                 Actions.hideDialog();
             };
             ws.onopen = function(event) {

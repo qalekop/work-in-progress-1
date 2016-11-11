@@ -53,7 +53,7 @@ body {
 .content {
   @include h-align-center;
   border: 2px double white;
-  height: (($count + 3) * $size) + (3 * $margin);
+  height: (($count + 4) * $size) + (4 * $margin);
   width: ($count * $size) + (2 * $margin);
   margin-top: $margin;
 }
@@ -73,6 +73,29 @@ body {
 
 .controlpanel-container {
   @include container(space-between);
+}
+
+.scoreboard-container {
+  @include container(initial);
+}
+
+.scoreboard-container__score {
+  width: ($count * $size) / 2;
+  height: $size;
+  text-align: center;
+  font-size: 200%;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.scoreboard-container__score_human {
+  background-color: $color-tile-human;
+}
+
+.scoreboard-container__score_machine {
+  background-color: $color-tile-machine;
 }
 
 .cell {
@@ -112,6 +135,10 @@ body {
   @include control-panel__button(column);
 }
 
+.control-panel__shuffle-button_hilighted {
+  background-color: $color-button-hover;
+}
+
 .control-panel__trashcan {
   width: 45px;
   height: 45px;
@@ -140,15 +167,6 @@ body {
 
 .LETTER_2X {
   background-color: darkblue;
-}
-
-.RESTRICTED {
-  background-color: black;
-}
-
-.REJECTED {
-  background-color: black;
-  color: blanchedalmond;
 }
 
 .HUMAN {

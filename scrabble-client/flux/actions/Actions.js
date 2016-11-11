@@ -45,6 +45,10 @@ class Actions {
         this.dispatch(response);
     }
 
+    getScore(scores) {
+        this.dispatch(scores);
+    }
+
     //<editor-fold desc="Initial setup>
     bootstrapRequest() {
         this.dispatch();

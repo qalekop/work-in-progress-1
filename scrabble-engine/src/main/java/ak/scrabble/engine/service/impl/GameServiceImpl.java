@@ -145,8 +145,10 @@ public class GameServiceImpl implements GameService {
             // todo machine's rack? scores?
             game = ImmutableGame.builder()
                     .cells(cells)
-                    .scoreHuman(0).scoreMachine(0)
-                    .rackHuman(rackHuman).rackMachine(game.rackMachine())
+                    .scoreHuman(((ResponseSuccess)response).score())
+                    .scoreMachine(game.scoreMachine())
+                    .rackHuman(rackHuman)
+                    .rackMachine(game.rackMachine())
                     .bag(bag)
                     .build();
             gameDAO.persistGame(user, game, UPDATE);
@@ -156,7 +158,7 @@ public class GameServiceImpl implements GameService {
 
     private MoveResponse _verifyMove(List<Cell> cells) {
         return ImmutableResponseSuccess.builder()
-                .score(0)
+                .score(-1)
                 .build();
     }
 

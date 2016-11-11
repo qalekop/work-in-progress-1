@@ -11,7 +11,7 @@ const SIZE = 50;
 const Cell = React.createClass({
 
     getInitialState() {
-        return {'letter': this.props.letter, 'occupied': false};
+        return {'letter': this.props.letter, 'occupied': this.props.state !== 'AVAILABLE'};
     }
 
     , componentWillReceiveProps(nextProps) {
@@ -44,11 +44,9 @@ const Cell = React.createClass({
             col = this.props.col,
             className = 'cell ';
         if (this.state.occupied) {
-            className += this.props.state === 'REJECTED' ? 'REJECTED' : 'HUMAN';
-        } else if (this.props.state === 'AVAILABLE' || this.props.state === 'REJECTED') {
-            className += this.props.bonus == 'NONE' ? '' : this.props.bonus;
-        } else {
             className += this.props.state;
+        } else {
+            className += this.props.bonus == 'NONE' ? '' : this.props.bonus;
         }
         return (
             <div className={className}
