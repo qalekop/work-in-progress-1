@@ -4,8 +4,8 @@
 
 const alt = require('../../alt');
 
-const Actions = require('../actions/Actions');
-const RackStore = require('./RackStore');
+const Actions = require('../actions/Actions'),
+    RackStore = require('./RackStore');
 const ENDPOINT_URL = '/scrabble/game/feedback/',
     MOVE_URL = '/scrabble/game/move/';
 
@@ -15,7 +15,6 @@ class ScrabbleStore {
     constructor() {
         this.bootstrapRequest = false;
         this.wsReady = false;
-        this.dropEnabled = true;
 
         this.cells = [];
 
@@ -24,8 +23,6 @@ class ScrabbleStore {
             handleGetField: Actions.GET_FIELD,
             handleBootstrapRequest: Actions.BOOTSTRAP_REQUEST,
             handleWsReady: Actions.WS_READY,
-            handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
-            handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
         });
 
         var endpointUrl = (window.location.protocol == 'http:' ? 'ws://' : 'wss://')
@@ -57,14 +54,6 @@ class ScrabbleStore {
                 console.log('*** ws.onclose', event.wasClean);
             };
         }
-    }
-
-    handleTileDroppedToTrashcan() {
-        this.dropEnabled = false;
-    }
-
-    handleTrashcanReverted() {
-        this.dropEnabled = true;
     }
 
     handleMakeMove() {

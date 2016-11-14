@@ -10,7 +10,7 @@ const ScrabbleStore = require('./ScrabbleStore');
 class ControlStore {
     constructor() {
         this.goButtonEnabled = false;
-        this.moveButtonShown = true;
+        this.goButtonShown = true;
 
         this.bindListeners({
             handleMakeMove: Actions.MAKE_MOVE,
@@ -23,15 +23,15 @@ class ControlStore {
     }
 
     handleGetRack() {
-        this.moveButtonShown = true;
+        this.goButtonShown = true;
     }
 
     handleTileDroppedToTrashcan() {
-        this.moveButtonShown = false;
+        this.goButtonShown = false;
     }
 
     handleTrashcanReverted() {
-        this.moveButtonShown = true;
+        this.goButtonShown = true;
     }
 
     handleTileDropped(tile) {

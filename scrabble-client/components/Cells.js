@@ -4,7 +4,7 @@
 const React = require('react');
 
 const Actions = require('../flux/actions/Actions');
-const ScrabbleStore = require("../flux/stores/ScrabbleStore");
+const ControlStore = require("../flux/stores/ControlStore");
 
 const SIZE = 50;
 
@@ -28,7 +28,7 @@ const Cell = React.createClass({
     }
 
     , dragOver(event) {
-        if (ScrabbleStore.getState().dropEnabled && !this.state.occupied) event.preventDefault();
+        if (ControlStore.getState().goButtonShown && !this.state.occupied) event.preventDefault();
     }
 
     , rightClicked(event) {

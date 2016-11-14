@@ -116,6 +116,11 @@
              <version>${org.codehaus.jackson.version}</version>
          </dependency>
          <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-databind</artifactId>
+             <version>${com.fasterxml.jackson.core.version}</version>
+         </dependency>
+         <dependency>
              <groupId>javax</groupId>
              <artifactId>javaee-api</artifactId>
              <version>7.0</version>

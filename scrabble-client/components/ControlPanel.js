@@ -43,9 +43,7 @@ const ButtonShuffle = React.createClass({
     }
 
     , clicked(event) {
-        if (this.props.enabled) {
-            Actions.shuffle();
-        }
+        Actions.shuffle();
     }
 
     , hover() {
@@ -113,7 +111,7 @@ const TrashCan = React.createClass({
 const ControlPanel = React.createClass({
 
     render() {
-        return this.props.moveButtonShown
+        return this.props.goButtonShown
             ? (
                 <div className="controlpanel-container">
                     <ButtonGo enabled={this.props.goButtonEnabled}/>
