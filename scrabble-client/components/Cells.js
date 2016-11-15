@@ -15,7 +15,7 @@ const Cell = React.createClass({
     }
 
     , componentWillReceiveProps(nextProps) {
-        this.setState({'letter': nextProps.letter, 'occupied': false});
+        this.setState({'letter': nextProps.letter, 'occupied': this.props.state !== 'AVAILABLE'});
     }
 
     , drop(event) {

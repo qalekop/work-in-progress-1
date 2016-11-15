@@ -42,7 +42,6 @@ class ScrabbleStore {
                 Actions.getField(response.cells);
                 Actions.getRack(response.rackHuman);
                 Actions.getScore({'human': response.scoreHuman, 'machine': response.scoreMachine});
-                Actions.hideDialog();
             };
             ws.onopen = function(event) {
                 console.log('*** ws open');
@@ -58,6 +57,13 @@ class ScrabbleStore {
 
     handleMakeMove() {
         var field = this.cells.filter(function(cell) { return cell.availability == 'OCCUPIED';});
+        let rackState = RackStore.getState();
+        let rest = rackState.tiles
+            .filter(tile => !tile.hidden)
+            .map(tile => tile.letter)
+            .reduce((prev, next) => prev + next, '');
+        let shuffle = rackState.shuffle.reduce((prev, next) => prev + next, '');
+        console.log("*** ScrabbleStore.handleMakeMove", rest, shuffle);
         new Promise(function(resolve) {
             $.ajax({
                 method: 'POST',
@@ -72,7 +78,6 @@ class ScrabbleStore {
             })
         }).then(function (response) {
             console.log('*** Promise responsed with ', response.success);
-            //todo update modal depending on response
             Actions.handleResponse(response);
             return response.success;
         }).then(function (success) {
@@ -87,7 +92,6 @@ class ScrabbleStore {
         if (this.wsReady) {
             this.bootstrapRequest = false;
             ws.send("GET_FIELD");
-            // Actions.getField();
         } else {
             this.bootstrapRequest = true;
         }
@@ -97,11 +101,11 @@ class ScrabbleStore {
         this.wsReady = true;
         if (this.bootstrapRequest) {
             ws.send("GET_FIELD");
-            // Actions.getField();
         }
     }
 
     handleGetField(cells) {
+        // cells.forEach(cell => console.log(`${cell.letter}; ${cell.state}`));
         this.cells = cells;
     }
 }

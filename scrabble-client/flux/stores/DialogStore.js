@@ -30,13 +30,9 @@ class DialogStore {
     }
 
     proceedWithDialog(response) {
-        // Actions.bootstrapRequest();
         if (!response.success) {
-            console.log('*** Error:' + response.message);
             this.showCloseButton = true;
             this.text = response.message;
-        // } else {
-        //     if (!!ws) ws.send('waiting for machine move');
         }
     }
 }
