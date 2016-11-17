@@ -42,6 +42,7 @@ class ScrabbleStore {
                 Actions.getField(response.cells);
                 Actions.getRack(response.rackHuman);
                 Actions.getScore({'human': response.scoreHuman, 'machine': response.scoreMachine});
+                Actions.hideDialog(false);
             };
             ws.onopen = function(event) {
                 console.log('*** ws open');
@@ -63,12 +64,17 @@ class ScrabbleStore {
             .map(tile => tile.letter)
             .reduce((prev, next) => prev + next, '');
         let shuffle = rackState.shuffle.reduce((prev, next) => prev + next, '');
-        console.log("*** ScrabbleStore.handleMakeMove", rest, shuffle);
+        console.log("*** ScrabbleStore.handleMakeMove", field, rest, shuffle);
+        let gameState = {
+            'cells': field,
+            'rest': rest,
+            'shuffle': shuffle
+        };
         new Promise(function(resolve) {
             $.ajax({
                 method: 'POST',
                 url: MOVE_URL,
-                data: JSON.stringify(field),
+                data: JSON.stringify(gameState),
                 dataType: 'json',
                 headers: {
                     'Accept': 'application/json',

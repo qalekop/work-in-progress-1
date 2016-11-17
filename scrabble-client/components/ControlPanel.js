@@ -30,34 +30,7 @@ const ButtonGo = React.createClass({
             <div className={className}
                  onMouseEnter={this.hover}
                  onMouseLeave={this.hover}
-                 onClick={this.clicked}>GO!
-            </div>
-        )
-    }
-});
-
-const ButtonShuffle = React.createClass({
-
-    getInitialState() {
-        return {'hover': false};
-    }
-
-    , clicked(event) {
-        Actions.shuffle();
-    }
-
-    , hover() {
-        this.setState({'hover': !this.state.hover});
-    }
-
-    , render() {
-        let className = 'control-panel__shuffle-button'
-            + (this.state.hover ? ' control-panel__shuffle-button_hilighted' : '');
-         return (
-            <div className={className}
-                 onMouseEnter={this.hover}
-                 onMouseLeave={this.hover}
-                 onClick={this.clicked}>Shuffle!
+                 onClick={this.clicked}>{this.props.title}
             </div>
         )
     }
@@ -111,19 +84,13 @@ const TrashCan = React.createClass({
 const ControlPanel = React.createClass({
 
     render() {
-        return this.props.goButtonShown
-            ? (
-                <div className="controlpanel-container">
-                    <ButtonGo enabled={this.props.goButtonEnabled}/>
-                    <TrashCan/>
-                </div>
-            )
-            : (
-                <div className="controlpanel-container">
-                    <ButtonShuffle/>
-                    <TrashCan/>
-                </div>
-            )
+        return (
+            <div className="controlpanel-container">
+                <ButtonGo enabled={this.props.goButtonEnabled || !this.props.goButtonShown}
+                          title={this.props.goButtonShown ? "GO!" : "SHUFFLE!"}/>
+                <TrashCan/>
+            </div>
+        )
     }
 });
 

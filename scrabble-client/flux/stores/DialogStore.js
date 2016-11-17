@@ -19,8 +19,8 @@ class DialogStore {
         });
     }
 
-    hideDialog() {
-        this.modalShown = false;
+    hideDialog(forcibly = false) {
+        if (forcibly || !this.showCloseButton) this.modalShown = false;
     }
 
     showDialog() {
@@ -30,8 +30,8 @@ class DialogStore {
     }
 
     proceedWithDialog(response) {
+        this.showCloseButton = !response.success;
         if (!response.success) {
-            this.showCloseButton = true;
             this.text = response.message;
         }
     }

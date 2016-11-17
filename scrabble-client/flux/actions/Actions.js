@@ -25,10 +25,6 @@ class Actions {
         this.dispatch();
     }
 
-    shuffle() {
-        this.dispatch();
-    }
-
     makeMove() {
         this.dispatch();
     }
@@ -37,8 +33,8 @@ class Actions {
         this.dispatch(cells);
     }
 
-    hideDialog() {
-        this.dispatch();
+    hideDialog(forcibly) {
+        this.dispatch(forcibly);
     }
 
     handleResponse(response) {

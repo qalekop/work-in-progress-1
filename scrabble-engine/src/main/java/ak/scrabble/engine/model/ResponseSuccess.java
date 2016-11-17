@@ -14,10 +14,14 @@ import java.util.List;
 public interface ResponseSuccess extends MoveResponse {
 
     List<Cell> cells();
-    int score();
 
     @Value.Derived
     default boolean success() {
         return true;
+    }
+
+    @Value.Default
+    default int score() {
+        return 0;
     }
 }

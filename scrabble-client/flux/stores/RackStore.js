@@ -17,7 +17,6 @@ class RackStore {
             handleTileReverted: Actions.TILE_REVERTED,
             handleTileDroppedToTrashcan: Actions.TILE_DROPPED_TO_TRASHCAN,
             handleTrashcanReverted: Actions.TRASHCAN_REVERTED,
-            handleShuffle: Actions.SHUFFLE,
         });
 
         this.exportAsync(RackSource);
@@ -49,15 +48,6 @@ class RackStore {
     handleTrashcanReverted() {
         this.tiles.forEach(tile => tile.hidden = false);
         this.shuffle = [];
-    }
-
-    handleShuffle() {
-        let rest = this.tiles
-            .filter(tile => !tile.hidden)
-            .map(tile => tile.letter)
-            .reduce((prev, next) => prev + next, '');
-        let shuffle = this.shuffle.reduce((prev, next) => prev + next, '');
-        this.getInstance().shuffleRack(rest, shuffle);
     }
 }
 

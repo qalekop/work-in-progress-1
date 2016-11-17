@@ -19,11 +19,6 @@ import java.security.Principal;
 @Component
 public class ScrabbleWSHandler extends TextWebSocketHandler {
 
-    private enum Command {
-        MOVE,      // start machine move sequence, then
-        GET_FIELD  // get game state and send it to the client
-    }
-
     private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -35,11 +30,7 @@ public class ScrabbleWSHandler extends TextWebSocketHandler {
         if (principal == null) {
             throw new IllegalStateException("not authenticated");
         }
-        if (Command.MOVE.name().equals(message.getPayload())) {
-            // start machine move sequence
-            // then save the new state to be retrieved next
-            gameService.processMachineMove(principal.getName());
-        }
+        gameService.processMachineMove(principal.getName());
         Game game = gameService.getGame(principal.getName());
         String response;
         try {

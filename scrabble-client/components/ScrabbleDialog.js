@@ -2,23 +2,11 @@ const React = require('react');
 import {Modal, ModalHeader, ModalBody, ModalFooter, Button} from 'elemental';
 
 const Actions = require('../flux/actions/Actions');
-const DialogStore = require('../flux/stores/DialogStore');
 
 const ScrabbleDialog = React.createClass({
-    componentDidMount(){
-        DialogStore.listen(this.onChange);
-    }
 
-    , componentWillUnmount() {
-        DialogStore.unlisten(this.onChange);
-    }
-
-    , onChange() {
-        this.forceUpdate();
-    }
-
-    , hideModal() {
-        Actions.hideDialog();
+    hideModal() {
+        Actions.hideDialog(true);
     }
 
     , render() {

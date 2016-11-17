@@ -15,7 +15,7 @@ import java.util.List;
 public interface GameService {
 
     /**
-     * Returns game state for that particular user
+     * Returns game state for that particular user.
      * @param user
      * @return
      * @throws SQLException
@@ -36,6 +36,15 @@ public interface GameService {
      * @throws SQLException
      */
     MoveResponse processHumanMove(final String user, final List<Cell> newCells) throws SQLException;
+
+    /**
+     * Shuffles human's rack, updates the game state and persists it.
+     * @param user
+     * @param rest Letters to be kept, combined into one string,
+     * @param shuffle Letters to be shuffled, combined into one string.
+     * @return
+     */
+    MoveResponse processShuffle(final String user, final String rest, final String shuffle) throws SQLException;
 
     /**
      * Verifies a move.

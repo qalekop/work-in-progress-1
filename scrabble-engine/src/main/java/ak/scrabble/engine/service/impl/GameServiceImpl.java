@@ -142,7 +142,6 @@ public class GameServiceImpl implements GameService {
             List<Tile> rackHuman = rackService.getRack(bag, game.rackHuman(), usedLetters);
 
             // 3. save field
-            // todo machine's rack? scores?
             game = ImmutableGame.builder()
                     .cells(cells)
                     .scoreHuman(((ResponseSuccess)response).score())
@@ -154,6 +153,15 @@ public class GameServiceImpl implements GameService {
             gameDAO.persistGame(user, game, UPDATE);
         }
         return response;
+    }
+
+    @Override
+    public MoveResponse processShuffle(String user, String rest, String shuffle) throws SQLException {
+        Game game = getGame(user);
+        List<Character> bag = new ArrayList<>(game.bag());
+        List<Tile> rack = rackService.getRack(bag, rest, shuffle);
+        updateGame(user, bag, rack);
+        return ImmutableResponseSuccess.builder().build();
     }
 
     private MoveResponse _verifyMove(List<Cell> cells) {
