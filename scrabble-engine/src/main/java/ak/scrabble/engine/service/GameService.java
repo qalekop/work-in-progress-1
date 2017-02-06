@@ -58,8 +58,7 @@ public interface GameService {
     /**
      * Handles machine move (in case of success sivet the new game state)
      * @param user
-     * @return Move score
      * @throws SQLException
      */
-    int processMachineMove(String user) throws SQLException;
+    void processMachineMove(String user) throws SQLException;
 }

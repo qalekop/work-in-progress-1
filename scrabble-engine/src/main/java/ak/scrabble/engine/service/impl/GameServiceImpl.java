@@ -231,7 +231,11 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public int processMachineMove(String user) throws SQLException {
+    public void processMachineMove(String user) throws SQLException {
+        if (!gameDAO.savedStateExists(user)) {
+            return;
+        }
+
         // 1. get game state. Assuming it exists for the given user
         Game game = gameDAO.getGame(user);
         String rack = game.rackMachine().stream().map(tile -> String.valueOf(tile.getLetter())).reduce("", (a, b) -> a + b);
@@ -276,6 +280,5 @@ public class GameServiceImpl implements GameService {
                 .bag(bag)
                 .build();
         gameDAO.persistGame(user, newGameState, UPDATE);
-        return score; // todo really score?
     }
 }
