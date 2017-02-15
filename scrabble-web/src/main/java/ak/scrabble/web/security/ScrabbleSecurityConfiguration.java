@@ -31,6 +31,7 @@ public class ScrabbleSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers(SecurityModel.UNSECURE_URI + "/**").permitAll()
                 .antMatchers(SecurityModel.SECURE_URI + "/**").hasRole(SecurityModel.ROLE)
                     .and()
                 .formLogin()
@@ -42,9 +43,6 @@ public class ScrabbleSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .permitAll()
                     .and()
                 .logout()
-                // default logout values used
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/")
                     .and()
                 .exceptionHandling()
                 .accessDeniedPage("/error/403")

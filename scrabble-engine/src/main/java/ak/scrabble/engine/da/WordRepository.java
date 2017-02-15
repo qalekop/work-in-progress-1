@@ -2,6 +2,8 @@ package ak.scrabble.engine.da;
 
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.Word;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import java.util.List;
 
@@ -31,4 +33,13 @@ public interface WordRepository {
      * @return Collection of objects, possibly empty
      */
     List<String> find(SearchSpec specification);
+
+    /**
+     * Looks up for a word in "white" dictionaries.
+     * @param word word to look for.
+     * @return Description of the word
+     * @throws IncorrectResultSizeDataAccessException if the query does not return exactly one row, or does not return exactly one column in that row
+     * @throws DataAccessException if the query fails
+     */
+    String lookup(String word);
 }

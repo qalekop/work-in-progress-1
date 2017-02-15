@@ -1,14 +1,11 @@
 package ak.scrabble.web.controller;
 
 import ak.scrabble.engine.model.Cell;
-import ak.scrabble.engine.model.Game;
-import ak.scrabble.engine.model.ImmutableGame;
 import ak.scrabble.engine.model.ImmutableResponseSuccess;
 import ak.scrabble.engine.model.MoveResponse;
 import ak.scrabble.engine.model.ResponseSuccess;
-import ak.scrabble.engine.model.Tile;
+import ak.scrabble.engine.service.DictService;
 import ak.scrabble.engine.service.GameService;
-import ak.scrabble.engine.service.RackService;
 import ak.scrabble.web.model.GameState;
 import ak.scrabble.web.security.SecurityModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by akopylov on 09.10.2015.
@@ -45,6 +42,9 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private DictService dictService;
 
     @RequestMapping(value = SecurityModel.SECURE_URI + GAME_URL, method = RequestMethod.GET)
     public String scrabble(Model model, SecurityContextHolderAwareRequestWrapper request) {
@@ -89,5 +89,17 @@ public class GameController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return new ResponseEntity<>(mapper.writer().writeValueAsString(moveResponse), headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = SecurityModel.UNSECURE_URI
+        , method = RequestMethod.GET)
+    public ResponseEntity<String> lookup(@RequestParam("word") String word) {
+        // todo check if empty
+        Optional<String> description = dictService.lookup(word);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return description.isPresent()
+                ? new ResponseEntity<>(description.get(), headers, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

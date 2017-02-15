@@ -6,11 +6,13 @@ import ak.scrabble.engine.model.WordProposal;
 import ak.scrabble.engine.service.DictService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +41,15 @@ public class DictServiceImpl implements DictService {
                 .filter(candidate -> !candidate.equalsIgnoreCase(word))
                 .map(candidate -> new WordProposal(candidate, spec.pattern()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<String> lookup(String word) {
+        try {
+            return Optional.ofNullable(wordRepo.lookup(word));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     private boolean valid(String availableChars, String candidate) {

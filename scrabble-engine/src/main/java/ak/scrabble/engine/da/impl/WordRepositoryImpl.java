@@ -3,7 +3,6 @@ package ak.scrabble.engine.da.impl;
 import ak.scrabble.engine.da.BaseDAO;
 import ak.scrabble.engine.da.WordRepository;
 import ak.scrabble.engine.model.DictFlavor;
-import ak.scrabble.engine.model.ImmutableWord;
 import ak.scrabble.engine.model.SearchSpec;
 import ak.scrabble.engine.model.Word;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -28,6 +27,9 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
     private static final String S_LIKE = "select word from dict where word ~ :" + P_WORD;
     // + " and flavor in (:" + P_FLAVOR + ")";
 
+    private static final String LOOKUP = "select description from dict where word = :" + P_WORD;
+    // + " and flavor in (:" + P_FLAVOR + ")";
+
     @Override
     public void addToBlackList(Word word) {
         // todo implement me
@@ -47,5 +49,10 @@ public class WordRepositoryImpl extends BaseDAO implements WordRepository {
         return jdbc.query(specification.regexp() ? S_LIKE : S_EQUALS,
                 new MapSqlParameterSource(P_WORD, searchPattern.toLowerCase(LOCALE_RU_RU)),
                 (resultSet, i) -> resultSet.getString("word"));
+    }
+
+    @Override
+    public String lookup(String word) {
+        return jdbc.queryForObject(LOOKUP, new MapSqlParameterSource(P_WORD, word), String.class);
     }
 }
