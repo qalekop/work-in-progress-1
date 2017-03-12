@@ -10,9 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +18,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DictServiceImpl implements DictService {
+
+    private final static Locale LOCALE_RU = new Locale("ru", "RU");
 
     private final WordRepository wordRepo;
 
@@ -46,7 +46,7 @@ public class DictServiceImpl implements DictService {
     @Override
     public Optional<String> lookup(String word) {
         try {
-            return Optional.ofNullable(wordRepo.lookup(word));
+            return Optional.ofNullable(wordRepo.lookup(word.toLowerCase(LOCALE_RU)));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
